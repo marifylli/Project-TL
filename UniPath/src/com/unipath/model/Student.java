@@ -7,6 +7,9 @@ public class Student extends User {
     private int currentSemester;
     private List<CourseEvaluation> evaluationCourses;
     private boolean notificationsEnabled;
+    private StudentProfile profile;
 
+    public Student(){
 
+    }
 }

@@ -8,6 +8,7 @@ public class StudyPlan {
     private int studentId;
     private int scenarioId;
     private Scenario scenario;
+    private List<Course> courses; //courses
     private String academicYear;
     private String directionName;
     private int totalECTS;

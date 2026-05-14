@@ -27,7 +27,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
+            <version>${javafx.version}</version>nai
         </dependency>
 
         <!-- Firebase Admin SDK -->
@@ -36,6 +36,8 @@
             <artifactId>firebase-admin</artifactId>
             <version>9.2.0</version>
         </dependency>
+
+
 
         <!-- JavaMail -->
         <dependency>

@@ -7,7 +7,6 @@ public class StudentProfile {
     private int profileId;
     private int studentId;
     private List<StudyPlan> savedPlans;
-    private float workloadIndex;
     private Date lastUpdated;
 
     public StudentProfile(){

@@ -9,4 +9,7 @@ public class Student extends User {
     private boolean notificationsEnabled;
     private StudentProfile profile;
 
+    public Student(){
+
+    }
 }

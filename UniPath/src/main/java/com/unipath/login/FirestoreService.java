@@ -1,8 +1,5 @@
 package com.unipath.login;
 
-import com.unipath.login.Role;
-import com.unipath.login.User;
-
 public class FirestoreService {
 
     public User getUserByEmail(String email) throws Exception {

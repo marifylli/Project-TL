@@ -1,7 +1,5 @@
 package com.unipath.model;
 
-import java.util.List;
-
 public class Scenario {
     private int scenarioId;
     private String title;

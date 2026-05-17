@@ -9,6 +9,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import com.unipath.login.User;
+import com.unipath.login.EmailOtpService;
+import com.unipath.login.FirestoreService;
 
 public class LoginController {
 

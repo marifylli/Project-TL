@@ -1,4 +1,4 @@
-package main.java.com.unipath.repository;
+package com.unipath.repository;
 
 public class CourseRepository {
 }

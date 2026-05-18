@@ -4,6 +4,7 @@ import com.unipath.model.AvailabilitySlot;
 import com.unipath.model.Calendar;
 import com.unipath.model.Thesis;
 import com.unipath.repository.ThesisRepository;
+import com.unipath.dataBase.DBManager;
 
 import java.util.List;
 
@@ -13,9 +14,12 @@ public class ManageThesisClass {
 
     public ManageThesisClass() {
         this.repository = new ThesisRepository();
-        this.repository.createTables();
+        try {
+            DBManager.getInstance().createTables();  // ✅ σωστό
+        } catch (Exception e) {
+            System.out.println("Σφάλμα δημιουργίας πινάκων: " + e.getMessage());
+        }
     }
-
     // ── Δημοσίευση Διπλωματικής ─────────────────────────────────────
     public boolean publishThesis(int professorId, String title,
                                  String description, String prerequisites,

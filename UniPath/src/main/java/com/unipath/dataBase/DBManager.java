@@ -54,8 +54,6 @@ public class DBManager {
                 passwordHash TEXT,
                 email TEXT NOT NULL UNIQUE,
                 firstName TEXT,
-                lastName TEXT
-      
             )
         """);
 
@@ -73,7 +71,6 @@ public class DBManager {
             )
         """);
 
-        // Πίνακας Professor ,να δω το courses
         stmt.execute("""
             CREATE TABLE IF NOT EXISTS Professor (
                 professorId INTEGER PRIMARY KEY,
@@ -81,8 +78,6 @@ public class DBManager {
                 office TEXT,
                 maxTeachingLoad INTEGER DEFAULT 6,
                 currentTeachingLoad INTEGER DEFAULT 0,
-                FOREIGN KEY (userId) REFERENCES User(userId),
-                FOREIGN KEY (courseId) REFERENCES Course(courseId)
             )
         """);
 

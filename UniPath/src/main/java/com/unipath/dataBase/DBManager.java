@@ -54,8 +54,8 @@ public class DBManager {
                 passwordHash TEXT,
                 email TEXT NOT NULL UNIQUE,
                 firstName TEXT,
-                lastName TEXT,
-                createdAt TEXT
+                lastName TEXT
+      
             )
         """);
 
@@ -73,7 +73,7 @@ public class DBManager {
             )
         """);
 
-        // Πίνακας Professor
+        // Πίνακας Professor ,να δω το courses
         stmt.execute("""
             CREATE TABLE IF NOT EXISTS Professor (
                 professorId INTEGER PRIMARY KEY,
@@ -81,8 +81,8 @@ public class DBManager {
                 office TEXT,
                 maxTeachingLoad INTEGER DEFAULT 6,
                 currentTeachingLoad INTEGER DEFAULT 0,
-                courses TEXT,
-                FOREIGN KEY (userId) REFERENCES User(userId)
+                FOREIGN KEY (userId) REFERENCES User(userId),
+                FOREIGN KEY (courseId) REFERENCES Course(courseId)
             )
         """);
 
@@ -180,6 +180,118 @@ public class DBManager {
                 isAnonymous INTEGER DEFAULT 0,
                 FOREIGN KEY (studentId) REFERENCES Student(studentId),
                 FOREIGN KEY (courseId) REFERENCES Course(courseId)
+            )
+        """);
+
+        // Πίνακας Report
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS Report (
+                reportId INTEGER PRIMARY KEY,
+                generatedBy INTEGER NOT NULL,
+                academicYear TEXT,
+                appliedFilters TEXT,
+                creationDate TEXT,
+                exportDate TEXT,
+                filterCriteria TEXT,
+                status TEXT,
+                format TEXT,
+                FOREIGN KEY (generatedBy) REFERENCES Secretary(secretaryId)
+            )
+        """);
+
+        // Πίνακας Thesis
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS Thesis (
+                thesisId INTEGER PRIMARY KEY,
+                professorId INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                description TEXT,
+                prerequisites TEXT,
+                requiredECTS INTEGER,
+                isAvailable INTEGER DEFAULT 1,
+                maxCandidates INTEGER,
+                interestedStudents INTEGER DEFAULT 0,
+                publicationDate TEXT,
+                requiredSkills TEXT,
+                lastModifiedDate TEXT,
+                FOREIGN KEY (professorId) REFERENCES Professor(professorId)
+            )
+        """);
+
+        // Πίνακας AvailabilitySlot
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS AvailabilitySlot (
+                slotId INTEGER PRIMARY KEY,
+                professorId INTEGER NOT NULL,
+                date TEXT,
+                dayOfWeek TEXT,
+                startTime TEXT,
+                endTime TEXT,
+                isAvailable INTEGER DEFAULT 1,
+                FOREIGN KEY (professorId) REFERENCES Professor(professorId)
+            )
+        """);
+
+        // Πίνακας Calendar
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS Calendar (
+                calendarId TEXT PRIMARY KEY,
+                lastUpdated TEXT,
+                updatedBy TEXT,
+                availabilitySlots TEXT
+            )
+        """);
+
+        // Πίνακας InterviewMeeting
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS InterviewMeeting (
+                meetingId INTEGER PRIMARY KEY,
+                studentId INTEGER NOT NULL,
+                professorId INTEGER NOT NULL,
+                slotId INTEGER NOT NULL,
+                thesisId INTEGER NOT NULL,
+                date TEXT,
+                startTime TEXT,
+                status TEXT,
+                confirmedAt TEXT,
+                notificationSent INTEGER DEFAULT 0,
+                FOREIGN KEY (studentId) REFERENCES Student(studentId),
+                FOREIGN KEY (professorId) REFERENCES Professor(professorId),
+                FOREIGN KEY (slotId) REFERENCES AvailabilitySlot(slotId),
+                FOREIGN KEY (thesisId) REFERENCES Thesis(thesisId)
+            )
+        """);
+
+        // Πίνακας HelpOffer
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS HelpOffer (
+                offerId INTEGER PRIMARY KEY,
+                mentorId INTEGER NOT NULL,
+                courseId TEXT NOT NULL,
+                helpType TEXT,
+                fileUrl TEXT,
+                meetingUrl TEXT,
+                isActive INTEGER DEFAULT 1,
+                publicationDate TEXT,
+                downloadCount INTEGER DEFAULT 0,
+                meetingAccessCount INTEGER DEFAULT 0,
+                FOREIGN KEY (mentorId) REFERENCES Student(studentId),
+                FOREIGN KEY (courseId) REFERENCES Course(courseId)
+            )
+        """);
+
+        // Πίνακας Notification
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS Notification (
+                notificationId INTEGER PRIMARY KEY,
+                recipientId TEXT NOT NULL,
+                senderId TEXT,
+                message TEXT,
+                dateSent TEXT,
+                isRead INTEGER DEFAULT 0,
+                notificationType TEXT,
+                FOREIGN KEY (recipientId) REFERENCES User(userId),
+                FOREIGN KEY (senderId) REFERENCES User(userId)
             )
         """);
 

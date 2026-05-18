@@ -54,8 +54,12 @@ public class DBManager {
                 passwordHash TEXT,
                 email TEXT NOT NULL UNIQUE,
                 firstName TEXT,
+                lastName TEXT,
+                createdAt TEXT
             )
         """);
+
+
 
         // Πίνακας Student
         stmt.execute("""
@@ -70,7 +74,7 @@ public class DBManager {
                 FOREIGN KEY (userId) REFERENCES User(userId)
             )
         """);
-
+     //Πινακασ Proffesor
         stmt.execute("""
             CREATE TABLE IF NOT EXISTS Professor (
                 professorId INTEGER PRIMARY KEY,
@@ -112,6 +116,30 @@ public class DBManager {
                 prerequisites TEXT
             )
         """);
+
+// Ενδιάμεσος πίνακας Student-Course
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS StudentCourse (
+                studentId INTEGER NOT NULL,
+                courseId TEXT NOT NULL,
+                PRIMARY KEY (studentId, courseId),
+                FOREIGN KEY (studentId) REFERENCES Student(studentId),
+                FOREIGN KEY (courseId) REFERENCES Course(courseId)
+            )
+        """);
+
+        // Ενδιάμεσος πίνακας Professor-Course
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS ProfessorCourse (
+                professorId INTEGER NOT NULL,
+                courseId TEXT NOT NULL,
+                role TEXT DEFAULT 'teaches',
+                PRIMARY KEY (professorId, courseId),
+                FOREIGN KEY (professorId) REFERENCES Professor(professorId),
+                FOREIGN KEY (courseId) REFERENCES Course(courseId)
+            )
+        """);
+
 
         // Πίνακας Scenario
         stmt.execute("""
@@ -226,6 +254,18 @@ public class DBManager {
                 FOREIGN KEY (professorId) REFERENCES Professor(professorId)
             )
         """);
+
+        // Ενδιάμεσος πίνακας Thesis-AvailabilitySlot
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS ThesisSlot (
+                thesisId INTEGER NOT NULL,
+                slotId INTEGER NOT NULL,
+                PRIMARY KEY (thesisId, slotId),
+                FOREIGN KEY (thesisId) REFERENCES Thesis(thesisId),
+                FOREIGN KEY (slotId) REFERENCES AvailabilitySlot(slotId)
+            )
+        """);
+
 
         // Πίνακας Calendar
         stmt.execute("""

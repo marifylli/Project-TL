@@ -74,16 +74,16 @@ public class DBManager {
                 FOREIGN KEY (userId) REFERENCES User(userId)
             )
         """);
-     //Πινακασ Proffesor
         stmt.execute("""
-            CREATE TABLE IF NOT EXISTS Professor (
-                professorId INTEGER PRIMARY KEY,
-                userId TEXT NOT NULL UNIQUE,
-                office TEXT,
-                maxTeachingLoad INTEGER DEFAULT 6,
-                currentTeachingLoad INTEGER DEFAULT 0,
-            )
-        """);
+    CREATE TABLE IF NOT EXISTS Professor (
+        professorId INTEGER PRIMARY KEY,
+        userId TEXT NOT NULL UNIQUE,
+        office TEXT,
+        maxTeachingLoad INTEGER DEFAULT 6,
+        currentTeachingLoad INTEGER DEFAULT 0,
+        FOREIGN KEY (userId) REFERENCES User(userId)
+    )
+""");
 
         // Πίνακας Secretary
         stmt.execute("""

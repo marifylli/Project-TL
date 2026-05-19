@@ -11,7 +11,7 @@ public class Course {
     private int semester;
     private boolean groupA;
     private boolean groupB;
-    private List<String> directions;
+    private String directions; // format: "K1:A,K2:B"
     private boolean isActive;
     private float averageRating;
     private float workloadScore;
@@ -38,9 +38,11 @@ public class Course {
         return groupB;
     }
 
-    public List<String> getDirections() {
+    public String getDirections() {
         return directions;
     }
-
+    public void setDirections(String directions){
+        this.directions=directions;
+    }
 
 }

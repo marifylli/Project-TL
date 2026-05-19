@@ -55,30 +55,29 @@ public class ManageStudyPlan {
     }
 
     public boolean validateRules() {
-        if (selectedScenario == null || selectedCourses == null) return false;
+        if (selectedScenario == null || selectedCourses == null || selectedCourses.isEmpty()) return false;
 
         // total ECTS must be 270
         if (calculateEcts() != 270) return false;
 
         int scenarioId = selectedScenario.getScenarioId();
-        List<String> mainDirs = selectedScenario.getMainDirections();
 
         if (scenarioId == 1) {
-            return validateScenario1(mainDirs);
+            return validateScenario1();
         } else if (scenarioId == 2) {
-            return validateScenario2(mainDirs);
+            return validateScenario2();
         } else if (scenarioId == 3) {
             return validateScenario3();
         }
-
         return false;
     }
 
 // --------- Helpers ---------
 
-    private boolean validateScenario1(List<String> mainDirs) {
-        if (mainDirs == null || mainDirs.size() != 1) return false;
-        String main = mainDirs.get(0);
+    private boolean validateScenario1() {
+        // You must get main direction from UI selection
+        String mainDir = getMainDirection();
+        if (mainDir == null || mainDir.isEmpty()) return false;
 
         int mainA = 0, mainB = 0;
         int otherA = 0;
@@ -87,9 +86,8 @@ public class ManageStudyPlan {
         Set<String> otherCourseDirs = new HashSet<>();
 
         for (Course c : selectedCourses) {
-            List<String> dirs = c.getDirections();
-
-            boolean inMain = dirs != null && dirs.contains(main);
+            Set<String> dirs = parseDirections(c.getDirections());
+            boolean inMain = dirs.contains(mainDir);
 
             if (inMain) {
                 if (c.isGroupA()) mainA++;
@@ -97,26 +95,27 @@ public class ManageStudyPlan {
             } else {
                 if (c.isGroupA()) {
                     otherA++;
-                    if (dirs != null) otherADirections.addAll(dirs);
+                    otherADirections.addAll(dirs);
                 }
                 otherCourses++;
-                if (dirs != null) otherCourseDirs.addAll(dirs);
+                otherCourseDirs.addAll(dirs);
             }
         }
 
-        return mainA >= 5
+        return selectedCourses.size() == 17
+                && mainA >= 5
                 && mainB >= 5
                 && otherA >= 5
                 && otherADirections.size() >= 3
                 && otherCourses >= 2
-                && otherCourseDirs.size() >= 2
-                && selectedCourses.size() == 17;
+                && otherCourseDirs.size() >= 2;
     }
 
-    private boolean validateScenario2(List<String> mainDirs) {
-        if (mainDirs == null || mainDirs.size() != 2) return false;
-        String main1 = mainDirs.get(0);
-        String main2 = mainDirs.get(1);
+    // ===== Scenario 2 =====
+    private boolean validateScenario2() {
+        String mainDir = getMainDirection();
+        String secondDir = getSecondDirection();
+        if (mainDir == null || secondDir == null) return false;
 
         int main1A = 0, main1B = 0;
         int main2A = 0, main2B = 0;
@@ -124,9 +123,9 @@ public class ManageStudyPlan {
         Set<String> otherDirs = new HashSet<>();
 
         for (Course c : selectedCourses) {
-            List<String> dirs = c.getDirections();
-            boolean inMain1 = dirs != null && dirs.contains(main1);
-            boolean inMain2 = dirs != null && dirs.contains(main2);
+            Set<String> dirs = parseDirections(c.getDirections());
+            boolean inMain1 = dirs.contains(mainDir);
+            boolean inMain2 = dirs.contains(secondDir);
 
             if (inMain1) {
                 if (c.isGroupA()) main1A++;
@@ -136,17 +135,18 @@ public class ManageStudyPlan {
                 if (c.isGroupB()) main2B++;
             } else {
                 otherCourses++;
-                if (dirs != null) otherDirs.addAll(dirs);
+                otherDirs.addAll(dirs);
             }
         }
 
-        return main1A >= 5 && main1B >= 2
+        return selectedCourses.size() == 17
+                && main1A >= 5 && main1B >= 2
                 && main2A >= 5 && main2B >= 2
                 && otherCourses >= 3
-                && otherDirs.size() >= 2
-                && selectedCourses.size() == 17;
+                && otherDirs.size() >= 2;
     }
 
+    // ===== Scenario 3 =====
     private boolean validateScenario3() {
         int groupAcount = 0;
         int otherCount = 0;
@@ -155,14 +155,38 @@ public class ManageStudyPlan {
         for (Course c : selectedCourses) {
             if (c.isGroupA()) groupAcount++;
             else otherCount++;
-
-            if (c.getDirections() != null) dirs.addAll(c.getDirections());
+            dirs.addAll(parseDirections(c.getDirections()));
         }
 
-        return groupAcount >= 10
+        return selectedCourses.size() == 17
+                && groupAcount >= 10
                 && otherCount >= 7
-                && dirs.size() >= 4
-                && selectedCourses.size() == 17;
+                && dirs.size() >= 4;
+    }
+
+    // ===== Helpers =====
+    private Set<String> parseDirections(String raw) {
+        Set<String> dirs = new HashSet<>();
+        if (raw == null || raw.isEmpty()) return dirs;
+
+        String[] parts = raw.split(",");
+        for (String p : parts) {
+            String[] pair = p.trim().split(":");
+            if (pair.length > 0) {
+                String dir = pair[0].trim();
+                if (!dir.isEmpty()) dirs.add(dir);
+            }
+        }
+        return dirs;
+    }
+
+    // TODO: replace these with real values from your UI
+    private String getMainDirection() {
+        return null;
+    }
+
+    private String getSecondDirection() {
+        return null;
     }
 
 }

@@ -8,9 +8,8 @@ public class Scenario {
     private String description;
     private int groupARequiredECTS;
     private int groupBRequiredECTS;
-    private StudyPlan studyPlan;
 
-    private List<String> mainDirections;
+
 
 
     public Scenario() {
@@ -19,7 +18,5 @@ public class Scenario {
         return scenarioId;
     }
 
-    public List<String> getMainDirections() {
-        return mainDirections;
-    }
+
 }

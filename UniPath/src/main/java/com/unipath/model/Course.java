@@ -26,9 +26,9 @@ public class Course {
     public Course() {
 
     }
-    public void getECTS() {
+    public int getECTS() {
 
-    }
+    return ects;}
 
 
 }

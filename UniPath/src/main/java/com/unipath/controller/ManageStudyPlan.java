@@ -14,7 +14,8 @@ public class ManageStudyPlan {
     private PlanSummaryScreen planSummaryScreen;
     private ConfirmationScreen confirmationScreen;
 
-
+    private Scenario selectedScenario;
+    private List<Course> selectedCourses;
 
     public void startCreatePlan() {
         scenarioSelectionScreen = new ScenarioSelectionScreen(this);
@@ -38,9 +39,14 @@ public class ManageStudyPlan {
 
     return false;}//false mexri na graftei to soma
 
-    public int calculateects(){
-
-    return 0;}// mexri na mpei soma
+    public int calculateEcts(){
+        if (selectedCourses == null) return 0;
+        int total = 0;
+        for (Course c : selectedCourses) {
+            total += c.getECTS();
+        }
+        return total;
+    }// mexri na mpei soma
 
     public void removeCourses(){
 

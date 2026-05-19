@@ -30,5 +30,17 @@ public class Course {
 
     return ects;}
 
+    public boolean isGroupA() {
+        return groupA;
+    }
+
+    public boolean isGroupB() {
+        return groupB;
+    }
+
+    public List<String> getDirections() {
+        return directions;
+    }
+
 
 }

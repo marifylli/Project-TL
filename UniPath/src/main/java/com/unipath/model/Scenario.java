@@ -10,7 +10,16 @@ public class Scenario {
     private int groupBRequiredECTS;
     private StudyPlan studyPlan;
 
+    private List<String> mainDirections;
+
 
     public Scenario() {
+    }
+    public int getScenarioId() {
+        return scenarioId;
+    }
+
+    public List<String> getMainDirections() {
+        return mainDirections;
     }
 }

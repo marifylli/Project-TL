@@ -74,16 +74,16 @@ public class DBManager {
                 FOREIGN KEY (userId) REFERENCES User(userId)
             )
         """);
+     //Πινακασ Proffesor
         stmt.execute("""
-    CREATE TABLE IF NOT EXISTS Professor (
-        professorId INTEGER PRIMARY KEY,
-        userId TEXT NOT NULL UNIQUE,
-        office TEXT,
-        maxTeachingLoad INTEGER DEFAULT 6,
-        currentTeachingLoad INTEGER DEFAULT 0,
-        FOREIGN KEY (userId) REFERENCES User(userId)
-    )
-""");
+            CREATE TABLE IF NOT EXISTS Professor (
+                professorId INTEGER PRIMARY KEY,
+                userId TEXT NOT NULL UNIQUE,
+                office TEXT,
+                maxTeachingLoad INTEGER DEFAULT 6,
+                currentTeachingLoad INTEGER DEFAULT 0
+            )
+        """);
 
         // Πίνακας Secretary
         stmt.execute("""
@@ -147,99 +147,98 @@ public class DBManager {
                 scenarioId INTEGER PRIMARY KEY,
                 title TEXT NOT NULL,
                 description TEXT,
-                minECTS INTEGER,
                 groupARequiredECTS INTEGER,
                 groupBRequiredECTS INTEGER
             )
         """);
 
-        // Πίνακας StudyPlan
         stmt.execute("""
-            CREATE TABLE IF NOT EXISTS StudyPlan (
-                planId INTEGER PRIMARY KEY,
-                studentId INTEGER NOT NULL,
-                scenarioId INTEGER NOT NULL,
-                courses TEXT,
-                academicYear TEXT,
-                directionName TEXT,
-                totalECTS INTEGER DEFAULT 0,
-                status TEXT,
-                isValid INTEGER DEFAULT 0,
-                isDraft INTEGER DEFAULT 1,
-                isFinalized INTEGER DEFAULT 0,
-                workLoadIndex REAL DEFAULT 0.0,
-                workloadCalculationDate TEXT,
-                createdDate TEXT,
-                lastUpdatedDate TEXT,
-                FOREIGN KEY (studentId) REFERENCES Student(studentId),
-                FOREIGN KEY (scenarioId) REFERENCES Scenario(scenarioId)
-            )
-        """);
-
+    CREATE TABLE IF NOT EXISTS StudyPlan (
+        planId INTEGER PRIMARY KEY,
+        studentId INTEGER NOT NULL,
+        scenarioId INTEGER NOT NULL,
+        courses TEXT,
+        academicYear TEXT,
+        directionName TEXT,
+        mainDirection TEXT,
+        secondDirection TEXT,
+        totalECTS INTEGER DEFAULT 0,
+        status TEXT,
+        isValid INTEGER DEFAULT 0,
+        isDraft INTEGER DEFAULT 1,
+        isFinalized INTEGER DEFAULT 0,
+        workLoadIndex REAL DEFAULT 0.0,
+        workloadCalculationDate TEXT,
+        createdDate TEXT,
+        lastUpdatedDate TEXT,
+        FOREIGN KEY (studentId) REFERENCES Student(studentId),
+        FOREIGN KEY (scenarioId) REFERENCES Scenario(scenarioId)
+    )
+""");
         // Πίνακας StudentProfile
         stmt.execute("""
-            CREATE TABLE IF NOT EXISTS StudentProfile (
-                profileId INTEGER PRIMARY KEY,
-                studentId INTEGER NOT NULL UNIQUE,
-                activePlanId INTEGER,
-                workloadIndex REAL,
-                transcriptId TEXT,
-                lastUpdated TEXT,
-                FOREIGN KEY (studentId) REFERENCES Student(studentId),
-                FOREIGN KEY (activePlanId) REFERENCES StudyPlan(planId)
-            )
-        """);
+    CREATE TABLE IF NOT EXISTS StudentProfile (
+        profileId INTEGER PRIMARY KEY,
+        studentId INTEGER NOT NULL UNIQUE,
+        activePlanId INTEGER,
+        workloadIndex REAL,
+        transcriptId TEXT,
+        lastUpdated TEXT,
+        FOREIGN KEY (studentId) REFERENCES Student(studentId),
+        FOREIGN KEY (activePlanId) REFERENCES StudyPlan(planId)
+    )
+""");
 
-        // Πίνακας CourseEvaluation
+// Πίνακας CourseEvaluation
         stmt.execute("""
-            CREATE TABLE IF NOT EXISTS CourseEvaluation (
-                evaluationId INTEGER PRIMARY KEY,
-                studentId INTEGER NOT NULL,
-                courseId TEXT NOT NULL,
-                submissionDate TEXT,
-                isSubmitted INTEGER DEFAULT 0,
-                rating INTEGER,
-                comments TEXT,
-                isAnonymous INTEGER DEFAULT 0,
-                FOREIGN KEY (studentId) REFERENCES Student(studentId),
-                FOREIGN KEY (courseId) REFERENCES Course(courseId)
-            )
-        """);
+    CREATE TABLE IF NOT EXISTS CourseEvaluation (
+        evaluationId INTEGER PRIMARY KEY,
+        studentId INTEGER NOT NULL,
+        courseId TEXT NOT NULL,
+        submissionDate TEXT,
+        isSubmitted INTEGER DEFAULT 0,
+        rating INTEGER,
+        comments TEXT,
+        isAnonymous INTEGER DEFAULT 0,
+        FOREIGN KEY (studentId) REFERENCES Student(studentId),
+        FOREIGN KEY (courseId) REFERENCES Course(courseId)
+    )
+""");
 
-        // Πίνακας Report
+// Πίνακας Report
         stmt.execute("""
-            CREATE TABLE IF NOT EXISTS Report (
-                reportId INTEGER PRIMARY KEY,
-                generatedBy INTEGER NOT NULL,
-                academicYear TEXT,
-                appliedFilters TEXT,
-                creationDate TEXT,
-                exportDate TEXT,
-                filterCriteria TEXT,
-                status TEXT,
-                format TEXT,
-                FOREIGN KEY (generatedBy) REFERENCES Secretary(secretaryId)
-            )
-        """);
+    CREATE TABLE IF NOT EXISTS Report (
+        reportId INTEGER PRIMARY KEY,
+        generatedBy INTEGER NOT NULL,
+        academicYear TEXT,
+        appliedFilters TEXT,
+        creationDate TEXT,
+        exportDate TEXT,
+        filterCriteria TEXT,
+        status TEXT,
+        format TEXT,
+        FOREIGN KEY (generatedBy) REFERENCES Secretary(secretaryId)
+    )
+""");
 
-        // Πίνακας Thesis
+// Πίνακας Thesis
         stmt.execute("""
-            CREATE TABLE IF NOT EXISTS Thesis (
-                thesisId INTEGER PRIMARY KEY,
-                professorId INTEGER NOT NULL,
-                title TEXT NOT NULL,
-                description TEXT,
-                prerequisites TEXT,
-                requiredECTS INTEGER,
-                isAvailable INTEGER DEFAULT 1,
-                maxCandidates INTEGER,
-                interestedStudents INTEGER DEFAULT 0,
-                publicationDate TEXT,
-                requiredSkills TEXT,
-                lastModifiedDate TEXT,
-                FOREIGN KEY (professorId) REFERENCES Professor(professorId)
-            )
-        """);
+    CREATE TABLE IF NOT EXISTS Thesis (
+        thesisId INTEGER PRIMARY KEY,
+        professorId INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        prerequisites TEXT,
+        requiredECTS INTEGER,
+        isAvailable INTEGER DEFAULT 1,
+        maxCandidates INTEGER,
+        interestedStudents INTEGER DEFAULT 0,
+        publicationDate TEXT,
+        requiredSkills TEXT,
+        lastModifiedDate TEXT,
+        FOREIGN KEY (professorId) REFERENCES Professor(professorId)
+    )
+""");
 
         // Πίνακας AvailabilitySlot
         stmt.execute("""

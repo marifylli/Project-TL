@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Course {
-    public int courseID;
+    public String courseID;
     private String title;
     private String description;
     private int ects;

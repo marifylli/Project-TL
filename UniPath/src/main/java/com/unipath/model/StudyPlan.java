@@ -21,6 +21,8 @@ public class StudyPlan {
     private Date workloadCalculationDate;
     private Date createdDate;
     private Date lastUpdatedDate;
+    private String mainDirection;
+    private String secondDirection;
 
     public StudyPlan() {
     }

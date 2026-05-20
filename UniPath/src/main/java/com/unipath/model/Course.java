@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Course {
-    public int courseID;
+    public String courseID;       // otan exoume conflict prepei na meinei string gia na tairiazei me ti vasi tis milenas
     private String title;
     private String description;
     private int ects;

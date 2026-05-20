@@ -161,3 +161,99 @@
     -fx-background-radius: 20;
     -fx-padding: 6 16 6 16;
 }
+
+
+/* ===== PROFESSOR SCREEN ===== */
+.prof-header {
+    -fx-background-color: #1a3a6b;
+}
+
+.prof-header-name {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.prof-icon-btn {
+    -fx-background-color: #4a90d9;
+    -fx-text-fill: white;
+    -fx-background-radius: 50;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+}
+
+.prof-section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a3a6b;
+}
+
+.prof-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.prof-course-card {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 10;
+    -fx-padding: 12 14 12 14;
+}
+
+.prof-course-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a3a6b;
+}
+
+.prof-course-meta {
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666;
+}
+
+.badge-active {
+    -fx-background-color: #3b6d11;
+    -fx-text-fill: #eaf3de;
+    -fx-background-radius: 20;
+    -fx-padding: 4 12 4 12;
+    -fx-font-size: 12px;
+}
+
+.badge-inactive {
+    -fx-background-color: #a32d2d;
+    -fx-text-fill: #fcebeb;
+    -fx-background-radius: 20;
+    -fx-padding: 4 12 4 12;
+    -fx-font-size: 12px;
+}
+
+.prof-edit-btn {
+    -fx-background-color: #378add;
+    -fx-text-fill: #e6f1fb;
+    -fx-background-radius: 20;
+    -fx-padding: 4 14 4 14;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.prof-action-btn-primary {
+    -fx-background-color: #d48fd4;
+    -fx-text-fill: #26215c;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8;
+    -fx-padding: 16 12 16 12;
+    -fx-cursor: hand;
+}
+
+.prof-action-btn-secondary {
+    -fx-background-color: white;
+    -fx-text-fill: #1a3a6b;
+    -fx-font-size: 13px;
+    -fx-background-radius: 8;
+    -fx-border-color: #1a3a6b;
+    -fx-border-radius: 8;
+    -fx-padding: 12 12 12 12;
+    -fx-cursor: hand;
+}

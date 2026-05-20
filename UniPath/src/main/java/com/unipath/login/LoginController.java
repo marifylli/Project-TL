@@ -103,15 +103,30 @@ public class LoginController {
     @FXML
     private void onVerifyOtp() {
         String entered = getEnteredOtp();
-        if (entered.length() < 6) { otpErrorLabel.setText("Συμπληρώστε και τα 6 ψηφία."); return; }
-        if (!entered.equals(generatedOtp)) {
-            otpErrorLabel.setText("Λάθος κωδικός. Δοκιμάστε ξανά.");
-            clearOtpFields(); otp1.requestFocus(); return;
+
+        // --- LOGIC ΓΙΑ TESTING ---
+        if (currentEmail.startsWith("test.") && entered.equals("000000")) {
+            generatedOtp = "000000"; // Παράκαμψη για τα test emails
         }
+        // -------------------------
+
+        if (entered.length() < 6) { otpErrorLabel.setText("Συμπληρώστε 6 ψηφία."); return; }
+        if (!entered.equals(generatedOtp)) {
+            otpErrorLabel.setText("Λάθος κωδικός.");
+            return;
+        }
+
         stopCountdown();
         new Thread(() -> {
             try {
-                loggedInUser = firestoreService.getUserByEmail(currentEmail);
+                // --- ΕΛΕΓΧΟΣ ΓΙΑ MOCK USER ---
+                if (currentEmail.startsWith("test.")) {
+                    loggedInUser = getMockUser(currentEmail);
+                } else {
+                    loggedInUser = firestoreService.getUserByEmail(currentEmail);
+                }
+                // ----------------------------
+
                 Platform.runLater(() -> {
                     roleLabel.setText("Ρόλος: " + loggedInUser.getRoleDisplayName());
                     redirectLabel.setText("Ανακατεύθυνση στο dashboard...");
@@ -146,8 +161,38 @@ public class LoginController {
 
     @FXML
     private void onEnterDashboard() {
-        System.out.println("Είσοδος ως: " + loggedInUser.getRoleDisplayName());
-        // TODO: φόρτωσε το dashboard ανάλογα με τον ρόλο
+        try {
+            String fxml;
+            switch (loggedInUser.getRole()) {
+                case PROFESSOR -> fxml = "/fxml/Professor/professor-main-view.fxml";
+                case STUDENT   -> fxml = "/fxml/Student/student-main-view.fxml";
+                case SECRETARY -> fxml = "/fxml/Secretary/secretary-main-view.fxml";
+                default        -> fxml = "/fxml/Professor/professor-main-view.fxml";
+            }
+
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource(fxml));
+            javafx.scene.Parent root = loader.load();
+
+            javafx.stage.Stage stage = (javafx.stage.Stage)
+                    emailField.getScene().getWindow();
+            stage.setScene(new javafx.scene.Scene(root, 1000, 650));
+            stage.setTitle("UniPath - Dashboard");
+            stage.show();
+
+        } catch (Exception e) {
+            System.out.println("Σφάλμα φόρτωσης οθόνης: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    private User getMockUser(String email) {
+        if (email.startsWith("test.secret")) {
+            return new User("mock_uid_1", email, Role.SECRETARY, "Γραμματεία (Test)");
+        } else if (email.startsWith("test.st")) {
+            return new User("mock_uid_2", email, Role.STUDENT, "Φοιτητής (Test)");
+        } else {
+            return new User("mock_uid_3", email, Role.PROFESSOR, "Καθηγητής (Test)");
+        }
     }
 
     private boolean isValidEmail(String email) {

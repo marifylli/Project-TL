@@ -11,7 +11,7 @@ public class Course {
     private int semester;
     private boolean groupA;
     private boolean groupB;
-    private List<String> directions;
+    private String directions; // format: "K1:A,K2:B"
     private boolean isActive;
     private float averageRating;
     private float workloadScore;
@@ -26,9 +26,23 @@ public class Course {
     public Course() {
 
     }
-    public void getECTS() {
+    public int getECTS() {
 
+    return ects;}
+
+    public boolean isGroupA() {
+        return groupA;
     }
 
+    public boolean isGroupB() {
+        return groupB;
+    }
+
+    public String getDirections() {
+        return directions;
+    }
+    public void setDirections(String directions){
+        this.directions=directions;
+    }
 
 }

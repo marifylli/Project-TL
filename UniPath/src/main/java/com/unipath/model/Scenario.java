@@ -8,9 +8,15 @@ public class Scenario {
     private String description;
     private int groupARequiredECTS;
     private int groupBRequiredECTS;
-    private StudyPlan studyPlan;
+
+
 
 
     public Scenario() {
     }
+    public int getScenarioId() {
+        return scenarioId;
+    }
+
+
 }

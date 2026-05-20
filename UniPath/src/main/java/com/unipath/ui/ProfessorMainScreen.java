@@ -1,5 +1,7 @@
-package com.unipath.ui.UC10;
+package com.unipath.ui;
 
+import com.unipath.model.Course;
+import com.unipath.repository.CourseRepository;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -19,15 +21,6 @@ public class ProfessorMainScreen implements Initializable {
     @FXML private Label coursesCountLabel;
     @FXML private VBox coursesContainer;
 
-    // Mock δεδομένα προς το παρόν
-    private static class CourseData {
-        String title, meta;
-        boolean isActive;
-        CourseData(String title, String meta, boolean isActive) {
-            this.title = title; this.meta = meta; this.isActive = isActive;
-        }
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadProfessorName();
@@ -35,44 +28,45 @@ public class ProfessorMainScreen implements Initializable {
     }
 
     private void loadProfessorName() {
-        // TODO: αντικατάστασε με δεδομένα από βάση
+        // Αντικατάστησε με το όνομα του loggedInUser αν το έχεις διαθέσιμο
         professorNameLabel.setText("Prof. Ioannis Georgiou");
     }
 
     private void loadCourses() {
-        // TODO: αντικατάστασε με δεδομένα από CourseRepository
-        List<CourseData> courses = List.of(
-                new CourseData("Μηχανική Μάθηση", "5 ECTS · Εξάμηνο 7 · Ομάδα Α", true),
-                new CourseData("Κυβερνοασφάλεια", "5 ECTS · Εξάμηνο 8 · Ομάδα Α", true),
-                new CourseData("Επιστημονικός Υπολογισμός", "5 ECTS · Εξάμηνο 8 · Ομάδα Α", false)
-        );
+        CourseRepository repo = new CourseRepository();
+        List<Course> allCourses = repo.queryGetCourses();
 
-        coursesCountLabel.setText("Ανατεθειμένα Μαθήματα : " + courses.size());
+        coursesCountLabel.setText("Ανατεθειμένα Μαθήματα : " + allCourses.size());
         coursesContainer.getChildren().clear();
 
-        for (CourseData course : courses) {
+        for (Course course : allCourses) {
             coursesContainer.getChildren().add(createCourseCard(course));
         }
     }
 
-    private HBox createCourseCard(CourseData course) {
+    private HBox createCourseCard(Course course) {
         HBox card = new HBox(10);
         card.getStyleClass().add("prof-course-card");
 
         VBox info = new VBox(4);
-        Label title = new Label(course.title);
+        Label title = new Label(course.getTitle());
         title.getStyleClass().add("prof-course-name");
-        Label meta = new Label(course.meta);
+
+        // Δημιουργία δυναμικού meta text από τα δεδομένα της βάσης
+        String metaText = course.getEcts() + " ECTS · Εξάμηνο " + course.getSemester();
+        Label meta = new Label(metaText);
         meta.getStyleClass().add("prof-course-meta");
+
         info.getChildren().addAll(title, meta);
         HBox.setHgrow(info, Priority.ALWAYS);
 
-        Label badge = new Label(course.isActive ? "Ενεργό" : "Ανενεργό");
-        badge.getStyleClass().add(course.isActive ? "badge-active" : "badge-inactive");
+        // Χρήση της μεθόδου isActive() του μοντέλου Course
+        Label badge = new Label(course.isActive() ? "Ενεργό" : "Ανενεργό");
+        badge.getStyleClass().add(course.isActive() ? "badge-active" : "badge-inactive");
 
         Button editBtn = new Button("Επεξεργασία");
         editBtn.getStyleClass().add("prof-edit-btn");
-        editBtn.setOnAction(e -> onEditCourse(course.title));
+        editBtn.setOnAction(e -> onEditCourse(course.getTitle()));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -84,17 +78,14 @@ public class ProfessorMainScreen implements Initializable {
     @FXML
     private void onThesisButtonClick() {
         System.out.println("Άνοιγμα φόρμας διπλωματικής...");
-        // TODO: άνοιγμα ThesisFormScreen
     }
 
     @FXML
     private void onCalendarButtonClick() {
         System.out.println("Άνοιγμα ημερολογίου...");
-        // TODO: άνοιγμα MeetingCalendarScreen
     }
 
     private void onEditCourse(String courseTitle) {
         System.out.println("Επεξεργασία μαθήματος: " + courseTitle);
-        // TODO: άνοιγμα οθόνης επεξεργασίας μαθήματος (UC9)
     }
 }

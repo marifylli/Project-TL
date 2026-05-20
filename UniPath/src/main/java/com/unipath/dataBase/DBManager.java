@@ -113,7 +113,7 @@ public class DBManager {
                 lastModifiedDate TEXT,
                 lastModifiedBy TEXT,
                 rules TEXT,
-                prerequisites TEXT
+                prerequisites TEXΤ            
             )
         """);
 

@@ -1,9 +1,10 @@
 package com.unipath.controller;
 
-import com.unipath.dataBase.DBManager;
 import com.unipath.model.FilterCriteria;
 import com.unipath.model.Report;
 import com.unipath.model.StudyPlan;
+import com.unipath.repository.ReportRepository;
+import com.unipath.repository.StudyPlanRepository;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -14,38 +15,45 @@ import java.util.stream.Collectors;
 // controller gia uc4 pou dimiorgeitai apo secretary main screen
 
 public class ManageStatAnalysis {
-    private DBManager dbManager;
+    private final StudyPlanRepository studyPlanRepository;
+    private final ReportRepository reportRepository;
+
     private FilterCriteria currentFilters;
     private List<StudyPlan> filteredPlans;
     private Map<String, Object> computedStatistics;
     private Report currentReport;
 
+
     public ManageStatAnalysis() {
-        this.dbManager = DBManager.getInstance();
+        this.studyPlanRepository = new StudyPlanRepository();
+        this.reportRepository    = new ReportRepository();
     }
 
-    // vima 3 : o ypallilos rithmizei filtra to systima lamvanei kai apothikeuei tis allages poy ekane
+    // ── UC4 vima 3 o ypallilos rithmizei ta filtra
+
     public void setFiltersCriteria(FilterCriteria filters) {
         this.currentFilters = filters;
     }
 
-    // vima 4,5,6,7
+    // view statistics
+
+
     public boolean selectViewStatistics() {
         try {
-            // vima 5: queryFinalizedPlans apo DB
-            List<StudyPlan> allPlans = dbManager.queryFinalizedPlans();
+            // vima 5: queryFinalizedPlans από db
+            List<StudyPlan> allPlans = studyPlanRepository.queryFinalizedPlans();
 
-            // Vima 6: compareWithFilters for every plan
+            //vima 6: compareWithFilters gia kathe plano
             filteredPlans = allPlans.stream()
                     .filter(plan -> plan.compareWithFilters(currentFilters))
                     .collect(Collectors.toList());
 
-            // enallaktiki [not enough data] — epistrefei false and ErrorScreen
+            // enallaktiki not enough data
             if (filteredPlans.isEmpty()) {
                 return false;
             }
 
-            // vima 7: computeStatistics
+            // Βήμα 7: computeStatistics
             computedStatistics = computeStatistics(filteredPlans);
             return true;
 
@@ -55,15 +63,14 @@ public class ManageStatAnalysis {
         }
     }
 
-    // vima 7 ypologismos statistikon gia filtered plans
-
+    // UC4 vima 7: ypologismos statistikon
     private Map<String, Object> computeStatistics(List<StudyPlan> plans) {
         Map<String, Object> stats = new HashMap<>();
 
-        // total plans number
+        // total plans
         stats.put("totalPlans", plans.size());
 
-        // Katanomi ana kateuthinsi
+        // Κατανομή ανά κατεύθυνση
         Map<String, Long> perDirection = plans.stream()
                 .collect(Collectors.groupingBy(
                         p -> p.getDirectionName() != null ? p.getDirectionName() : "Άγνωστη",
@@ -71,7 +78,7 @@ public class ManageStatAnalysis {
                 ));
         stats.put("plansPerDirection", perDirection);
 
-        // Katanomi ana akadimaiko etos
+        // plans per year
         Map<String, Long> perYear = plans.stream()
                 .collect(Collectors.groupingBy(
                         p -> p.getAcademicYear() != null ? p.getAcademicYear() : "Άγνωστο",
@@ -89,11 +96,13 @@ public class ManageStatAnalysis {
         return stats;
     }
 
-    // vima 9-11 o ypallilos pataei eksagogi eggraofu to systima dimiourgei kai apothikeuei tin episimi anafora
+    // UC4 Βήμα 9-11: Ο ipallilos epilegei eksagogi eggrafou
+
+    // creates and save report, kaleitai apo ReportExportScreen.
 
     public Report generateReport(String format, int secretaryId) {
         try {
-            // vima 10: create Report
+            // Βήμα 10: create Report
             currentReport = new Report(
                     "Αναφορά Στατιστικής Ανάλυσης",
                     currentFilters,
@@ -102,8 +111,8 @@ public class ManageStatAnalysis {
                     String.valueOf(secretaryId)
             );
 
-            // vima 11: saveReport in DB
-            dbManager.saveReport(currentReport, secretaryId);
+            // vima 11: saveReport stin db
+            reportRepository.saveReport(currentReport, secretaryId);
 
             return currentReport;
 
@@ -113,17 +122,12 @@ public class ManageStatAnalysis {
         }
     }
 
-    // screens get
-    public FilterCriteria getCurrentFilters()
-    { return currentFilters; }
-    public List<StudyPlan> getFilteredPlans()
-    { return filteredPlans; }
-    public Map<String, Object> getComputedStatistics()
-    { return computedStatistics; }
-    public Report getCurrentReport()
-    { return currentReport; }
+    // Getters gia Screens
 
-
+    public FilterCriteria getCurrentFilters()         { return currentFilters; }
+    public List<StudyPlan> getFilteredPlans()         { return filteredPlans; }
+    public Map<String, Object> getComputedStatistics(){ return computedStatistics; }
+    public Report getCurrentReport()                  { return currentReport; }
 
 
 

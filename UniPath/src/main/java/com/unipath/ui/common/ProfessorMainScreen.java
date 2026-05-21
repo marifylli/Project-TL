@@ -1,8 +1,13 @@
-package com.unipath.ui;
+package com.unipath.ui.common;
 
 import com.unipath.model.Course;
 import com.unipath.repository.CourseRepository;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -77,7 +82,18 @@ public class ProfessorMainScreen implements Initializable {
 
     @FXML
     private void onThesisButtonClick() {
-        System.out.println("Άνοιγμα φόρμας διπλωματικής...");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/thesis-form-view.fxml"));
+            Parent root = loader.load();
+
+            // Ανοίγουμε το παράθυρο για το UC10
+            Stage stage = new Stage();
+            stage.setTitle("Δημοσίευση Θέματος Διπλωματικής");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

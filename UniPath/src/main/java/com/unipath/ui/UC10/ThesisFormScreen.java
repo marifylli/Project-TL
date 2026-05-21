@@ -1,9 +1,12 @@
 package com.unipath.ui.UC10;
 
 import com.unipath.controller.ManageThesisClass;
+import com.unipath.model.Thesis;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Label;
 
 public class ThesisFormScreen {
 
@@ -16,101 +19,67 @@ public class ThesisFormScreen {
     @FXML private Label errorLabel;
 
     private final ManageThesisClass controller = new ManageThesisClass();
-    private int professorId = 1; // TODO: παίρνει από το login
+    private int professorId = 1;
 
     @FXML
     private void onSelectCalendar() {
+        if (!validateForm()) return;
+
         try {
+            int ects = Integer.parseInt(ectsField.getText().trim());
+            int maxCandidates = Integer.parseInt(maxCandidatesField.getText().trim());
+
+            Thesis temporaryThesis = new Thesis(
+                    professorId,
+                    titleField.getText().trim(),
+                    descriptionArea.getText().trim(),
+                    prerequisitesArea.getText().trim(),
+                    ects,
+                    maxCandidates,
+                    requiredSkillsArea.getText().trim()
+            );
+
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/fxml/meeting-calendar-view.fxml"));
+                    getClass().getResource("/fxml/Professor/meeting-calendar-view.fxml"));
             javafx.scene.Parent root = loader.load();
+
+            MeetingCalendarScreen calendarScreen = loader.getController();
+            calendarScreen.setThesisContext(temporaryThesis, (Stage) titleField.getScene().getWindow());
 
             Stage stage = new Stage();
             stage.setTitle("Ημερολόγιο Συναντήσεων");
-            stage.setScene(new javafx.scene.Scene(root, 600, 500));
+            stage.setScene(new javafx.scene.Scene(root));
             stage.show();
-        } catch (Exception e) {
-            errorLabel.setText("Σφάλμα ανοίγματος ημερολογίου!");
-        }
-    }
-
-    @FXML
-    private void onPublishThesis() {
-        errorLabel.setText("");
-
-        if (!validateForm()) return;
-
-        int ects;
-        int maxCandidates;
-        try {
-            ects = Integer.parseInt(ectsField.getText().trim());
-            maxCandidates = Integer.parseInt(maxCandidatesField.getText().trim());
         } catch (NumberFormatException e) {
-            errorLabel.setText("Τα ECTS και ο αριθμός υποψηφίων πρέπει να είναι αριθμοί!");
-            return;
-        }
-
-        boolean success = controller.publishThesis(
-                professorId,
-                titleField.getText().trim(),
-                descriptionArea.getText().trim(),
-                prerequisitesArea.getText().trim(),
-                ects,
-                maxCandidates,
-                requiredSkillsArea.getText().trim()
-        );
-
-        if (success) {
-            showSuccess();
-        } else {
-            errorLabel.setText("Σφάλμα δημοσίευσης! Παρακαλώ προσπαθήστε ξανά.");
+            showErrorWindow();
+        } catch (Exception e) {
+            showErrorWindow();
         }
     }
 
     private boolean validateForm() {
-        if (titleField.getText().isBlank()) {
-            errorLabel.setText("Ο τίτλος είναι υποχρεωτικός!");
-            return false;
-        }
-        if (descriptionArea.getText().isBlank()) {
-            errorLabel.setText("Η περιγραφή είναι υποχρεωτική!");
-            return false;
-        }
-        if (prerequisitesArea.getText().isBlank()) {
-            errorLabel.setText("Τα προαπαιτούμενα είναι υποχρεωτικά!");
-            return false;
-        }
-        if (requiredSkillsArea.getText().isBlank()) {
-            errorLabel.setText("Οι δεξιότητες είναι υποχρεωτικές!");
-            return false;
-        }
-        if (ectsField.getText().isBlank()) {
-            errorLabel.setText("Τα ECTS είναι υποχρεωτικά!");
-            return false;
-        }
-        if (maxCandidatesField.getText().isBlank()) {
-            errorLabel.setText("Ο αριθμός υποψηφίων είναι υποχρεωτικός!");
+        if (titleField.getText().isBlank() || descriptionArea.getText().isBlank() ||
+                prerequisitesArea.getText().isBlank() || requiredSkillsArea.getText().isBlank() ||
+                ectsField.getText().isBlank() || maxCandidatesField.getText().isBlank()) {
+
+            showErrorWindow();
             return false;
         }
         return true;
     }
 
-    private void showSuccess() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Επιτυχής Δημοσίευση");
-        alert.setHeaderText(null);
-        alert.setContentText("Η διπλωματική δημοσιεύτηκε επιτυχώς!");
-        alert.showAndWait();
-        clearForm();
-    }
+    private void showErrorWindow() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/fxml/common/error-window-view.fxml"));
+            javafx.scene.Parent root = loader.load();
 
-    private void clearForm() {
-        titleField.clear();
-        descriptionArea.clear();
-        prerequisitesArea.clear();
-        ectsField.clear();
-        maxCandidatesField.clear();
-        requiredSkillsArea.clear();
-        errorLabel.setText("");
+            Stage stage = new Stage();
+            stage.setTitle("Οθόνη Σφάλματος");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            errorLabel.setText("Σφάλμα κατά τη συμπλήρωση των πεδίων.");
+        }
     }
 }

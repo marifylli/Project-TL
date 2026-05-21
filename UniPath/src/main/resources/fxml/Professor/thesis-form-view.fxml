@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.unipath.ui.UC10.ThesisFormScreen" style="-fx-background-color: #f8f9fa;">
+    <children>
+        <Label text="Δημιουργία Νέας Αγγελίας Διπλωματικής" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2B3A42;"/>
+
+        <Label text="Τίτλος Θέματος:"/>
+        <TextField fx:id="titleField" promptText="Εισάγετε τίτλο..."/>
+
+        <Label text="Περιγραφή:"/>
+        <TextArea fx:id="descriptionArea" prefHeight="80.0" promptText="Εισάγετε περιγραφή..."/>
+
+        <Label text="Προαπαιτούμενα Μαθήματα:"/>
+        <TextArea fx:id="prerequisitesArea" prefHeight="60.0" promptText="Προαπαιτούμενα..."/>
+
+        <HBox spacing="15.0">
+            <children>
+                <VBox HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Απαιτούμενα ECTS:"/>
+                        <TextField fx:id="ectsField" promptText="e.g. 10"/>
+                    </children>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Μέγιστος Αριθμός Υποψηφίων:"/>
+                        <TextField fx:id="maxCandidatesField" promptText="e.g. 3"/>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <Label text="Απαιτούμενες Δεξιότητες:"/>
+        <TextArea fx:id="requiredSkillsArea" prefHeight="60.0" promptText="Δεξιότητες..."/>
+
+        <Label fx:id="errorLabel" style="-fx-text-fill: red; -fx-font-weight: bold;"/>
+
+        <HBox spacing="10.0" alignment="CENTER_RIGHT">
+            <children>
+                <Button text="Διασύνδεση Ημερολογίου" onAction="#onSelectCalendar"
+                        style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+</VBox>

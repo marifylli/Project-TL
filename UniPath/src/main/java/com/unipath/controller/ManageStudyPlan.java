@@ -5,6 +5,7 @@ import com.unipath.ui.UC1.CourseSelectionScreen;
 import com.unipath.ui.UC1.PlanSummaryScreen;
 import com.unipath.model.Scenario;
 import com.unipath.ui.UC1.ScenarioSelectionScreen;
+import com.unipath.repository.CourseRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,9 @@ public class ManageStudyPlan {
     private CourseSelectionScreen courseSelectionScreen;
     private PlanSummaryScreen planSummaryScreen;
     private ConfirmationScreen confirmationScreen;
+    private CourseRepository courseRepository;
+
+
 
     private Scenario selectedScenario;
     private List<Course> selectedCourses;

@@ -37,6 +37,8 @@
             <version>9.2.0</version>
         </dependency>
 
+
+
         <!-- SQLite -->
         <dependency>
             <groupId>org.xerial</groupId>
@@ -52,8 +54,16 @@
         </dependency>
     </dependencies>
 
+
     <build>
+        <sourceDirectory>UniPath/src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>UniPath/src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
+
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>

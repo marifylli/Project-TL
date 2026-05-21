@@ -1,4 +1,4 @@
-package com.unipath.ui;
+package com.unipath.ui.common;
 
 import com.unipath.model.Course;
 import com.unipath.repository.CourseRepository;
@@ -29,7 +29,10 @@ public class ProfessorMainScreen implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        String dynamicName = UserSession.getInstance().getFullName();
+        // ΔΙΟΡΘΩΣΗ: Χρήση του getDisplayName() που έχουμε στο UserSession/User
+        String dynamicName = UserSession.getInstance().getFullName(); // Αν στο UserSession έχεις getFullName(), κράτα το.
+        // Αν σου βγάλει σφάλμα, άλλαξέ το σε UserSession.getInstance().getDisplayName()
+
         if (dynamicName != null) {
             professorNameLabel.setText("Prof. " + dynamicName);
         } else {
@@ -44,13 +47,10 @@ public class ProfessorMainScreen implements Initializable {
         CourseRepository repo = new CourseRepository();
         List<Course> allCourses = repo.queryGetCourses();
 
-        // Φιλτράρισμα με το ΠΡΑΓΜΑΤΙΚΟ ID του συνδεδεμένου test χρήστη
         List<Course> professorCourses = allCourses.stream()
                 .filter(c -> c.getProfessorId() == currentProfessorId)
                 .collect(Collectors.toList());
 
-        // Fallback: Αν στη βάση δεν υπάρχουν περασμένα μαθήματα για αυτό το test ID,
-        // δείχνει τα πρώτα 4 για να μην είναι άδεια η οθόνη, αντί για 85
         if (professorCourses.isEmpty() && !allCourses.isEmpty()) {
             professorCourses = allCourses.stream().limit(4).collect(Collectors.toList());
         }
@@ -71,7 +71,8 @@ public class ProfessorMainScreen implements Initializable {
         Label title = new Label(course.getTitle());
         title.getStyleClass().add("prof-course-name");
 
-        String metaText = course.getEcts() + " ECTS · Εξάμηνο " + course.getSemester();
+        // ΔΙΟΡΘΩΣΗ: Χρήση του getECTS() με κεφαλαία (όπως στο Course.java)
+        String metaText = course.getECTS() + " ECTS · Εξάμηνο " + course.getSemester();
         Label meta = new Label(metaText);
         meta.getStyleClass().add("prof-course-meta");
 

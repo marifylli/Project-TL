@@ -1,6 +1,5 @@
 package com.unipath.login;
 
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -127,6 +126,24 @@ public class LoginController {
                 }
                 // ----------------------------
 
+                // --- ΕΝΣΩΜΑΤΩΣΗ ΔΥΝΑΜΙΚΟΥ USER SESSION ---
+                int intUserId;
+                try {
+                    // Μετατροπή UID σε int
+                    intUserId = Integer.parseInt(loggedInUser.getUid().replaceAll("[^0-9]", ""));
+                } catch (NumberFormatException e) {
+                    intUserId = Math.abs(loggedInUser.getUid().hashCode() % 100000);
+                }
+
+                // ΔΙΟΡΘΩΣΗ: Χρησιμοποιούμε τη σωστή μέθοδο getDisplayName() από την κλάση User
+                UserSession.getInstance().startSession(
+                        intUserId,
+                        loggedInUser.getEmail(),
+                        loggedInUser.getDisplayName(), // ΕΔΩ ΗΤΑΝ ΤΟ ΛΑΘΟΣ
+                        loggedInUser.getRole().name()
+                );
+                // -----------------------------------------
+
                 Platform.runLater(() -> {
                     roleLabel.setText("Ρόλος: " + loggedInUser.getRoleDisplayName());
                     redirectLabel.setText("Ανακατεύθυνση στο dashboard...");
@@ -185,23 +202,26 @@ public class LoginController {
             e.printStackTrace();
         }
     }
+
     private User getMockUser(String email) {
-        if (email.startsWith("test.secret")) {
-            return new User("mock_uid_1", email, Role.SECRETARY, "Γραμματεία (Test)");
-        } else if (email.startsWith("test.st")) {
-            return new User("mock_uid_2", email, Role.STUDENT, "Φοιτητής (Test)");
+        if (email.startsWith("test.secretary")) {
+            return new User("1001", email, Role.SECRETARY, "Γραμματεία (Test)");
+        } else if (email.startsWith("test.student")) {
+            return new User("2002", email, Role.STUDENT, "Φοιτητής (Test)");
         } else {
-            return new User("mock_uid_3", email, Role.PROFESSOR, "Καθηγητής (Test)");
+            // Δυναμικό Test για Καθηγητές: Αν γράψεις π.χ. test.georgiou@ceid.upatras.gr,
+            // θα βγάλει το όνομα "Prof. test.georgiou" αντί για καρφωμένο κείμενο
+            String namePart = email.substring(5, email.indexOf("@"));
+            String capitalizedName = namePart.substring(0, 1).toUpperCase() + namePart.substring(1);
+            return new User("1", email, Role.PROFESSOR, capitalizedName + " (Test)");
         }
     }
 
     private boolean isValidEmail(String email) {
-        if (email.equals("secretary@ceid.upatras.gr"))
-            return true;
-        if (email.matches("st\\d+@ceid\\.upatras\\.gr"))
-            return true;
-        if (email.matches(".+@ceid\\.upatras\\.gr"))
-            return true;
+        if (email.startsWith("test.")) return true; // Επιτρέπουμε άμεσα όλα τα test emails
+        if (email.equals("secretary@ceid.upatras.gr")) return true;
+        if (email.matches("st\\d+@ceid\\.upatras\\.gr")) return true;
+        if (email.matches(".+@ceid\\.upatras\\.gr")) return true;
         return false;
     }
 

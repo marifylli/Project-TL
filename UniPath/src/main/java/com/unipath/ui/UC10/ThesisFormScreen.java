@@ -2,11 +2,16 @@ package com.unipath.ui.UC10;
 
 import com.unipath.controller.ManageThesisClass;
 import com.unipath.model.Thesis;
+import com.unipath.ui.common.ErrorScreen;
+import com.unipath.login.UserSession;
 import javafx.fxml.FXML;
-import javafx.stage.Stage;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class ThesisFormScreen {
 
@@ -19,7 +24,6 @@ public class ThesisFormScreen {
     @FXML private Label errorLabel;
 
     private final ManageThesisClass controller = new ManageThesisClass();
-    private int professorId = 1;
 
     @FXML
     private void onSelectCalendar() {
@@ -29,57 +33,75 @@ public class ThesisFormScreen {
             int ects = Integer.parseInt(ectsField.getText().trim());
             int maxCandidates = Integer.parseInt(maxCandidatesField.getText().trim());
 
+            String prereqs = prerequisitesArea.getText() == null ? "" : prerequisitesArea.getText().trim();
+            String skills = requiredSkillsArea.getText() == null ? "" : requiredSkillsArea.getText().trim();
+
+            int activeProfessorId = UserSession.getInstance().getUserId();
+
             Thesis temporaryThesis = new Thesis(
-                    professorId,
+                    activeProfessorId,
                     titleField.getText().trim(),
                     descriptionArea.getText().trim(),
-                    prerequisitesArea.getText().trim(),
+                    prereqs,
                     ects,
                     maxCandidates,
-                    requiredSkillsArea.getText().trim()
+                    skills
             );
 
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/fxml/Professor/meeting-calendar-view.fxml"));
-            javafx.scene.Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/meeting-calendar-view.fxml"));
+            Parent root = loader.load();
 
             MeetingCalendarScreen calendarScreen = loader.getController();
+
+            if (calendarScreen == null) {
+                showErrorWindow("Σφάλμα: Δεν βρέθηκε ο Controller του Ημερολογίου!\nΕλέγξτε το fx:controller στο meeting-calendar-view.fxml");
+                return;
+            }
+
             calendarScreen.setThesisContext(temporaryThesis, (Stage) titleField.getScene().getWindow());
 
             Stage stage = new Stage();
             stage.setTitle("Ημερολόγιο Συναντήσεων");
-            stage.setScene(new javafx.scene.Scene(root));
+            stage.setScene(new Scene(root));
             stage.show();
         } catch (NumberFormatException e) {
-            showErrorWindow();
+            showErrorWindow("Τα πεδία ECTS και Μέγιστος Αριθμός Υποψηφίων πρέπει να περιέχουν μόνο αριθμούς!");
         } catch (Exception e) {
-            showErrorWindow();
+            showErrorWindow("Σφάλμα συστήματος κατά τη φόρτωση του ημερολογίου.");
+            e.printStackTrace();
         }
     }
 
     private boolean validateForm() {
-        if (titleField.getText().isBlank() || descriptionArea.getText().isBlank() ||
-                prerequisitesArea.getText().isBlank() || requiredSkillsArea.getText().isBlank() ||
-                ectsField.getText().isBlank() || maxCandidatesField.getText().isBlank()) {
+        StringBuilder missingFields = new StringBuilder();
 
-            showErrorWindow();
+        if (titleField.getText().isBlank()) missingFields.append("- Τίτλος Θέματος\n");
+        if (descriptionArea.getText().isBlank()) missingFields.append("- Περιγραφή\n");
+        if (ectsField.getText().isBlank()) missingFields.append("- Απαιτούμενα ECTS\n");
+        if (maxCandidatesField.getText().isBlank()) missingFields.append("- Μέγιστος Αριθμός Υποψηφίων\n");
+
+        if (missingFields.length() > 0) {
+            showErrorWindow("Δεν συμπληρώθηκαν τα υποχρεωτικά πεδία:\n" + missingFields.toString());
             return false;
         }
         return true;
     }
 
-    private void showErrorWindow() {
+    private void showErrorWindow(String msg) {
         try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/fxml/common/error-window-view.fxml"));
-            javafx.scene.Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
+            Parent root = loader.load();
+
+            ErrorScreen errorScreen = loader.getController();
+            errorScreen.setErrorMessage(msg);
 
             Stage stage = new Stage();
             stage.setTitle("Οθόνη Σφάλματος");
-            stage.setScene(new javafx.scene.Scene(root));
-            stage.show();
+            stage.setScene(new Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
         } catch (Exception e) {
-            errorLabel.setText("Σφάλμα κατά τη συμπλήρωση των πεδίων.");
+            if (errorLabel != null) errorLabel.setText(msg);
         }
     }
 }

@@ -54,8 +54,16 @@
         </dependency>
     </dependencies>
 
+
     <build>
+        <sourceDirectory>UniPath/src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>UniPath/src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
+
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>

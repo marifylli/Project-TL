@@ -2,6 +2,7 @@ package com.unipath.repository;
 
 import com.unipath.dataBase.DBManager;
 import com.unipath.model.Course;
+import com.unipath.model.Professor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -73,6 +74,98 @@ public class CourseRepository {
         }
 
         return courses;
+    }
+
+    // μέθοδοι gia uc5
+
+    // εναλλακτική [queryCheckDuplicates()] - Ελέγχει αν το courseId υπάρχει ήδη στη ΒΔ
+    public boolean queryCheckDuplicates(String courseID) {
+        String sql = "SELECT COUNT(*) FROM Course WHERE courseId = ?";
+        try (java.sql.Connection conn = DBManager.getInstance().connect();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, courseID);
+            try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Σφάλμα στο queryCheckDuplicates: " + e.getMessage());
+        }
+        return false;
+    }
+
+    // Βήμα 5: [queryManageProfessors()] - Επιστρέφει τους καθηγητές από τη ΒΔ
+    public List<Professor> queryManageProfessors() {
+        List<Professor> professors = new ArrayList<>();
+        String sql = """
+            SELECT p.professorId, (u.firstName || ' ' || u.lastName) AS fullName, u.email, p.office 
+            FROM Professor p
+            JOIN User u ON p.userId = u.userId
+        """;
+
+        try (java.sql.Connection conn = DBManager.getInstance().connect();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+             java.sql.ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Professor prof = new Professor(
+                        rs.getInt("professorId"),
+                        rs.getString("fullName"),
+                        rs.getString("email"),
+                        rs.getString("office")
+                );
+                professors.add(prof);
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Σφάλμα στο queryManageProfessors: " + e.getMessage());
+        }
+        return professors;
+    }
+
+    // εναλλακτική & Βασική Ροή: [saveCourse()] - Αποθηκεύει το μάθημα και την ανάθεση (Πίνακας ProfessorCourse)
+    public boolean saveCourse(Course course, int professorID) {
+        String insertCourseSql = """
+            INSERT INTO Course (courseId, title, description, ects, semester, isActive, lastModifiedDate, lastModifiedBy) 
+            VALUES (?, ?, ?, ?, ?, 1, ?, 'Secretary')
+        """;
+        String insertRelationSql = "INSERT INTO ProfessorCourse (professorId, courseId, role) VALUES (?, ?, 'teaches')";
+        String updateLoadSql = "UPDATE Professor SET currentTeachingLoad = currentTeachingLoad + 1 WHERE professorId = ?";
+
+        java.sql.Connection conn = null;
+        try {
+            conn = DBManager.getInstance().connect();
+            conn.setAutoCommit(false);
+
+            try (java.sql.PreparedStatement pstmt1 = conn.prepareStatement(insertCourseSql)) {
+                pstmt1.setString(1, course.getCourseID());
+                pstmt1.setString(2, course.getTitle());
+                pstmt1.setString(3, course.getDescription());
+                pstmt1.setInt(4, course.getEcts());
+                pstmt1.setInt(5, course.getSemester());
+                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                pstmt1.setString(6, dateFormat.format(new Date()));
+                pstmt1.executeUpdate();
+            }
+
+            try (java.sql.PreparedStatement pstmt2 = conn.prepareStatement(insertRelationSql)) {
+                pstmt2.setInt(1, professorID);
+                pstmt2.setString(2, course.getCourseID());
+                pstmt2.executeUpdate();
+            }
+
+            try (java.sql.PreparedStatement pstmt3 = conn.prepareStatement(updateLoadSql)) {
+                pstmt3.setInt(1, professorID);
+                pstmt3.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
+        } catch (java.sql.SQLException e) {
+            if (conn != null) { try { conn.rollback(); } catch (java.sql.SQLException ex) {} }
+            return false;
+        }
     }
 
 }

@@ -90,7 +90,7 @@ public class ProfessorMainScreen implements Initializable {
     }
 
     @FXML
-    private void onThesisButtonClick(ActionEvent event) {
+    private void selectThesisManagement(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/thesis-form-view.fxml"));
             Parent root = loader.load();

@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+
 
 public class ThesisFormScreen {
 
@@ -26,52 +28,40 @@ public class ThesisFormScreen {
     private final ManageThesisClass controller = new ManageThesisClass();
 
     @FXML
-    private void onSelectCalendar() {
+    private void selectThesisManagement() {
         if (!validateForm()) return;
 
         try {
             int ects = Integer.parseInt(ectsField.getText().trim());
             int maxCandidates = Integer.parseInt(maxCandidatesField.getText().trim());
 
-            String prereqs = prerequisitesArea.getText() == null ? "" : prerequisitesArea.getText().trim();
-            String skills = requiredSkillsArea.getText() == null ? "" : requiredSkillsArea.getText().trim();
-
-            int activeProfessorId = UserSession.getInstance().getUserId();
-
             Thesis temporaryThesis = new Thesis(
-                    activeProfessorId,
+                    UserSession.getInstance().getUserId(),
                     titleField.getText().trim(),
                     descriptionArea.getText().trim(),
-                    prereqs,
+                    prerequisitesArea.getText().trim(),
                     ects,
                     maxCandidates,
-                    skills
+                    requiredSkillsArea.getText().trim()
             );
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/meeting-calendar-view.fxml"));
             Parent root = loader.load();
 
             MeetingCalendarScreen calendarScreen = loader.getController();
-
-            if (calendarScreen == null) {
-                showErrorWindow("Σφάλμα: Δεν βρέθηκε ο Controller του Ημερολογίου!\nΕλέγξτε το fx:controller στο meeting-calendar-view.fxml");
-                return;
-            }
-
             calendarScreen.setThesisContext(temporaryThesis, (Stage) titleField.getScene().getWindow());
 
             Stage stage = new Stage();
             stage.setTitle("Ημερολόγιο Συναντήσεων");
             stage.setScene(new Scene(root));
             stage.show();
+
         } catch (NumberFormatException e) {
-            showErrorWindow("Τα πεδία ECTS και Μέγιστος Αριθμός Υποψηφίων πρέπει να περιέχουν μόνο αριθμούς!");
+            showErrorWindow("Τα πεδία ECTS και Μέγιστος Αριθμός Υποψηφίων πρέπει να είναι αριθμοί!");
         } catch (Exception e) {
-            showErrorWindow("Σφάλμα συστήματος κατά τη φόρτωση του ημερολογίου.");
             e.printStackTrace();
         }
     }
-
     private boolean validateForm() {
         StringBuilder missingFields = new StringBuilder();
 
@@ -89,19 +79,31 @@ public class ThesisFormScreen {
 
     private void showErrorWindow(String msg) {
         try {
+            // Φορτώνουμε το fxml της οθόνης σφάλματος (πρέπει να έχεις ένα error-window-view.fxml)
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
             Parent root = loader.load();
 
+            // Παίρνουμε τον controller της οθόνης σφάλματος για να περάσουμε το μήνυμα
             ErrorScreen errorScreen = loader.getController();
             errorScreen.setErrorMessage(msg);
 
-            Stage stage = new Stage();
-            stage.setTitle("Οθόνη Σφάλματος");
-            stage.setScene(new Scene(root));
-            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-            stage.showAndWait();
+            // Δημιουργούμε νέο παράθυρο (Stage)
+            Stage errorStage = new Stage();
+            errorStage.setTitle("Σφάλμα Συμπλήρωσης");
+            errorStage.setScene(new Scene(root));
+
+            // Modal σημαίνει ότι ο χρήστης ΔΕΝ μπορεί να αγγίξει την πίσω οθόνη
+            // μέχρι να κλείσει το error (ακριβώς όπως λέει η ροή 9.α.3)
+            errorStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            errorStage.showAndWait();
+
         } catch (Exception e) {
-            if (errorLabel != null) errorLabel.setText(msg);
+            // Fallback αν δεν βρεθεί το FXML, εμφάνιση σε alert box
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Σφάλμα");
+            alert.setHeaderText(null);
+            alert.setContentText(msg);
+            alert.showAndWait();
         }
     }
 }

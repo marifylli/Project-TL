@@ -1,54 +1,27 @@
 package com.unipath.controller;
 
-import com.unipath.model.AvailabilitySlot;
-import com.unipath.model.Calendar;
-import com.unipath.model.Thesis;
+import com.unipath.model.*;
 import com.unipath.repository.ThesisRepository;
 import com.unipath.dataBase.DBManager;
 import java.util.Date;
 
 public class ManageThesisClass {
-
-    private final ThesisRepository repository;
+    private final ThesisRepository repository = new ThesisRepository();
 
     public ManageThesisClass() {
-        this.repository = new ThesisRepository();
-        try {
-            DBManager.getInstance().createTables();
-        } catch (Exception e) {
-            System.out.println("Σφάλμα δημιουργίας πινάκων: " + e.getMessage());
-        }
+        try { DBManager.getInstance().createTables(); }
+        catch (Exception e) { e.printStackTrace(); }
     }
 
-    // Διορθώθηκε ώστε να δέχεται τις 7 παραμέτρους που του στέλνει το MeetingCalendarScreen
-    public boolean publishThesis(int professorId, String title, String description,
-                                 String prerequisites, int requiredECTS, int maxCandidates,
-                                 String requiredSkills) {
-
-        Thesis thesis = new Thesis(professorId, title, description,
-                prerequisites, requiredECTS, maxCandidates, requiredSkills);
-
-        return repository.saveThesis(thesis);
+    public boolean publishThesis(int pId, String title, String desc, String pre, int ects, int max, String skills) {
+        return repository.saveThesis(new Thesis(pId, title, desc, pre, ects, max, skills));
     }
 
-    public boolean setAvailability(int professorId, String dayOfWeek, String startTime, String endTime) {
-        if (dayOfWeek == null || startTime == null || endTime == null) {
-            return false;
-        }
-        AvailabilitySlot slot = new AvailabilitySlot(professorId, new Date(), dayOfWeek, startTime, endTime);
-        return repository.saveAvailabilitySlot(slot);
+    public boolean setAvailability(int pId, String day, String start, String end) {
+        return repository.saveAvailabilitySlot(new AvailabilitySlot(pId, new Date(), day, start, end));
     }
 
-    public Calendar requestCalendar(int professorId) {
-        return repository.getCalendarByProfessor(professorId);
-    }
-
-    // Διορθώθηκε ώστε να δέχεται τις 4 παραμέτρους που του στέλνει το MeetingCalendarScreen
-    public boolean validateFields(String title, String description, String prerequisites, String requiredSkills) {
-        if (title == null || title.isBlank()) return false;
-        if (description == null || description.isBlank()) return false;
-        if (prerequisites == null || prerequisites.isBlank()) return false;
-        if (requiredSkills == null || requiredSkills.isBlank()) return false;
-        return true;
+    public Calendar requestCalendar(int pId) {
+        return repository.getCalendarByProfessor(pId);
     }
 }

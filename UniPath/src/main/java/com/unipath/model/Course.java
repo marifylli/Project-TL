@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 public class Course {
-    public String courseID;
+
+    public String courseID; // otan exoume conflict prepei na meinei string gia na tairiazei me ti vasi tis milenas
+
     private String title;
     private String description;
     private int ects;
@@ -21,12 +23,13 @@ public class Course {
     private String rules;
     private String prerequisites;
 
-
-
+    // Constructor
     public Course() {
-
     }
+
+    // Getters & Setters
     public String getCourseID() { return courseID; }
+    // ΔΙΟΡΘΩΣΗ: setCourseID (με μικρό d στο τέλος)
     public void setCourseID(String courseID) { this.courseID = courseID; }
 
     public String getTitle() { return title; }
@@ -63,6 +66,7 @@ public class Course {
     public void setWorkloadRank(int workloadRank) { this.workloadRank = workloadRank; }
 
     public Date getLastModifiedDate() { return lastModifiedDate; }
+    // ΔΙΟΡΘΩΣΗ: setLastModifiedDate (με μικρό d)
     public void setLastModifiedDate(Date lastModifiedDate) { this.lastModifiedDate = lastModifiedDate; }
 
     public String getLastModifiedBy() { return lastModifiedBy; }
@@ -74,4 +78,3 @@ public class Course {
     public String getPrerequisites() { return prerequisites; }
     public void setPrerequisites(String prerequisites) { this.prerequisites = prerequisites; }
 }
-

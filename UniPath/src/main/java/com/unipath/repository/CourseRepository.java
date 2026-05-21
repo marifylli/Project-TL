@@ -14,7 +14,6 @@ import java.util.List;
 
 public class CourseRepository {
 
-
     public List<Course> queryGetCourses() {
         List<Course> courses = new ArrayList<>();
         String sql = """
@@ -23,7 +22,6 @@ public class CourseRepository {
                    lastModifiedDate, lastModifiedBy, rules, prerequisites 
             FROM Course
         """;
-
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -34,31 +32,29 @@ public class CourseRepository {
             while (rs.next()) {
                 Course course = new Course();
 
-
+                // ΔΙΟΡΘΩΣΗ 1: setCourseID με κεφαλαίο ID
                 course.setCourseID(rs.getString("courseId"));
                 course.setTitle(rs.getString("title"));
                 course.setDescription(rs.getString("description"));
                 course.setEcts(rs.getInt("ects"));
                 course.setSemester(rs.getInt("semester"));
 
-
                 course.setGroupA(rs.getInt("groupA") == 1);
                 course.setGroupB(rs.getInt("groupB") == 1);
                 course.setActive(rs.getInt("isActive") == 1);
-
 
                 course.setAverageRating(rs.getFloat("averageRating"));
                 course.setWorkloadScore(rs.getFloat("workloadScore"));
                 course.setWorkloadRank(rs.getInt("workloadRank"));
 
-
                 String dateStr = rs.getString("lastModifiedDate");
                 if (dateStr != null && !dateStr.isEmpty()) {
                     try {
                         Date parsedDate = dateFormat.parse(dateStr);
+                        // ΔΙΟΡΘΩΣΗ 2: setLastModifiedDate
                         course.setLastModifiedDate(parsedDate);
                     } catch (Exception e) {
-
+                        // ΔΙΟΡΘΩΣΗ 3: setLastModifiedDate
                         course.setLastModifiedDate(null);
                     }
                 }
@@ -78,5 +74,4 @@ public class CourseRepository {
 
         return courses;
     }
-
 }

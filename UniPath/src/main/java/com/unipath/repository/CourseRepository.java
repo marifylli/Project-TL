@@ -36,7 +36,7 @@ public class CourseRepository {
                 course.setCourseID(rs.getString("courseId"));
                 course.setTitle(rs.getString("title"));
                 course.setDescription(rs.getString("description"));
-                course.setEcts(rs.getInt("ects"));
+                course.setECTS(rs.getInt("ects"));
                 course.setSemester(rs.getInt("semester"));
 
                 course.setGroupA(rs.getInt("groupA") == 1);

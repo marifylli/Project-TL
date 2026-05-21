@@ -23,33 +23,43 @@ public class Calendar {
     }
 
     public String getCalendarId()                        {
+
         return calendarId;
     }
     public Date getLastUpdated()                         {
+
         return lastUpdated;
     }
     public String getUpdatedBy()                         {
+
         return updatedBy;
     }
     public List<AvailabilitySlot> getAvailabilitySlots() {
+
         return availabilitySlot;
     }
 
     // Setters
     public void setCalendarId(String id)                          {
+
         this.calendarId = id;
     }
     public void setLastUpdated(Date date)                         {
+
         this.lastUpdated = date;
     }
     public void setUpdatedBy(String user)                         {
         this.updatedBy = user;
     }
     public void setAvailabilitySlots(List<AvailabilitySlot> slots){
+
         this.availabilitySlot = slots;
     }
+
+
     // Βοηθητική μέθοδος για προσθήκη slot
     public void addSlot(AvailabilitySlot slot) {
+
         this.availabilitySlot.add(slot);
     }
 

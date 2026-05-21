@@ -1,5 +1,6 @@
 package com.unipath.ui.common;
 
+import com.unipath.controller.ManageProfCourseEdit;
 import com.unipath.model.Course;
 import com.unipath.repository.CourseRepository;
 import com.unipath.login.UserSession;
@@ -26,6 +27,7 @@ public class ProfessorMainScreen implements Initializable {
     @FXML private Label professorNameLabel;
     @FXML private Label coursesCountLabel;
     @FXML private VBox coursesContainer;
+    private ManageProfCourseEdit manageProfCourseEdit;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -106,4 +108,10 @@ public class ProfessorMainScreen implements Initializable {
     }
 
     @FXML private void onCalendarButtonClick() {}
+
+    public void clickMyCourses(){
+        ManageProfCourseEdit manage = new ManageProfCourseEdit();
+        manage.startMyCourses();
+    }
+
 }

@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 public class Course {
-    public String courseID;       // otan exoume conflict prepei na meinei string gia na tairiazei me ti vasi tis milenas
+
+    public String courseID; // otan exoume conflict prepei na meinei string gia na tairiazei me ti vasi tis milenas
+
     private String title;
     private String description;
     private int ects;
@@ -21,68 +23,58 @@ public class Course {
     private String rules;
     private String prerequisites;
 
-
-
+    // Constructor
     public Course() {
-
-    }
-    public int getECTS() {
-
-    return ects;}
-
-    public void setEcts(int ects)
-    { this.ects = ects; }
-
-    public boolean isGroupA() {
-        return groupA;
     }
 
-    public boolean isGroupB() {
-        return groupB;
-    }
+    // Getters & Setters
+    public String getCourseID() { return courseID; }
+    // ΔΙΟΡΘΩΣΗ: setCourseID (με μικρό d στο τέλος)
+    public void setCourseID(String courseID) { this.courseID = courseID; }
 
-    public void setGroupA(boolean groupA)           { this.groupA = groupA; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setGroupB(boolean groupB)           { this.groupB = groupB; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getDirections() {
-        return directions;
-    }
-    public void setDirections(String directions){
-        this.directions=directions;
-    }
+    public int getEcts() { return ects; }
+    public void setEcts(int ects) { this.ects = ects; }
 
-    //uc4 used
+    public int getSemester() { return semester; }
+    public void setSemester(int semester) { this.semester = semester; }
 
-    public String getTitle()                        { return title; }
-    public void setTitle(String title)              { this.title = title; }
+    public boolean isGroupA() { return groupA; }
+    public void setGroupA(boolean groupA) { this.groupA = groupA; }
 
-    public String getDescription()                  { return description; }
-    public void setDescription(String desc)         { this.description = desc; }
+    public boolean isGroupB() { return groupB; }
+    public void setGroupB(boolean groupB) { this.groupB = groupB; }
 
-    public int getSemester()                        { return semester; }
-    public void setSemester(int semester)           { this.semester = semester; }
+    public String getDirections() { return directions; }
+    public void setDirections(String directions) { this.directions = directions; }
 
-    public boolean isActive()                       { return isActive; }
-    public void setActive(boolean active)           { this.isActive = active; }
+    public boolean isActive() { return isActive; }
+    public void setActive(boolean isActive) { this.isActive = isActive; }
 
-    public float getAverageRating()                 { return averageRating; }
-    public void setAverageRating(float rating)      { this.averageRating = rating; }
+    public float getAverageRating() { return averageRating; }
+    public void setAverageRating(float averageRating) { this.averageRating = averageRating; }
 
-    public float getWorkloadScore()                 { return workloadScore; }
-    public void setWorkloadScore(float score)       { this.workloadScore = score; }
+    public float getWorkloadScore() { return workloadScore; }
+    public void setWorkloadScore(float workloadScore) { this.workloadScore = workloadScore; }
 
-    public int getWorkloadRank()                    { return workloadRank; }
-    public void setWorkloadRank(int rank)           { this.workloadRank = rank; }
+    public int getWorkloadRank() { return workloadRank; }
+    public void setWorkloadRank(int workloadRank) { this.workloadRank = workloadRank; }
 
-    public String getLastModifiedBy()               { return lastModifiedBy; }
-    public void setLastModifiedBy(String user)      { this.lastModifiedBy = user; }
+    public Date getLastModifiedDate() { return lastModifiedDate; }
+    // ΔΙΟΡΘΩΣΗ: setLastModifiedDate (με μικρό d)
+    public void setLastModifiedDate(Date lastModifiedDate) { this.lastModifiedDate = lastModifiedDate; }
 
-    public String getRules()                        { return rules; }
-    public void setRules(String rules)              { this.rules = rules; }
+    public String getLastModifiedBy() { return lastModifiedBy; }
+    public void setLastModifiedBy(String lastModifiedBy) { this.lastModifiedBy = lastModifiedBy; }
 
-    public String getPrerequisites()                { return prerequisites; }
-    public void setPrerequisites(String prereq)     { this.prerequisites = prereq; }
+    public String getRules() { return rules; }
+    public void setRules(String rules) { this.rules = rules; }
 
-
+    public String getPrerequisites() { return prerequisites; }
+    public void setPrerequisites(String prerequisites) { this.prerequisites = prerequisites; }
 }

@@ -14,9 +14,53 @@ public class Scenario {
 
     public Scenario() {
     }
+    //full consructor
+    public Scenario(int scenarioId, String title, String description, int groupARequiredECTS, int groupBRequiredECTS) {
+        this.scenarioId = scenarioId;
+        this.title = title;
+        this.description = description;
+        this.groupARequiredECTS = groupARequiredECTS;
+        this.groupBRequiredECTS = groupBRequiredECTS;
+    }
     public int getScenarioId() {
         return scenarioId;
     }
 
+
+    public void setScenarioId(int scenarioId) {
+        this.scenarioId = scenarioId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getGroupARequiredECTS() {
+        return groupARequiredECTS;
+    }
+
+    public void setGroupARequiredECTS(int groupARequiredECTS) {
+        this.groupARequiredECTS = groupARequiredECTS;
+    }
+
+    public int getGroupBRequiredECTS() {
+        return groupBRequiredECTS;
+    }
+
+    public void setGroupBRequiredECTS(int groupBRequiredECTS) {
+        this.groupBRequiredECTS = groupBRequiredECTS;
+    }
 
 }

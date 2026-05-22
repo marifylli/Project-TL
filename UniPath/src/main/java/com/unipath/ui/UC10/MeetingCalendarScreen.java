@@ -2,19 +2,15 @@ package com.unipath.ui.UC10;
 
 import com.unipath.controller.ManageThesisClass;
 import com.unipath.model.Thesis;
-import com.unipath.ui.common.SuccessScreen;
 import com.unipath.login.UserSession;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MeetingCalendarScreen {
 
@@ -54,16 +50,20 @@ public class MeetingCalendarScreen {
     }
 
     // Βήμα 8: publishThesis() -> alt1 [allFields]
+    // Βήμα 8: publishThesis() -> alt1 [allFields]
     @FXML
     private void publishThesis() {
+        // 1. Παίρνουμε το ενεργό ID ως int απευθείας από το Session!
         int activeProfessorId = UserSession.getInstance().getUserId();
 
-        // Βήμα 10: setAvailableSlots() στον Controller
+        System.out.println("[Session] Ενεργό Professor ID από το Login: " + activeProfessorId);
+
+        // 2. Βήμα 10: setAvailableSlots() στον Controller
         for (String[] slot : temporarySlotsData) {
             manager.setAvailableSlots(activeProfessorId, slot[0], slot[1], slot[2]);
         }
 
-        // Βήμα 11: saveNewThesis() στον Controller
+        // 3. Βήμα 11: saveNewThesis() στον Controller
         boolean success = manager.saveNewThesis(
                 activeProfessorId,
                 thesisToPublish.getTitle(),
@@ -76,26 +76,19 @@ public class MeetingCalendarScreen {
 
         if (success) {
             if (formStageReference != null) formStageReference.close();
-            ((Stage) slotListView.getScene().getWindow()).close();
 
-            // Βήμα 12: Δημιουργία και display() της SuccessScreen
+            if (slotListView.getScene() != null && slotListView.getScene().getWindow() != null) {
+                ((Stage) slotListView.getScene().getWindow()).close();
+            }
+
+            // Βήμα 12: Εμφάνιση του Pop-up μέσω του Controller
             displaySuccess();
         }
     }
 
-    private void displaySuccess() {
-        try {
-            FXMLLoader successLoader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
-            Parent successRoot = successLoader.load();
-            SuccessScreen successScreen = successLoader.getController();
-            successScreen.setSuccessMessage("Η αγγελία δημοσιεύτηκε επιτυχώς!");
 
-            Stage successStage = new Stage();
-            successStage.initModality(Modality.APPLICATION_MODAL);
-            successStage.setScene(new Scene(successRoot));
-            successStage.showAndWait();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void displaySuccess() {
+        // Καλεί τον κεντρικό Controller να δείξει το παράθυρο και να κάνει το navigation
+        manager.displaySuccessScreen();
     }
 }

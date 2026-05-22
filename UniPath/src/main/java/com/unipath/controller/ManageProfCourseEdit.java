@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
 
+
 public class ManageProfCourseEdit {
 
     private CourseRepository courseRepository = new CourseRepository();
@@ -77,9 +78,10 @@ public class ManageProfCourseEdit {
         // Στέλνουμε το δυναμικό μήνυμα στο Error Screen της εργασίας σου
         displayErrorScreen(errorMessage);
     }
-    // Πρεβολη της οθόνης επιτυχίας (success-window-view.fxml)
-    private void displaySuccessScreen() {
+
+    public void displaySuccessScreen() {
         try {
+            // 1. Φορτώνουμε το κοινό FXML επιτυχίας
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
             Parent root = loader.load();
 
@@ -87,10 +89,73 @@ public class ManageProfCourseEdit {
             stage.setTitle("Επιτυχία");
             stage.setScene(new Scene(root));
             stage.show();
+
+            // 2. Βρίσκουμε δυναμικά το κουμπί (Είτε γράφει "Κλείσιμο" είτε "Επιβεβαίωση")
+            javafx.scene.control.Button closeBtn = null;
+            for (javafx.scene.Node node : root.lookupAll(".button")) {
+                if (node instanceof javafx.scene.control.Button) {
+                    javafx.scene.control.Button tempBtn = (javafx.scene.control.Button) node;
+                    String txt = tempBtn.getText();
+                    if (txt.contains("Κλείσιμο") || txt.contains("Επιβεβαίωση") || txt.contains("Close")) {
+                        closeBtn = tempBtn;
+                        break;
+                    }
+                }
+            }
+
+            // 3. Όταν ο χρήστης πατήσει το κουμπί στο Pop-up
+            if (closeBtn != null) {
+                closeBtn.setOnAction(e -> {
+                    stage.close(); // Κλείνει το μικρό πράσινο pop-up
+
+                    // 4. ΑΛΛΑΓΗ ΟΘΟΝΗΣ ΚΑΙ ΔΙΑΧΕΙΡΙΣΗ ΠΑΡΑΘΥΡΩΝ
+                    try {
+                        // Χρήση του ΑΚΡΙΒΟΥΣ ονόματος αρχείου από το project σου!
+                        FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
+                        Parent mainRoot = mainLoader.load();
+
+                        // Παίρνουμε όλα τα ανοιχτά παράθυρα
+                        java.util.List<javafx.stage.Window> openWindows = javafx.stage.Window.getWindows().stream()
+                                .filter(javafx.stage.Window::isShowing)
+                                .collect(java.util.stream.Collectors.toList());
+
+                        Stage mainStage = null;
+                        Stage rulesStage = null;
+
+                        if (openWindows.size() > 0) {
+                            mainStage = (Stage) openWindows.get(0); // Το αρχικό κεντρικό παράθυρο
+                        }
+
+                        // Εντοπίζουμε το ενδιάμεσο παράθυρο των κανόνων (UC9) για να το κλείσουμε
+                        for (javafx.stage.Window w : openWindows) {
+                            if (w instanceof Stage && w != stage && w != mainStage) {
+                                rulesStage = (Stage) w;
+                                break;
+                            }
+                        }
+
+                        // Κλείνουμε το παράθυρο των κανόνων για να μην ξεμείνει ανοιχτό
+                        if (rulesStage != null) {
+                            rulesStage.close();
+                        }
+
+                        // Στο κυρίως παράθυρο, αλλάζουμε το root για να δείξει το Dashboard
+                        if (mainStage != null) {
+                            mainStage.getScene().setRoot(mainRoot);
+                            mainStage.requestFocus(); // Φέρνει το παράθυρο μπροστά
+                            System.out.println("[UI] Επιτυχής επιστροφή στο professor-main-view.");
+                        }
+
+                    } catch (IOException ex) {
+                        System.err.println("Σφάλμα κατά την επιστροφή στην αρχική οθόνη: " + ex.getMessage());
+                    }
+                });
+            }
         } catch (IOException e) {
-            System.err.println("Σφάλμα κατά τη φόρτωση της SuccessScreen: " + e.getMessage());
+            System.err.println("Σφάλμα φόρτωσης του success-window-view.fxml: " + e.getMessage());
         }
     }
+
 
     private void displayErrorScreen(String message) {
         try {

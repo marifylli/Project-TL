@@ -27,6 +27,7 @@ public class DBManager {
             stmt.execute("PRAGMA foreign_keys = ON");
             stmt.close();
             System.out.println("SQLite Successfully connected");
+            createTables();
         }
         return connection;
     }

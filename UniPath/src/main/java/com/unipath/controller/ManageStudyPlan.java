@@ -45,7 +45,7 @@ public class ManageStudyPlan {
         if (selectedCourses == null) return 0;
         int total = 0;
         for (Course c : selectedCourses) {
-            total += c.getECTS();
+            total += c.getEcts();
         }
         return total;
     }

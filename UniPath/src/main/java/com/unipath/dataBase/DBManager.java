@@ -102,6 +102,7 @@ public class DBManager {
                 title TEXT NOT NULL,
                 description TEXT,
                 ects INTEGER,
+                professorID INTEGER,
                 semester INTEGER,
                 groupA INTEGER DEFAULT 0,
                 groupB INTEGER DEFAULT 0,

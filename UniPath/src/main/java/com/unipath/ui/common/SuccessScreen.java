@@ -20,4 +20,7 @@ public class SuccessScreen {
         Stage stage = (Stage) successMessageLabel.getScene().getWindow();
         stage.close();
     }
+    public void display(){
+
+    }
 }

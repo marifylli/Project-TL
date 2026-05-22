@@ -178,50 +178,50 @@ public class LoginController {
 
     @FXML
     private void onEnterDashboard() {
-        try {
-            javafx.fxml.FXMLLoader loader;
+        // ΔΙΟΡΘΩΣΗ: Μεταφέρουμε όλη τη φόρτωση και αλλαγή οθονών στο JavaFX Application Thread
+        Platform.runLater(() -> {
+            try {
+                javafx.fxml.FXMLLoader loader;
 
-            switch (loggedInUser.getRole()) {
-                case STUDENT:
-                    java.net.URL studentFxml = getClass().getResource("/fxml/Student/student-main-screen.fxml");
+                switch (loggedInUser.getRole()) {
+                    case STUDENT:
+                        java.net.URL studentFxml = getClass().getResource("/fxml/Student/student-main-screen.fxml");
+                        if (studentFxml == null) {
+                            studentFxml = getClass().getClassLoader().getResource("fxml/Student/student-main-screen.fxml");
+                        }
+                        if (studentFxml == null) {
+                            throw new java.io.IOException("Το αρχείο student-main-screen.fxml δεν βρέθηκε στον φάκελο fxml/Student/");
+                        }
+                        loader = new javafx.fxml.FXMLLoader(studentFxml);
+                        break;
 
-                    if (studentFxml == null) {
-                        studentFxml = getClass().getClassLoader().getResource("fxml/Student/student-main-screen.fxml");
-                    }
+                    case PROFESSOR:
+                        loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
+                        break;
 
-                    if (studentFxml == null) {
-                        throw new java.io.IOException("Το αρχείο student-main-screen.fxml δεν βρέθηκε στον φάκελο fxml/Student/");
-                    }
-                    loader = new javafx.fxml.FXMLLoader(studentFxml);
-                    break;
+                    case SECRETARY:
+                        loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Secretary/secretary-main-view.fxml"));
+                        break;
 
+                    default:
+                        loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
+                        break;
+                }
 
-                case PROFESSOR:
-                    loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
-                    break;
+                // Φόρτωση του FXML που επιλέχθηκε
+                javafx.scene.Parent root = loader.load();
 
-                case SECRETARY:
-                    loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Secretary/secretary-main-view.fxml"));
-                    break;
+                // Αλλαγή της σκηνής στο παράθυρο με ασφάλεια
+                javafx.stage.Stage stage = (javafx.stage.Stage) emailField.getScene().getWindow();
+                stage.setScene(new javafx.scene.Scene(root, 1000, 650));
+                stage.setTitle("UniPath - Dashboard");
+                stage.show();
 
-                default:
-                    loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
-                    break;
+            } catch (Exception e) {
+                System.out.println("Σφάλμα φόρτωσης οθόνης: " + e.getMessage());
+                e.printStackTrace();
             }
-
-            // Φόρτωση του FXML που επιλέχθηκε
-            javafx.scene.Parent root = loader.load();
-
-            // Αλλαγή της σκηνής στο παράθυρο
-            javafx.stage.Stage stage = (javafx.stage.Stage) emailField.getScene().getWindow();
-            stage.setScene(new javafx.scene.Scene(root, 1000, 650));
-            stage.setTitle("UniPath - Dashboard");
-            stage.show();
-
-        } catch (Exception e) {
-            System.out.println("Σφάλμα φόρτωσης οθόνης: " + e.getMessage());
-            e.printStackTrace();
-        }
+        });
     }
 
 

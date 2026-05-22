@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 40; -fx-background-color: #f4f6f9;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://fxml.com/fxml/1"
+      fx:controller="com.unipath.ui.UC9.CourseDetailScreen">
+    <children>
+        <Label text="Επεξεργασία Στοιχείων &amp; Προφίλ Μαθήματος" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1a237e;" />
+        <Separator prefWidth="200.0" />
+
+        <GridPane hgap="15" vgap="15" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8;">
+            <columnConstraints>
+                <ColumnConstraints minWidth="120" prefWidth="150" />
+                <ColumnConstraints hgrow="ALWAYS" />
+            </columnConstraints>
+            <children>
+                <Label text="Τίτλος Μαθήματος:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="titleField" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-size: 14px;" />
+
+                <Label text="Περιγραφή:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+                <TextArea fx:id="descriptionArea" prefHeight="100.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-size: 14px;" />
+
+                <Label text="Ακαδημαϊκά Στοιχεία:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+                <Label fx:id="metaLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-size: 14px;" />
+            </children>
+        </GridPane>
+
+        <HBox alignment="CENTER_RIGHT" spacing="15">
+            <children>
+                <Button text="Κανόνες &amp; Προαπαιτούμενα" onAction="#clicksRules" style="-fx-background-color: #3f51b5; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 20; -fx-cursor: hand;" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

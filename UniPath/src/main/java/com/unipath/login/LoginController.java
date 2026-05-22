@@ -179,20 +179,41 @@ public class LoginController {
     @FXML
     private void onEnterDashboard() {
         try {
-            String fxml;
+            javafx.fxml.FXMLLoader loader;
+
             switch (loggedInUser.getRole()) {
-                case PROFESSOR -> fxml = "/fxml/Professor/professor-main-view.fxml";
-                case STUDENT   -> fxml = "/fxml/Student/student-main-view.fxml";
-                case SECRETARY -> fxml = "/fxml/Secretary/secretary-main-view.fxml";
-                default        -> fxml = "/fxml/Professor/professor-main-view.fxml";
+                case STUDENT:
+                    java.net.URL studentFxml = getClass().getResource("/fxml/Student/student-main-screen.fxml");
+
+                    if (studentFxml == null) {
+                        studentFxml = getClass().getClassLoader().getResource("fxml/Student/student-main-screen.fxml");
+                    }
+
+                    if (studentFxml == null) {
+                        throw new java.io.IOException("Το αρχείο student-main-screen.fxml δεν βρέθηκε στον φάκελο fxml/Student/");
+                    }
+                    loader = new javafx.fxml.FXMLLoader(studentFxml);
+                    break;
+
+
+                case PROFESSOR:
+                    loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
+                    break;
+
+                case SECRETARY:
+                    loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Secretary/secretary-main-view.fxml"));
+                    break;
+
+                default:
+                    loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
+                    break;
             }
 
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource(fxml));
+            // Φόρτωση του FXML που επιλέχθηκε
             javafx.scene.Parent root = loader.load();
 
-            javafx.stage.Stage stage = (javafx.stage.Stage)
-                    emailField.getScene().getWindow();
+            // Αλλαγή της σκηνής στο παράθυρο
+            javafx.stage.Stage stage = (javafx.stage.Stage) emailField.getScene().getWindow();
             stage.setScene(new javafx.scene.Scene(root, 1000, 650));
             stage.setTitle("UniPath - Dashboard");
             stage.show();
@@ -202,6 +223,7 @@ public class LoginController {
             e.printStackTrace();
         }
     }
+
 
     private User getMockUser(String email) {
         if (email.startsWith("test.secretary")) {

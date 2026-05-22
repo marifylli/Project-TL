@@ -34,6 +34,15 @@ public class StudentProfile {
         System.out.println("Το προφίλ του φοιτητή " + this.studentId + " ενημερώθηκε επιτυχώς στις " + this.lastUpdated);
     }
 
+    public StudyPlan getStudyPlan() {
+        System.out.println("[Model] Κλήση της getStudyPlan() για τον φοιτητή " + this.studentId);
+        if (this.savedPlans != null && !this.savedPlans.isEmpty()) {
+            return this.savedPlans.get(0);
+        }
+        // Αν η λίστα είναι άδεια, επιστρέφουμε ένα mock αντικείμενο για να μην κρασάρει η εφαρμογή
+        return new StudyPlan();
+    }
+
     public int getStudentId() {
         return studentId;
     }

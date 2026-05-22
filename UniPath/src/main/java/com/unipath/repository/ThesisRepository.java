@@ -108,4 +108,29 @@ public class ThesisRepository {
         }
         return theses;
     }
+
+    // ── Ανάκτηση Διπλωματικής βάσει ID ─────────────────────────────
+    public Thesis getThesisById(int thesisId) {
+        String sql = "SELECT * FROM Thesis WHERE thesisId = ?";
+        try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
+            pstmt.setInt(1, thesisId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Thesis thesis = new Thesis();
+                thesis.setDiplomaticId(rs.getInt("thesisId"));
+                thesis.setProfessorId(rs.getInt("professorId"));
+                thesis.setTitle(rs.getString("title"));
+                thesis.setDescription(rs.getString("description"));
+                thesis.setPrerequisites(rs.getString("prerequisites"));
+                thesis.setRequiredECTS(rs.getInt("requiredECTS"));
+                thesis.setAvailable(rs.getBoolean("isAvailable"));
+                thesis.setMaxCandidates(rs.getInt("maxCandidates"));
+                thesis.setRequiredSkills(rs.getString("requiredSkills"));
+                return thesis;
+            }
+        } catch (SQLException e) {
+            System.out.println("Σφάλμα ανάκτησης: " + e.getMessage());
+        }
+        return null;
+    }
 }

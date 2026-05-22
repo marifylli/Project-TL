@@ -9,8 +9,6 @@ public class MyCoursesScreen {
     private ManageProfCourseEdit manageProfCourseEdit;
     private List<Course> courses;
 
-
-
     public MyCoursesScreen(ManageProfCourseEdit manageProfCourseEdit, List<Course> courses) {
         this.manageProfCourseEdit = manageProfCourseEdit;
         this.courses = courses;
@@ -23,5 +21,4 @@ public class MyCoursesScreen {
     public void selectCourse(Course course) {
         manageProfCourseEdit.onCourseSelected(course);
     }
-
 }

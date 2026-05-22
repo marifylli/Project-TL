@@ -4,8 +4,8 @@ public class UserSession {
     private static UserSession instance;
 
     private int userId;
-    private String username;
-    private String fullName;
+    private String email;
+    private String displayName;
     private String role;
 
     private UserSession() {}
@@ -17,22 +17,24 @@ public class UserSession {
         return instance;
     }
 
-    public void startSession(int userId, String username, String fullName, String role) {
+    // Συμβατό με τα 4 ορίσματα που καλεί ο LoginController
+    public void startSession(int userId, String email, String displayName, String role) {
         this.userId = userId;
-        this.username = username;
-        this.fullName = fullName;
+        this.email = email;
+        this.displayName = displayName;
         this.role = role;
+        System.out.println("[Session Started] Email αποθηκευμένο: " + this.email);
     }
 
     public void cleanSession() {
         this.userId = 0;
-        this.username = null;
-        this.fullName = null;
+        this.email = null;
+        this.displayName = null;
         this.role = null;
     }
 
     public int getUserId() { return userId; }
-    public String getUsername() { return username; }
-    public String getFullName() { return fullName; }
+    public String getEmail() { return email; } // Απαραίτητο για το CourseRepository!
+    public String getDisplayName() { return displayName; }
     public String getRole() { return role; }
 }

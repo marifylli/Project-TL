@@ -2,15 +2,15 @@ package com.unipath.ui.UC10;
 
 import com.unipath.controller.ManageThesisClass;
 import com.unipath.model.Thesis;
-import com.unipath.ui.common.ErrorScreen;
 import com.unipath.login.UserSession;
+import com.unipath.ui.common.ErrorScreen;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class ThesisFormScreen {
@@ -21,87 +21,86 @@ public class ThesisFormScreen {
     @FXML private TextField ectsField;
     @FXML private TextField maxCandidatesField;
     @FXML private TextArea requiredSkillsArea;
-    @FXML private Label errorLabel;
 
-    private final ManageThesisClass controller = new ManageThesisClass();
+    private final ManageThesisClass manager = new ManageThesisClass();
 
+    // Βήμα 4: selectCalendar()
     @FXML
-    private void onSelectCalendar() {
-        if (!validateForm()) return;
+    private void selectCalendar() {
+        // Βήμα 9: Το Σύστημα επικυρώνει τη συμπλήρωση (validateFields) ΠΡΙΝ προχωρήσει
+        if (!validateFields()) {
+            return; // alt [not all Fields]: Η ροή διακόπτεται και μένει στη φόρμα (Βήμα 3)
+        }
 
         try {
             int ects = Integer.parseInt(ectsField.getText().trim());
             int maxCandidates = Integer.parseInt(maxCandidatesField.getText().trim());
 
-            String prereqs = prerequisitesArea.getText() == null ? "" : prerequisitesArea.getText().trim();
-            String skills = requiredSkillsArea.getText() == null ? "" : requiredSkillsArea.getText().trim();
-
-            int activeProfessorId = UserSession.getInstance().getUserId();
-
             Thesis temporaryThesis = new Thesis(
-                    activeProfessorId,
+                    UserSession.getInstance().getUserId(),
                     titleField.getText().trim(),
                     descriptionArea.getText().trim(),
-                    prereqs,
+                    prerequisitesArea.getText().trim(),
                     ects,
                     maxCandidates,
-                    skills
+                    requiredSkillsArea.getText().trim()
             );
 
+            // Βήμα 5: requestCalendar() στον Controller
+            manager.requestCalendar(UserSession.getInstance().getUserId());
+
+            // Βήμα 6: Δημιουργία και εμφάνιση της MeetingCalendarScreen (display)
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/meeting-calendar-view.fxml"));
             Parent root = loader.load();
 
             MeetingCalendarScreen calendarScreen = loader.getController();
-
-            if (calendarScreen == null) {
-                showErrorWindow("Σφάλμα: Δεν βρέθηκε ο Controller του Ημερολογίου!\nΕλέγξτε το fx:controller στο meeting-calendar-view.fxml");
-                return;
-            }
-
             calendarScreen.setThesisContext(temporaryThesis, (Stage) titleField.getScene().getWindow());
 
             Stage stage = new Stage();
             stage.setTitle("Ημερολόγιο Συναντήσεων");
             stage.setScene(new Scene(root));
             stage.show();
+
         } catch (NumberFormatException e) {
-            showErrorWindow("Τα πεδία ECTS και Μέγιστος Αριθμός Υποψηφίων πρέπει να περιέχουν μόνο αριθμούς!");
+            highligthMissingFields("Τα πεδία ECTS και Μέγιστος Αριθμός Υποψηφίων πρέπει να είναι έγκυροι αριθμοί!");
         } catch (Exception e) {
-            showErrorWindow("Σφάλμα συστήματος κατά τη φόρτωση του ημερολογίου.");
             e.printStackTrace();
         }
     }
 
-    private boolean validateForm() {
-        StringBuilder missingFields = new StringBuilder();
+    // Εσωτερικό μήνυμα validateFields() του διαγράμματος
+    public boolean validateFields() {
+        if (titleField.getText() == null || titleField.getText().isBlank() ||
+                descriptionArea.getText() == null || descriptionArea.getText().isBlank() ||
+                ectsField.getText() == null || ectsField.getText().isBlank() ||
+                maxCandidatesField.getText() == null || maxCandidatesField.getText().isBlank()) {
 
-        if (titleField.getText().isBlank()) missingFields.append("- Τίτλος Θέματος\n");
-        if (descriptionArea.getText().isBlank()) missingFields.append("- Περιγραφή\n");
-        if (ectsField.getText().isBlank()) missingFields.append("- Απαιτούμενα ECTS\n");
-        if (maxCandidatesField.getText().isBlank()) missingFields.append("- Μέγιστος Αριθμός Υποψηφίων\n");
-
-        if (missingFields.length() > 0) {
-            showErrorWindow("Δεν συμπληρώθηκαν τα υποχρεωτικά πεδία:\n" + missingFields.toString());
+            // alt [not all Fields] -> trigger οθόνης σφάλματος
+            highligthMissingFields("Δεν συμπληρώθηκαν όλα τα υποχρεωτικά πεδία!");
             return false;
         }
         return true;
     }
 
-    private void showErrorWindow(String msg) {
+    // Μήνυμα highligthMissingFields() στην ErrorScreen (alt [not all Fields])
+    private void highligthMissingFields(String errorMessage) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
             Parent root = loader.load();
 
             ErrorScreen errorScreen = loader.getController();
-            errorScreen.setErrorMessage(msg);
+            errorScreen.setErrorMessage(errorMessage);
 
-            Stage stage = new Stage();
-            stage.setTitle("Οθόνη Σφάλματος");
-            stage.setScene(new Scene(root));
-            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-            stage.showAndWait();
+            Stage errorStage = new Stage();
+            errorStage.setTitle("Σφάλμα Συμπλήρωσης");
+            errorStage.setScene(new Scene(root));
+
+            // 9.α.3: Modal για να κλειδώσει η πίσω οθόνη μέχρι να πατηθεί το "κλείσιμο"
+            errorStage.initModality(Modality.APPLICATION_MODAL);
+            errorStage.showAndWait();
+
         } catch (Exception e) {
-            if (errorLabel != null) errorLabel.setText(msg);
+            e.printStackTrace();
         }
     }
 }

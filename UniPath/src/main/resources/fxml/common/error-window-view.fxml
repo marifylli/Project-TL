@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox spacing="20.0" alignment="CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.unipath.ui.common.ErrorWindowScreen" style="-fx-background-color: #fff5f5; -fx-border-color: #e74c3c; -fx-border-width: 2px;">
+      fx:controller="com.unipath.ui.common.ErrorScreen" style="-fx-background-color: #fff5f5; -fx-border-color: #e74c3c; -fx-border-width: 2px;">
     <children>
         <Label text="Προσοχή / Σφάλμα" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;"/>
 

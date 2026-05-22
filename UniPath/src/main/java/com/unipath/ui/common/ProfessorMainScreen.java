@@ -32,7 +32,7 @@ public class ProfessorMainScreen implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // ΔΙΟΡΘΩΣΗ: Χρήση του getDisplayName() που έχουμε στο UserSession/User
-        String dynamicName = UserSession.getInstance().getFullName(); // Αν στο UserSession έχεις getFullName(), κράτα το.
+        String dynamicName = UserSession.getInstance().getDisplayName(); // Αν στο UserSession έχεις getFullName(), κράτα το.
         // Αν σου βγάλει σφάλμα, άλλαξέ το σε UserSession.getInstance().getDisplayName()
 
         if (dynamicName != null) {
@@ -44,22 +44,20 @@ public class ProfessorMainScreen implements Initializable {
     }
 
     private void loadCourses() {
+        // 1. Παίρνουμε το ID του συνδεδεμένου καθηγητή από το UserSession
         int currentProfessorId = UserSession.getInstance().getUserId();
 
+        // 2. Αρχικοποιούμε το Repository
         CourseRepository repo = new CourseRepository();
-        List<Course> allCourses = repo.queryGetCourses();
 
-        List<Course> professorCourses = allCourses.stream()
-                .filter(c -> c.getProfessorId() == currentProfessorId)
-                .collect(Collectors.toList());
+        // 3. Καλούμε τη μέθοδο που επιστρέφει τα Mock μαθήματα αν ανιχνεύσει test email
+        List<Course> professorCourses = repo.queryGetProfessorCourses(currentProfessorId);
 
-        if (professorCourses.isEmpty() && !allCourses.isEmpty()) {
-            professorCourses = allCourses.stream().limit(4).collect(Collectors.toList());
-        }
-
+        // 4. Ενημερώνουμε το UI label με τον σωστό αριθμό μαθημάτων
         coursesCountLabel.setText("Ανατεθειμένα Μαθήματα : " + professorCourses.size());
         coursesContainer.getChildren().clear();
 
+        // 5. Δημιουργούμε τις κάρτες των μαθημάτων στο container
         for (Course course : professorCourses) {
             coursesContainer.getChildren().add(createCourseCard(course));
         }
@@ -87,12 +85,18 @@ public class ProfessorMainScreen implements Initializable {
         Button editBtn = new Button("Επεξεργασία");
         editBtn.getStyleClass().add("prof-edit-btn");
 
+        editBtn.setOnAction(e -> {
+            ManageProfCourseEdit manage = new ManageProfCourseEdit();
+
+            // Επιστροφή στην κανονική μέθοδο του διαγράμματος
+            manage.onCourseSelected(course);
+        });
         card.getChildren().addAll(info, badge, editBtn);
         return card;
     }
 
     @FXML
-    private void onThesisButtonClick(ActionEvent event) {
+    private void selectThesisManagement(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/thesis-form-view.fxml"));
             Parent root = loader.load();

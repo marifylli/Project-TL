@@ -36,6 +36,7 @@ public class ManageProfCourseEdit {
             myCoursesScreen.displayProfCourses();
         } else {
             System.out.println("Ο καθηγητής δεν έχει ανατεθειμένα μαθήματα.");
+            displayErrorScreen();
         }
     }
 
@@ -47,6 +48,7 @@ public class ManageProfCourseEdit {
 
     // Όταν πατηθεί το κουμπί επεξεργασίας πεδίων
     public void onEditCourseFields() {
+        System.out.println("Επεξεργασία πεδίων για το μάθημα: " + selectedCourse.getTitle());
 
     }
 
@@ -69,18 +71,22 @@ public class ManageProfCourseEdit {
 
         if (success) {
             selectedCourse.setRules(updatedRules);
-            loadSuccessScreen();
+            diplaySuccessScreen();
+        }else {
+            displayErrorScreen();
         }
+
     }
 
     public void onCancelRules() {
         if (rulesScreen != null) {
             rulesScreen.deleteChanges();
+            displayErrorScreen();
         }
     }
 
 
-    private void loadSuccessScreen() {
+    private void diplaySuccessScreen() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/unipath/ui/common/SuccessScreen.fxml"));
             Parent root = loader.load();
@@ -97,7 +103,7 @@ public class ManageProfCourseEdit {
         }
     }
 
-    private void loadErrorScreen() {
+    private void displayErrorScreen() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/unipath/ui/common/ErrorScreen.fxml"));
             Parent root = loader.load();

@@ -20,7 +20,7 @@ public class CourseRepository {
     public List<Course> queryGetCourses() {
         List<Course> courses = new ArrayList<>();
         String sql = """
-            SELECT courseId, title, description, ects, semester, professorID, groupA, groupB, 
+            SELECT courseId, title, description, ects, semester, professorId, groupA, groupB, 
                    directions, isActive, averageRating, workloadScore, workloadRank, 
                    lastModifiedDate, lastModifiedBy, rules, prerequisites 
             FROM Course
@@ -50,14 +50,13 @@ public class CourseRepository {
         List<Course> professorCourses = new ArrayList<>();
 
         String sql = """
-            SELECT courseId, title, description, ects, semester, professorID,
-                   groupA, groupB, directions, isActive, averageRating, 
-                   workloadScore, workloadRank, lastModifiedDate, 
-                   lastModifiedBy, rules, prerequisites
-            FROM Course
-            WHERE professorID = ?
-        """;
-
+    SELECT courseId, title, description, ects, semester, professorId,
+           groupA, groupB, directions, isActive, averageRating, 
+           workloadScore, workloadRank, lastModifiedDate, 
+           lastModifiedBy, rules, prerequisites
+    FROM Course
+    WHERE professorId = ?
+""";
         try {
             Connection conn = DBManager.getInstance().connect();
 
@@ -148,7 +147,7 @@ public class CourseRepository {
         course.setSemester(rs.getInt("semester"));
 
         // Διαβάζουμε τη νέα στήλη από τη βάση και τη δίνουμε στο Model
-        course.setProfessorId(rs.getInt("professorID"));
+        course.setProfessorId(rs.getInt("professorId"));
 
         course.setGroupA(rs.getInt("groupA") == 1);
         course.setGroupB(rs.getInt("groupB") == 1);

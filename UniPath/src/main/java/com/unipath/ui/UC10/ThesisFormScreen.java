@@ -2,18 +2,16 @@ package com.unipath.ui.UC10;
 
 import com.unipath.controller.ManageThesisClass;
 import com.unipath.model.Thesis;
-import com.unipath.ui.common.ErrorScreen;
 import com.unipath.login.UserSession;
+import com.unipath.ui.common.ErrorScreen;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
-
 
 public class ThesisFormScreen {
 
@@ -23,13 +21,16 @@ public class ThesisFormScreen {
     @FXML private TextField ectsField;
     @FXML private TextField maxCandidatesField;
     @FXML private TextArea requiredSkillsArea;
-    @FXML private Label errorLabel;
 
-    private final ManageThesisClass controller = new ManageThesisClass();
+    private final ManageThesisClass manager = new ManageThesisClass();
 
+    // Βήμα 4: selectCalendar()
     @FXML
-    private void selectThesisManagement() {
-        if (!validateForm()) return;
+    private void selectCalendar() {
+        // Βήμα 9: Το Σύστημα επικυρώνει τη συμπλήρωση (validateFields) ΠΡΙΝ προχωρήσει
+        if (!validateFields()) {
+            return; // alt [not all Fields]: Η ροή διακόπτεται και μένει στη φόρμα (Βήμα 3)
+        }
 
         try {
             int ects = Integer.parseInt(ectsField.getText().trim());
@@ -45,6 +46,10 @@ public class ThesisFormScreen {
                     requiredSkillsArea.getText().trim()
             );
 
+            // Βήμα 5: requestCalendar() στον Controller
+            manager.requestCalendar(UserSession.getInstance().getUserId());
+
+            // Βήμα 6: Δημιουργία και εμφάνιση της MeetingCalendarScreen (display)
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/meeting-calendar-view.fxml"));
             Parent root = loader.load();
 
@@ -57,53 +62,45 @@ public class ThesisFormScreen {
             stage.show();
 
         } catch (NumberFormatException e) {
-            showErrorWindow("Τα πεδία ECTS και Μέγιστος Αριθμός Υποψηφίων πρέπει να είναι αριθμοί!");
+            highligthMissingFields("Τα πεδία ECTS και Μέγιστος Αριθμός Υποψηφίων πρέπει να είναι έγκυροι αριθμοί!");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    private boolean validateForm() {
-        StringBuilder missingFields = new StringBuilder();
 
-        if (titleField.getText().isBlank()) missingFields.append("- Τίτλος Θέματος\n");
-        if (descriptionArea.getText().isBlank()) missingFields.append("- Περιγραφή\n");
-        if (ectsField.getText().isBlank()) missingFields.append("- Απαιτούμενα ECTS\n");
-        if (maxCandidatesField.getText().isBlank()) missingFields.append("- Μέγιστος Αριθμός Υποψηφίων\n");
+    // Εσωτερικό μήνυμα validateFields() του διαγράμματος
+    public boolean validateFields() {
+        if (titleField.getText() == null || titleField.getText().isBlank() ||
+                descriptionArea.getText() == null || descriptionArea.getText().isBlank() ||
+                ectsField.getText() == null || ectsField.getText().isBlank() ||
+                maxCandidatesField.getText() == null || maxCandidatesField.getText().isBlank()) {
 
-        if (missingFields.length() > 0) {
-            showErrorWindow("Δεν συμπληρώθηκαν τα υποχρεωτικά πεδία:\n" + missingFields.toString());
+            // alt [not all Fields] -> trigger οθόνης σφάλματος
+            highligthMissingFields("Δεν συμπληρώθηκαν όλα τα υποχρεωτικά πεδία!");
             return false;
         }
         return true;
     }
 
-    private void showErrorWindow(String msg) {
+    // Μήνυμα highligthMissingFields() στην ErrorScreen (alt [not all Fields])
+    private void highligthMissingFields(String errorMessage) {
         try {
-            // Φορτώνουμε το fxml της οθόνης σφάλματος (πρέπει να έχεις ένα error-window-view.fxml)
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
             Parent root = loader.load();
 
-            // Παίρνουμε τον controller της οθόνης σφάλματος για να περάσουμε το μήνυμα
             ErrorScreen errorScreen = loader.getController();
-            errorScreen.setErrorMessage(msg);
+            errorScreen.setErrorMessage(errorMessage);
 
-            // Δημιουργούμε νέο παράθυρο (Stage)
             Stage errorStage = new Stage();
             errorStage.setTitle("Σφάλμα Συμπλήρωσης");
             errorStage.setScene(new Scene(root));
 
-            // Modal σημαίνει ότι ο χρήστης ΔΕΝ μπορεί να αγγίξει την πίσω οθόνη
-            // μέχρι να κλείσει το error (ακριβώς όπως λέει η ροή 9.α.3)
-            errorStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            // 9.α.3: Modal για να κλειδώσει η πίσω οθόνη μέχρι να πατηθεί το "κλείσιμο"
+            errorStage.initModality(Modality.APPLICATION_MODAL);
             errorStage.showAndWait();
 
         } catch (Exception e) {
-            // Fallback αν δεν βρεθεί το FXML, εμφάνιση σε alert box
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Σφάλμα");
-            alert.setHeaderText(null);
-            alert.setContentText(msg);
-            alert.showAndWait();
+            e.printStackTrace();
         }
     }
 }

@@ -46,7 +46,7 @@
 
         <HBox spacing="10.0" alignment="CENTER_RIGHT">
             <children>
-                <Button text="Διασύνδεση Ημερολογίου" onAction="#selectThesisManagement"
+                <Button text="Διασύνδεση Ημερολογίου" onAction="#selectCalendar"
                         style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-weight: bold;"/>
             </children>
         </HBox>

@@ -115,8 +115,6 @@ public class Thesis {
 
 
 
-
-
     public void findAllThesis() {}
     public void findThesisDetails() {}
 }

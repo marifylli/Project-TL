@@ -58,18 +58,26 @@ public class StudentMainScreen {
         }
     }
 
-
     // 📅 ΕΝΕΡΓΕΙΑ ΓΙΑ ΤΟ USE CASE ΤΗΣ ΟΜΑΔΑΣ (UC1)
     @FXML
     public void clickCreatePlan() {
         try {
-            System.out.println("=== Έναρξη UC1: Διαχείριση Προγράμματος Σπουδών ===");
-            ManageStudyPlan manage = new ManageStudyPlan();
-            manage.startCreatePlan();
+            System.out.println("=== Έναρξη UC3: Προσομοίωση και Εξισορρόπηση Φόρτου Εργασίας ===");
+
+            // Αρχικοποιούμε τον ολοκαίνουργιο controller του UC3
+            com.unipath.controller.ManageWorkLoadClass workloadController = new com.unipath.controller.ManageWorkLoadClass();
+
+            // Παίρνουμε το τρέχον Stage και ξεκινάμε την ανάλυση
+            Stage stage = (Stage) studyPlanButton.getScene().getWindow();
+            workloadController.startAnalysis(stage);
+
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC1:");
+            System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC3:");
             e.printStackTrace();
         }
     }
+
+
+
 }
 

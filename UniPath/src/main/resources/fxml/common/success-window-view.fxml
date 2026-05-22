@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox spacing="20.0" alignment="CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.unipath.ui.common.SuccessWindowScreen" style="-fx-background-color: #f4fbf7; -fx-border-color: #2ecc71; -fx-border-width: 2px;">
+      fx:controller="com.unipath.ui.common.SuccessScreen" style="-fx-background-color: #f4fbf7; -fx-border-color: #2ecc71; -fx-border-width: 2px;">
     <children>
         <Label text="Επιτυχής Ενέργεια" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2ecc71;"/>
 

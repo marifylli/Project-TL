@@ -179,7 +179,6 @@ public class ManageProfCourseEdit {
                 }
             }
 
-            // Αν βρήκαμε το Label, του βάζουμε το δικό μας έξυπνο μήνυμα!
             if (lbl != null) {
                 lbl.setText(message);
             }

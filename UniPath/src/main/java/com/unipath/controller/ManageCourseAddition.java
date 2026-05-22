@@ -62,7 +62,7 @@ public class ManageCourseAddition {
         course.setCourseID(courseId);
         course.setTitle(title);
         course.setDescription(description);
-        course.setEcts(ects);
+        course.setECTS(ects);
         course.setSemester(semester);
 
         // Βήμα 8: saveCourse() στη βάση

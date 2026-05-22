@@ -39,8 +39,8 @@ public class Course {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public int getECTS() { return ects; }
-    public void setECTS(int ects) { this.ects = ects; }
+    public int getEcts() { return ects; }
+    public void setEcts(int ects) { this.ects = ects; }
 
     public int getSemester() { return semester; }
     public void setSemester(int semester) { this.semester = semester; }

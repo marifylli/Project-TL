@@ -51,7 +51,7 @@ public class EvaluationRepository {
                 Course course = new Course();
                 course.setCourseID(rs.getString("courseId"));
                 course.setTitle(rs.getString("title"));
-                course.setEcts(rs.getInt("ects"));
+                course.setECTS(rs.getInt("ects"));
                 course.setSemester(rs.getInt("semester"));
                 courses.add(course);
             }

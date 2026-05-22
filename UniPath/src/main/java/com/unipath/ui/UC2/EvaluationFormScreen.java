@@ -1,71 +1,87 @@
-package ui.UC2;
+package com.unipath.ui.UC2;
 
-import controller.ManageEvaluation;
-import javafx.geometry.Pos;
+import com.unipath.controller.ManageEvaluation;
+import com.unipath.ui.common.SuccessScreen;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class EvaluationFormScreen {
-    private Stage stage;
-    private ManageEvaluation controller;
-    private String courseId;
 
-    public EvaluationFormScreen(Stage stage, ManageEvaluation controller, String courseId) {
-        this.stage = stage;
-        this.controller = controller;
-        this.courseId = courseId;
+    @FXML private Label courseTitleLabel;
+    @FXML private TextField ratingField;
+    @FXML private TextArea commentArea;
+    @FXML private Label errorLabel;
+
+    private final ManageEvaluation controller = new ManageEvaluation();
+    private String currentCourseId;
+    private Stage previousStageReference;
+
+    public void setEvaluationContext(String courseId, Stage previousStage) {
+        this.currentCourseId = courseId;
+        this.previousStageReference = previousStage;
+
+        if (courseTitleLabel != null) {
+            courseTitleLabel.setText("Μάθημα: " + courseId);
+        }
     }
 
-    public void display() {
-        Label titleLabel = new Label("Αξιολόγηση Μαθήματος: " + courseId);
-        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        Label ratingLabel = new Label("Βαθμολογία (1-5):");
-        TextField ratingField = new TextField(); // Ή Slider, ανάλογα με το UI προτιμήσεων
-        ratingField.setPromptText("π.χ. 5");
+    @FXML
+    private void onSubmitEvaluation() {
+        errorLabel.setText("");
+        String ratingText = ratingField.getText().trim();
+        String comments = commentArea.getText().trim();
 
-        Label commentLabel = new Label("Σχόλια:");
-        TextArea commentArea = new TextArea();
-        commentArea.setPromptText("Εισάγετε τα σχόλιά σας εδώ...");
+        // Βήμα 8 (sd2): checkFields() στον Controller
+        if (!controller.checkFields(ratingText, comments)) {
+            // Εναλλακτική Ροή 2: HighlightMissingFields / Σφάλμα
+            errorLabel.setText("Συμπληρώστε σωστά όλα τα πεδία (Βαθμός 1-5)!");
+            ratingField.setStyle("-fx-border-color: red;");
+            return;
+        }
 
-        Button submitButton = new Button("Υποβολή Αξιολόγησης");
+        int rating = Integer.parseInt(ratingText);
 
-        submitButton.setOnAction(e -> {
-            String ratingText = ratingField.getText();
-            String comments = commentArea.getText();
+        // Βήμα 9 (sd2): saveEvaluation()
+        boolean isSaved = controller.saveEvaluation(currentCourseId, rating, comments);
 
-            // Βήμα 6: checkFields() στον controller
-            boolean fieldsValid = controller.checkFields(ratingText, comments);
+        // Βήμα 11 (sd2): updateCourseStats()
+        if (isSaved) {
+            controller.updateCourseStats(currentCourseId);
 
-            if (!fieldsValid) {
-                // Εναλλακτική Ροή: HighlightMissingFields()
-                ratingField.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                commentArea.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                System.out.println("Σφάλμα: Παρακαλώ συμπληρώστε όλα τα πεδία σωστά.");
-            } else {
-                // Βασική Ροή: Αποθήκευση και Ενημέρωση Στατιστικών
-                int rating = Integer.parseInt(ratingText);
-                controller.saveEvaluation(courseId, rating, comments);
-                controller.updateCourseStats(courseId);
+            // Κλείσιμο παραθύρων
+            if (previousStageReference != null) previousStageReference.close();
+            ((Stage) ratingField.getScene().getWindow()).close();
 
-                // Εμφάνιση SuccessScreen (Κοινή κλάση του project)
-                showSuccessScreen("Η αξιολόγησή σας υποβλήθηκε με επιτυχία! Ευχαριστούμε.");
-            }
-        });
-
-        VBox layout = new VBox(12, titleLabel, ratingLabel, ratingField, commentLabel, commentArea, submitButton);
-        layout.setAlignment(Pos.CENTER_LEFT);
-        layout.setStyle("-fx-padding: 20px;");
-
-        Scene scene = new Scene(layout, 450, 500);
-        stage.setScene(scene);
-        stage.show();
+            // Εμφάνιση SuccessScreen της ομάδας
+            showSuccessWindow();
+        } else {
+            errorLabel.setText("Σφάλμα κατά την αποθήκευση της αξιολόγησης.");
+        }
     }
 
-    private void showSuccessScreen(String message) {
-        System.out.println("[SUCCESS SCREEN]: " + message);
+    private void showSuccessWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
+            Parent root = loader.load();
+
+            SuccessScreen successScreen = loader.getController();
+            successScreen.setSuccessMessage("Η αξιολόγησή σας υποβλήθηκε με επιτυχία!");
+
+            Stage stage = new Stage();
+            stage.setTitle("Επιτυχία");
+            stage.setScene(new Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

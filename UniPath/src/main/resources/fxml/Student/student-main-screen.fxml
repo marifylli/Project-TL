@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.unipath.ui.common.StudentMainScreen"
+            prefWidth="1000" prefHeight="650"
+            stylesheets="@../../css/styles.css">
+
+    <top>
+        <HBox styleClass="prof-header" alignment="CENTER_LEFT" spacing="10">
+            <padding><Insets top="16" right="24" bottom="16" left="24"/></padding>
+            <Label fx:id="studentNameLabel" text="Φοιτητής: ..." styleClass="prof-header-name"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="profileButton" text="👤" styleClass="prof-icon-btn"/>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="24">
+            <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+            <VBox spacing="12" HBox.hgrow="ALWAYS">
+                <Label fx:id="coursesCountLabel" text="Εγγεγραμμένα Μαθήματα : 0" styleClass="prof-section-title"/>
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="prof-scroll">
+                    <VBox fx:id="coursesContainer" spacing="10">
+                        <padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <VBox spacing="20" minWidth="250" alignment="TOP_CENTER">
+                <padding><Insets top="40"/></padding>
+
+                <Button fx:id="evaluateButton" text="📝 Αξιολόγηση Μαθημάτων"
+                        styleClass="prof-action-btn-primary" onAction="#clickEvaluateCourses"
+                        maxWidth="Infinity" wrapText="true"/>
+
+                <Button fx:id="studyPlanButton" text="📅 Πρόγραμμα Σπουδών"
+                        styleClass="prof-action-btn-secondary" onAction="#clickCreatePlan"
+                        maxWidth="Infinity"/>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>
+
+
+
+

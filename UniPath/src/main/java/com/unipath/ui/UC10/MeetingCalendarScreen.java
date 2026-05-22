@@ -1,6 +1,7 @@
 package com.unipath.ui.UC10;
 
 import com.unipath.controller.ManageThesisClass;
+import com.unipath.controller.ManageThesisInterest;
 import com.unipath.model.AvailabilitySlot;
 import com.unipath.model.Calendar;
 import com.unipath.model.Thesis;
@@ -29,10 +30,15 @@ public class MeetingCalendarScreen {
 
     private final ManageThesisClass controller = new ManageThesisClass();
     private final ObservableList<String> slots = FXCollections.observableArrayList();
+    private final ManageThesisInterest manager = new ManageThesisInterest();
 
     private Thesis thesisToPublish;
     private Stage formStageReference;
     private final List<String[]> temporarySlotsData = new ArrayList<>();
+
+    private int selectedSlotId;
+    private int thesisId;
+    private int professorId;
 
     @FXML
     public void initialize() {
@@ -134,6 +140,18 @@ public class MeetingCalendarScreen {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    @FXML
+    private void handleConfirmAppointment() { // Βήμα 8
+        int studentId = UserSession.getInstance().getUserId();
+
+        // Βήμα 9: Καταχώρηση στη βάση
+        boolean success = manager.selectConfirmAppointment(studentId, professorId, selectedSlotId, thesisId);
+
+        if (success) {
+            // Βήμα 10: Επιτυχία
+            System.out.println("Το ραντεβού καταχωρήθηκε επιτυχώς!");
         }
     }
 

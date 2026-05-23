@@ -130,8 +130,33 @@ public class ManageStudyPlan {
         }
     }
     public void onConfirmPlan(Scenario scenario, List<Course> courses) {
-        confirmationScreen = new ConfirmationScreen(this);
-        confirmationScreen.displayConfirmation();
+        System.out.println("DEBUG: Ο χρήστης επιβεβαίωσε το πρόγραμμα σπουδών. Αποθήκευση και εμφάνιση Success Screen...");
+
+        try {
+            // 1. Φόρτωση του FXML για την οθόνη επιτυχίας από τον κοινό φάκελο (common)
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // 2. Αν η κλάση SuccessScreen χρειάζεται κάποια αρχικοποίηση, την κάνεις εδώ.
+            // Για παράδειγμα, αν έχει μέθοδο setManageStudyPlan:
+            // com.unipath.ui.common.SuccessScreen successScreen = loader.getController();
+
+            // 3. Αλλαγή της σκηνής στο mainStage για να φανεί το Success Screen
+            if (mainStage != null) {
+                javafx.scene.Scene scene = new javafx.scene.Scene(root, 650, 550);
+                if (getClass().getResource("/css/styles.css") != null) {
+                    scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+                }
+                mainStage.setTitle("Επιτυχής Υποβολή - UniPath");
+                mainStage.setScene(scene);
+                mainStage.sizeToScene();
+                mainStage.show();
+            }
+
+        } catch (java.io.IOException e) {
+            System.err.println("Σφάλμα κατά τη φόρτωση της οθόνης επιτυχίας: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 
@@ -147,9 +172,20 @@ public class ManageStudyPlan {
         return total;
     }
 
-    public void removeCourses(){
 
+    public void removeCourses() {
+        System.out.println("DEBUG: Εκτέλεση της removeCourses(). Καθαρισμός επιλογών και επανεκκίνηση...");
+
+
+        this.selectedScenario = null;
+
+        this.selectedCourses = null;
+
+
+        startCreatePlan();
     }
+
+
 
     public boolean validateRules() {
         return true;

@@ -27,8 +27,11 @@
 
             <Label text="Επιλεγμένα Μαθήματα προς Εγγραφή:" styleClass="field-label"/>
             <ListView fx:id="summaryListView" prefHeight="150"/>
+            <HBox spacing="10" alignment="CENTER">
 
             <Button text="Οριστική Υποβολή" styleClass="btn-primary" maxWidth="Infinity" onAction="#handleConfirm"/>
+            <Button text="Καθαρισμός" styleClass="btn-secondary" maxWidth="Infinity" onAction="#handleClear"/>
+            </HBox>
         </VBox>
     </VBox>
 </VBox>

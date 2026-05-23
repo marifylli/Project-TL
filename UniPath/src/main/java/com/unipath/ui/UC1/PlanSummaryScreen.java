@@ -27,12 +27,12 @@ public class PlanSummaryScreen {
     }
 
 
-
     public PlanSummaryScreen(ManageStudyPlan manageStudyPlan, Scenario scenario, List<Course> courses) {
         this.manageStudyPlan = manageStudyPlan;
         this.scenario = scenario;
         this.courses = courses;
     }
+
     public void setSummaryData(ManageStudyPlan manageStudyPlan, Scenario scenario, List<Course> courses) {
         this.manageStudyPlan = manageStudyPlan;
         this.scenario = scenario;
@@ -69,17 +69,24 @@ public class PlanSummaryScreen {
     }
 
 
-
     public void confirmSave() {
-        manageStudyPlan.onConfirmPlan(scenario, courses);
+        if (manageStudyPlan != null) {
+            manageStudyPlan.onConfirmPlan(scenario, courses);
+        }
     }
 
     @FXML
     private void handleConfirm() {
         confirmSave();
     }
+
+
+
     @FXML
-    private void handleBack() {
-        manageStudyPlan.onScenarioSelected(scenario);
+    private void handleClear() {
+        if (manageStudyPlan != null) {
+            // Καλεί τη μέθοδο του controller για να καθαρίσει τα δεδομένα και να γυρίσει πίσω
+            manageStudyPlan.removeCourses();
+        }
     }
 }

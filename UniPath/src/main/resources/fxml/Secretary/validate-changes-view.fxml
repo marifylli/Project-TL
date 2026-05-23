@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.unipath.ui.UC6.ValidateChangesScreen"
+            prefWidth="700" prefHeight="500"
+            stylesheets="@../../css/styles.css">
+    <top>
+        <HBox styleClass="prof-header" alignment="CENTER_LEFT" spacing="10">
+            <padding><Insets top="16" right="24" bottom="16" left="24"/></padding>
+            <Label text="✅ Επιβεβαίωση Αλλαγών" styleClass="prof-header-name"/>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="20" alignment="CENTER">
+            <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+            <Label text="Παρακαλώ επιβεβαιώστε τις παρακάτω αλλαγές:"
+                   styleClass="prof-section-title" wrapText="true"/>
+            <VBox spacing="10" style="-fx-background-color: #f7fafc; -fx-padding: 20; -fx-background-radius: 8;">
+                <HBox spacing="10">
+                    <Label text="Τίτλος:" style="-fx-font-weight: bold; -fx-min-width: 130;"/>
+                    <Label fx:id="titleLabel" text="-"/>
+                </HBox>
+                <HBox spacing="10">
+                    <Label text="ECTS:" style="-fx-font-weight: bold; -fx-min-width: 130;"/>
+                    <Label fx:id="ectsLabel" text="-"/>
+                </HBox>
+                <HBox spacing="10">
+                    <Label text="Εξάμηνο:" style="-fx-font-weight: bold; -fx-min-width: 130;"/>
+                    <Label fx:id="semesterLabel" text="-"/>
+                </HBox>
+                <HBox spacing="10">
+                    <Label text="Περιγραφή:" style="-fx-font-weight: bold; -fx-min-width: 130;"/>
+                    <Label fx:id="descriptionLabel" text="-" wrapText="true"/>
+                </HBox>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="← Ακύρωση" styleClass="prof-action-btn" onAction="#onCancel"/>
+                <Button text="✅ Επιβεβαίωση" styleClass="prof-action-btn-primary" onAction="#onConfirm"/>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>
+
+

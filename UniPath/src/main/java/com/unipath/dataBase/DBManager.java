@@ -27,6 +27,7 @@ public class DBManager {
             stmt.execute("PRAGMA foreign_keys = ON");
             stmt.close();
             System.out.println("SQLite Successfully connected");
+            createTables();
         }
         return connection;
     }
@@ -102,6 +103,7 @@ public class DBManager {
                 title TEXT NOT NULL,
                 description TEXT,
                 ects INTEGER,
+                professorID INTEGER,
                 semester INTEGER,
                 groupA INTEGER DEFAULT 0,
                 groupB INTEGER DEFAULT 0,
@@ -113,7 +115,7 @@ public class DBManager {
                 lastModifiedDate TEXT,
                 lastModifiedBy TEXT,
                 rules TEXT,
-                prerequisites TEXT
+                prerequisites TEXT          
             )
         """);
 

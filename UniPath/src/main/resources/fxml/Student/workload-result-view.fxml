@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.unipath.ui.UC3.WorkLoadResultScreen"
+            prefWidth="1000" prefHeight="650"
+            stylesheets="@../../css/styles.css">
+
+    <top>
+        <HBox styleClass="prof-header" alignment="CENTER_LEFT" spacing="10">
+            <padding><Insets top="16" right="24" bottom="16" left="24"/></padding>
+            <Label text="📊 Αποτελέσματα Φόρτου Εργασίας (UC3)" styleClass="prof-header-name"/>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="24">
+            <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+            <VBox spacing="12" HBox.hgrow="ALWAYS">
+                <Label text="Ταξινόμηση Μαθημάτων βάσει Φόρτου (Υψηλός -> Χαμηλός):" styleClass="prof-section-title"/>
+                <ListView fx:id="sortedCoursesListView" VBox.vgrow="ALWAYS" styleClass="prof-scroll"/>
+            </VBox>
+
+            <VBox spacing="25" minWidth="300" alignment="TOP_CENTER" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+                <Label text="Συνολικός Δείκτης Φόρτου" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #4a5568;"/>
+
+                <Label fx:id="workloadIndexLabel" text="0.0" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #e53e3e;"/>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <Button fx:id="btnConfirm" text="✓ Επιβεβαίωση &amp; Αποθήκευση"
+                        styleClass="prof-action-btn-primary" onAction="#onConfirmAnalysis" maxWidth="Infinity"/>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>
+

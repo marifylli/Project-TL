@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.unipath.ui.UC1.ConfirmationScreen"
+      alignment="CENTER" spacing="20" prefWidth="500" prefHeight="400" styleClass="root-pane">
+
+    <VBox styleClass="login-card" maxWidth="400" prefHeight="300" alignment="CENTER" style="-fx-padding: 30;">
+        <Label text="UC1 - Study Plan" styleClass="role-badge"/>
+
+        <Label fx:id="statusTitle" styleClass="success-title"/>
+        <Label fx:id="messageLabel" styleClass="field-label" wrapText="true"/>
+
+        <Button text="Επιστροφή στο Μενού" styleClass="btn-primary" prefWidth="200" onAction="#handleClose"/>
+    </VBox>
+</VBox>

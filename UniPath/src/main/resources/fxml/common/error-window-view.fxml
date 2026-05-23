@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20.0" alignment="CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.unipath.ui.common.ErrorScreen" style="-fx-background-color: #fff5f5; -fx-border-color: #e74c3c; -fx-border-width: 2px;">
+    <children>
+        <Label text="Προσοχή / Σφάλμα" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;"/>
+
+        <Label fx:id="errorMessageLabel" text="Μήνυμα Σφάλματος" wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #333333; -fx-text-alignment: center;"/>
+
+        <Button text="Κλείσιμο Μηνύματος" onAction="#onClose"
+                style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+    </children>
+    <padding>
+        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
+    </padding>
+</VBox>

@@ -1,10 +1,42 @@
 package com.unipath.ui.UC5;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.net.URL;
+
 public class SuccessScreen {
 
-    // Η μέθοδος display() πρέπει να ανήκει απευθείας στην κλάση SuccessScreen
     public void display() {
-        System.out.println("Εμφάνιση Οθόνης Επιτυχίας: Το μάθημα προστέθηκε!");
-        // Εδώ αργότερα θα μπει ο JavaFX κώδικας για να εμφανίζεται το παράθυρο
+        try {
+            URL fxmlUrl = getClass().getResource("/fxml/common/success-window-view.fxml");
+            if (fxmlUrl == null) {
+                fxmlUrl = getClass().getClassLoader().getResource("fxml/common/success-window-view.fxml");
+            }
+            if (fxmlUrl == null) {
+                System.err.println("Σφάλμα: Δεν βρέθηκε το success-window-view.fxml!");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Parent root = loader.load();
+
+            // Χρησιμοποιούμε το fully qualified name για να αποφύγουμε σύγκρουση
+            com.unipath.ui.common.SuccessScreen controller = loader.getController();
+            controller.setSuccessMessage("Το μάθημα προστέθηκε επιτυχώς στο Πρόγραμμα Σπουδών!");
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.setTitle("UniPath - Επιτυχής Προσθήκη");
+            stage.showAndWait();
+
+        } catch (Exception e) {
+            System.err.println(" Απέτυχε η φόρτωση της οθόνης επιτυχίας:");
+            e.printStackTrace();
+        }
     }
 }

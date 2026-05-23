@@ -5,30 +5,28 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.unipath.ui.UC2.CoursesToEvaluateScreen"
+            fx:controller="com.unipath.ui.UC6.CourseListScreen"
             prefWidth="1000" prefHeight="650"
             stylesheets="@../../css/styles.css">
-
     <top>
         <HBox styleClass="prof-header" alignment="CENTER_LEFT" spacing="10">
             <padding><Insets top="16" right="24" bottom="16" left="24"/></padding>
-            <Label text="📝 Αξιολόγηση Μαθημάτων (UC2)" styleClass="prof-header-name"/>
-            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="📚 Επεξεργασία Μαθήματος (UC6)" styleClass="prof-header-name"/>
         </HBox>
     </top>
-
     <center>
         <VBox spacing="15">
             <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
-
-            <Label text="Παρακαλώ επιλέξτε το μάθημα που επιθυμείτε να αξιολογήσετε από την παρακάτω λίστα:"
+            <Label text="Επιλέξτε το μάθημα που επιθυμείτε να επεξεργαστείτε:"
                    styleClass="prof-section-title"/>
-
+            <TextField fx:id="searchField" promptText="🔍 Αναζήτηση μαθήματος..."
+                       styleClass="prof-input" onKeyReleased="#onSearch"/>
             <ListView fx:id="coursesListView" VBox.vgrow="ALWAYS" styleClass="prof-scroll"
                       onMouseClicked="#onCourseSelected"/>
-
-            <Label fx:id="errorLabel" text="" style="-fx-text-fill: #e53e3e; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <Label fx:id="errorLabel" text=""
+                   style="-fx-text-fill: #e53e3e; -fx-font-size: 13px; -fx-font-weight: bold;"/>
         </VBox>
     </center>
 </BorderPane>
+
 

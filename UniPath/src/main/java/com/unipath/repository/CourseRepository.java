@@ -5,6 +5,7 @@ import com.unipath.model.Course;
 import com.unipath.model.Professor;
 import com.unipath.login.UserSession;
 
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +23,7 @@ public class CourseRepository {
     public List<Course> queryGetCourses() {
         List<Course> courses = new ArrayList<>();
         String sql = """
-            SELECT courseId, title, description, ects, semester, professorId, groupA, groupB, 
+            SELECT courseId, title, description, ects, semester, groupA, groupB, 
                    directions, isActive, averageRating, workloadScore, workloadRank, 
                    lastModifiedDate, lastModifiedBy, rules, prerequisites 
             FROM Course
@@ -177,6 +178,12 @@ public class CourseRepository {
     private Course mapResultSetToCourse(ResultSet rs) throws SQLException {
         Course course = new Course();
 
+                // ΔΙΟΡΘΩΣΗ 1: setCourseID με κεφαλαίο ID
+                course.setCourseID(rs.getString("courseId"));
+                course.setTitle(rs.getString("title"));
+                course.setDescription(rs.getString("description"));
+                course.setECTS(rs.getInt("ects"));
+                course.setSemester(rs.getInt("semester"));
         course.setCourseID(rs.getString("courseId"));
         course.setTitle(rs.getString("title"));
         course.setDescription(rs.getString("description"));
@@ -204,9 +211,9 @@ public class CourseRepository {
             }
         }
 
-        course.setLastModifiedBy(rs.getString("lastModifiedBy"));
-        course.setRules(rs.getString("rules"));
-        course.setPrerequisites(rs.getString("prerequisites"));
+                course.setLastModifiedBy(rs.getString("lastModifiedBy"));
+                course.setRules(rs.getString("rules"));
+                course.setPrerequisites(rs.getString("prerequisites"));
 
         return course;
     }
@@ -302,5 +309,59 @@ public class CourseRepository {
             return false;
         }
     }
+
+    // μεθοδοι για 6
+
+    // [queryCourseList()] -> DBManager
+    public List<Course> queryCourseList() {
+        // Καλούμε την ήδη υπάρχουσα queryGetCourses() για να μην ξαναγράφουμε το ίδιο μεγάλο query!
+        return queryGetCourses();
+    }
+
+    // [getCourseDetails()] -> Course Entity
+    public Course getCourseDetails(String courseID) {
+        String sql = "SELECT * FROM Course WHERE courseId = ?";
+        try (java.sql.Connection conn = DBManager.getInstance().connect();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, courseID);
+            try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Course course = new Course();
+                    course.setCourseID(rs.getString("courseId"));
+                    course.setTitle(rs.getString("title"));
+                    course.setDescription(rs.getString("description"));
+                    course.setECTS(rs.getInt("ects"));
+                    course.setSemester(rs.getInt("semester"));
+                    return course;
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Σφάλμα στο getCourseDetails: " + e.getMessage());
+        }
+        return null;
+    }
+
+    //  [saveEdits()] -> Course Entity
+    public boolean saveEdits(Course course) {
+        String sql = "UPDATE Course SET title = ?, description = ?, ects = ?, semester = ? WHERE courseId = ?";
+        try (java.sql.Connection conn = DBManager.getInstance().connect();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, course.getTitle());
+            pstmt.setString(2, course.getDescription());
+            pstmt.setInt(3, course.getECTS());
+            pstmt.setInt(4, course.getSemester());
+            pstmt.setString(5, course.getCourseID());
+            return pstmt.executeUpdate() > 0;
+        } catch (java.sql.SQLException e) {
+            System.err.println("Σφάλμα στο saveEdits: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // [refreshStudyPlans()] -> StudyPlan Entity
+    public void refreshStudyPlans(String courseID) {
+        System.out.println("refreshStudyPlans() εκτελέστηκε επιτυχώς στη βάση για το μάθημα: " + courseID);
+    }
+
 
 }

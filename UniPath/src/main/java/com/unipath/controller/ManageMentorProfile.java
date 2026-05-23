@@ -5,6 +5,15 @@ import com.unipath.model.StudentProfile;
 import com.unipath.model.Course;
 import com.unipath.dataBase.DBManager;
 import com.unipath.repository.HelpOfferRepository;
+import com.unipath.ui.common.SuccessScreen;
+import com.unipath.ui.common.ErrorScreen;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -14,10 +23,110 @@ public class ManageMentorProfile {
     private String currentHelpType;
     private String currentNotesFile;
     private String currentMeetingUrl;
+    private Stage mainStage;
 
     public ManageMentorProfile() {
     }
+    /**
+     * ΕΚΚΙΝΗΣΗ ΡΟΗΣ UC7: Καλείται όταν ο χρήστης πατάει "Add New Offer" στη StudentMainScreen
+     */
+    public void startMentorFlow(Stage stage) {
+        this.mainStage = stage;
+        navigateToNewOfferForm();
+    }
 
+    /**
+     * Μετάβαση στην πρώτη φόρμα επιλογής μαθήματος (NewOfferFormScreen)
+     */
+    public void navigateToNewOfferForm() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/new-offer-form-view.fxml"));
+            Parent root = loader.load();
+
+            mainStage.setScene(new Scene(root, 1000, 650));
+            mainStage.setTitle("UniPath - Επιλογή Μαθήματος & Τύπου Βοήθειας");
+            mainStage.show();
+        } catch (Exception e) {
+            System.err.println(" Σφάλμα κατά τη φόρτωση του new-offer-form-view.fxml:");
+            e.printStackTrace();
+            showErrorPopup("Αδυναμία φόρτωσης της οθόνης φόρμας.");
+        }
+    }
+
+    /**
+     * Μετάβαση στη δεύτερη φόρμα υποβολής αρχείων (OfferSubmissionFormScreen)
+     */
+    public void navigateToOfferSubmission() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/offer-submission-view.fxml"));
+            Parent root = loader.load();
+
+            mainStage.setScene(new Scene(root, 1000, 650));
+            mainStage.setTitle("UniPath - Υποβολή Υλικού Προσφοράς");
+            mainStage.show();
+        } catch (Exception e) {
+            System.err.println(" Σφάλμα κατά τη φόρτωση του offer-submission-view.fxml:");
+            e.printStackTrace();
+            showErrorPopup("Αδυναμία φόρτωσης της οθόνης υποβολής.");
+        }
+    }
+
+    /**
+     * Εμφάνιση του Κοινού SuccessScreen ως Αναδυόμενο Παράθυρο (Popup)
+     */
+    public void showSuccessPopup(String message) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-view.fxml"));
+            Parent root = loader.load();
+
+            SuccessScreen controller = loader.getController();
+            controller.setSuccessMessage(message);
+
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setTitle("Επιτυχία");
+            popupStage.setScene(new Scene(root));
+            popupStage.showAndWait();
+
+            returnToMainMenu();
+        } catch (Exception e) {
+            System.err.println(" Σφάλμα κατά την εμφάνιση του SuccessScreen: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Εμφάνιση του Κοινού ErrorScreen ως Αναδυόμενο Παράθυρο (Popup)
+     */
+    public void showErrorPopup(String message) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-view.fxml"));
+            Parent root = loader.load();
+
+            ErrorScreen controller = loader.getController();
+            controller.setErrorMessage(message);
+
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setTitle("Σφάλμα");
+            popupStage.setScene(new Scene(root));
+            popupStage.showAndWait();
+        } catch (Exception e) {
+            System.err.println(" Σφάλμα κατά την εμφάνιση του ErrorScreen: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Επιστροφή στην Κεντρική Οθόνη Φοιτητή μετά από επιτυχία ή ακύρωση
+     */
+    private void returnToMainMenu() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/common/student-main-view.fxml"));
+            mainStage.setScene(new Scene(root, 1000, 650));
+            mainStage.setTitle("UniPath - Κεντρικό Μενού");
+        } catch (Exception e) {
+            System.err.println(" Σφάλμα κατά την επιστροφή στο κεντρικό μενού: " + e.getMessage());
+        }
+    }
     /**
      * Βήμα 2 Λεκτικού: Το Σύστημα ανακτά όλα τα διαθέσιμα μαθήματα (queryCourses())
      */
@@ -61,6 +170,7 @@ public class ManageMentorProfile {
         // 1. Βήμα 8 Λεκτικού: Το Σύστημα ελέγχει τη συμπλήρωση των πεδίων (checkFields)
         if (!checkFields()) {
             System.out.println("[Controller] [Alternative Path] Σφάλμα: Τα πεδία δεν συμπληρώθηκαν σωστά.");
+            showErrorPopup("Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία (Μάθημα, Τύπος Βοήθειας και τουλάχιστον ένα Αρχείο ή Σύνδεσμο).");
             return false;
         }
         System.out.println("[Controller] Ο έλεγχος πεδίων πέτυχε.");
@@ -81,12 +191,14 @@ public class ManageMentorProfile {
         System.out.println("[Controller] Αποθήκευση στη ΒΔ μέσω DBManager. Κατάσταση: " + isSaved);
 
         if (isSaved) {
-            // 4. Βήμα 11 Λεκτικού: Εμφάνιση της λίστας στο Προφίλ Φοιτητή (updateActiveOffersList)
             profile.updateActiveOffersList(newOffer);
             System.out.println("[Controller] Ενημερώθηκε η λίστα ενεργών προσφορών στο StudentProfile.");
+
+            showSuccessPopup("Η προσφορά ακαδημαϊκής βοήθειας δημοσιεύτηκε με επιτυχία!");
             return true;
         }
 
+        showErrorPopup("Παρουσιάστηκε σφάλμα κατά την αποθήκευση της προσφοράς στη βάση δεδομένων.");
         return false;
     }
 

@@ -70,8 +70,15 @@ public class CourseSelectionScreen {
             }
             return;
         }
-        // Καλεί την αρχική σου μέθοδο selectCourses
-        selectCourses(selectedCourses);
+
+        if (errorLabel != null) {
+            errorLabel.setVisible(false);
+        }
+
+        // 💡 ΔΙΟΡΘΩΣΗ: Περνάμε 2 ορίσματα (scenario, selectedCourses) όπως ακριβώς αναμένεται
+        if (manageStudyPlan != null) {
+            manageStudyPlan.onCoursesSelected(this.scenario, selectedCourses);
+        }
     }
 
     @FXML

@@ -8,7 +8,11 @@ import com.unipath.model.Scenario;
 import com.unipath.ui.UC1.ScenarioSelectionScreen;
 import com.unipath.repository.CourseRepository;
 import com.unipath.repository.ScenarioRepository;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +25,7 @@ public class ManageStudyPlan {
     private CourseRepository courseRepository;
     private ScenarioRepository scenarioRepository;
 
-
+    private javafx.stage.Stage mainStage;
 
     private Scenario selectedScenario;
     private List<Course> selectedCourses;
@@ -39,11 +43,10 @@ public class ManageStudyPlan {
             com.unipath.ui.UC1.ScenarioSelectionScreen scenarioScreen = loader.getController();
             scenarioScreen.setManageStudyPlan(this);
 
-            javafx.stage.Stage stage = new javafx.stage.Stage();
-            stage.setTitle("Επιλογή Σεναρίου - UniPath");
-            stage.setScene(new javafx.scene.Scene(root));
-            stage.show();
-
+            this.mainStage = new javafx.stage.Stage();
+            mainStage.setTitle("Επιλογή Σεναρίου - UniPath");
+            mainStage.setScene(new javafx.scene.Scene(root, 600, 500));
+            mainStage.show();
         } catch (java.io.IOException e) {
             System.err.println("Σφάλμα κατά το άνοιγμα της οθόνης επιλογής σεναρίου: " + e.getMessage());
             e.printStackTrace();
@@ -51,9 +54,37 @@ public class ManageStudyPlan {
     }
     public void onScenarioSelected(Scenario scenario) {
         this.selectedScenario = scenario; // Αποθηκεύουμε το σενάριο που επιλέχθηκε
-        courseSelectionScreen = new CourseSelectionScreen(this, scenario);
-        courseSelectionScreen.displayCourses();
+        try {
+            // 1. Φόρτωση του FXML για την επιλογή μαθημάτων
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Student/course-selection-view.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // 2. Σύνδεση δεδομένων με τον Controller της νέας οθόνης
+            com.unipath.ui.UC1.CourseSelectionScreen selectionScreen = loader.getController();
+            selectionScreen.setSelectionData(this, scenario);
+
+            // 3. 💡 ΔΙΟΡΘΩΣΗ: Δημιουργία νέου Scene και εξαναγκασμός εμφάνισης
+            if (mainStage != null) {
+                // Φτιάχνουμε μια νέα σκηνή με τις διαστάσεις που ορίζει το FXML (650x550)
+                javafx.scene.Scene newScene = new javafx.scene.Scene(root, 650, 550);
+
+                // Προσθέτουμε το CSS αρχείο αν υπάρχει (προαιρετικό, αλλά βοηθάει αν χάνει τα styles)
+                if (getClass().getResource("/css/styles.css") != null) {
+                    newScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+                }
+
+                mainStage.setTitle("Επιλογή Μαθημάτων - UniPath");
+                mainStage.setScene(newScene);
+                mainStage.sizeToScene();  // Προσαρμογή μεγέθους παραθύρου
+                mainStage.show();         // Επανεμφάνιση
+            }
+
+        } catch (java.io.IOException e) {
+            System.err.println("Σφάλμα κατά τη φόρτωση της οθόνης επιλογής μαθημάτων: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
 
     public void onCoursesSelected(Scenario scenario, List<Course> courses) {
         this.selectedCourses = courses; // Αποθηκεύουμε τα μαθήματα που επιλέχθηκαν

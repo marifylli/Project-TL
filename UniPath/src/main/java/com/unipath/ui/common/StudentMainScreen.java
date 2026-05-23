@@ -93,7 +93,25 @@ public class StudentMainScreen {
         }
     }
 
+    @FXML
+    public void clickAddNewOffer() {
+        try {
+            System.out.println("=== Έναρξη UC7: Προσθήκη Νέας Προσφοράς Βοήθειας (Add New Offer) ===");
 
+            // Αρχικοποιούμε τον Controller του UC7
+            com.unipath.controller.ManageMentorProfile mentorController = new com.unipath.controller.ManageMentorProfile();
+
+            // Παίρνουμε το τρέχον Stage από ένα υπάρχον κουμπί (π.χ. το studyPlanButton)
+            Stage stage = (Stage) studyPlanButton.getScene().getWindow();
+
+            // Ξεκινάμε τη διαδικασία του UC7 περνώντας το stage
+            mentorController.startMentorFlow(stage);
+
+        } catch (Exception e) {
+            System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC7 (Add New Offer):");
+            e.printStackTrace();
+        }
+    }
 
 }
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.unipath.ui.UC1.PlanSummaryScreen"
+      alignment="CENTER" spacing="20" prefWidth="650" prefHeight="550" styleClass="root-pane">
+
+    <VBox styleClass="login-card" maxWidth="500" alignment="TOP_CENTER">
+        <VBox styleClass="card-top" alignment="CENTER" spacing="5">
+            <Label text="Σύνοψη Προγράμματος Σπουδών" styleClass="app-name"/>
+            <Label text="Βήμα 3: Τελικός Έλεγχος &amp; Υποβολή" styleClass="uni-name"/>
+        </VBox>
+
+        <VBox styleClass="card-body" spacing="15">
+            <HBox styleClass="step-dots-container" alignment="CENTER" spacing="8">
+                <Circle radius="5" styleClass="dot-inactive"/>
+                <Circle radius="5" styleClass="dot-inactive"/>
+                <Circle radius="5" styleClass="dot-active"/>
+            </HBox>
+
+            <VBox styleClass="info-box" spacing="5">
+                <Label fx:id="scenarioLabel" styleClass="info-text"/>
+            </VBox>
+
+            <Label text="Επιλεγμένα Μαθήματα προς Εγγραφή:" styleClass="field-label"/>
+            <ListView fx:id="summaryListView" prefHeight="150"/>
+            <HBox spacing="10" alignment="CENTER">
+
+            <Button text="Οριστική Υποβολή" styleClass="btn-primary" maxWidth="Infinity" onAction="#handleConfirm"/>
+            <Button text="Καθαρισμός" styleClass="btn-secondary" maxWidth="Infinity" onAction="#handleClear"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</VBox>

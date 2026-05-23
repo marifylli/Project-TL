@@ -58,9 +58,25 @@ public class StudentMainScreen {
         }
     }
 
-    // 📅 ΕΝΕΡΓΕΙΑ ΓΙΑ ΤΟ USE CASE ΤΗΣ ΟΜΑΔΑΣ (UC1)
     @FXML
     public void clickCreatePlan() {
+        try {
+            System.out.println("=== Έναρξη UC1: Δημιουργία και Έλεγχος Πλάνου Σπουδών ===");
+
+            // Αρχικοποιούμε τον σωστό controller για το UC1 (ManageStudyPlan)
+            com.unipath.controller.ManageStudyPlan studyPlanController = new com.unipath.controller.ManageStudyPlan();
+
+            // Εκκινούμε τη διαδικασία, η οποία θα φορτώσει το scenario-selection-view.fxml
+            studyPlanController.startCreatePlan();
+
+        } catch (Exception e) {
+            System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC1 (ManageStudyPlan):");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void clickfortosioannas() {
         try {
             System.out.println("=== Έναρξη UC3: Προσομοίωση και Εξισορρόπηση Φόρτου Εργασίας ===");
 

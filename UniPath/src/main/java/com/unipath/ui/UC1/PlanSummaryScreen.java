@@ -14,9 +14,14 @@ public class PlanSummaryScreen {
     private Scenario scenario;
     private List<Course> courses;
 
-    @FXML private Label scenarioLabel;
-    @FXML private Label ectsLabel;
-    @FXML private ListView<Course> summaryListView;
+    @FXML
+    private Label scenarioTitleLabel;
+
+    @FXML
+    private ListView<Course> summaryListView;
+
+    @FXML
+    private Label totalEctsLabel;
 
     public PlanSummaryScreen() {
     }
@@ -33,26 +38,37 @@ public class PlanSummaryScreen {
         this.scenario = scenario;
         this.courses = courses;
 
-        displaySummary();
-    }
-
-
-    public void displaySummary() {
-        // show summary
-        if (scenarioLabel != null && scenario != null) {
-            scenarioLabel.setText("Σενάριο: " + scenario.toString());
+        // 1. Εμφάνιση του τίτλου του ακαδημαϊκού σεναρίου
+        if (scenarioTitleLabel != null && scenario != null) {
+            scenarioTitleLabel.setText("Σενάριο: " + scenario.getTitle());
         }
+
+        // 2. Γέμισμα του ListView με τα εγκεκριμένα μαθήματα
         if (summaryListView != null && courses != null) {
-            summaryListView.getItems().clear();
-            summaryListView.getItems().addAll(courses);
+            summaryListView.getItems().setAll(courses);
+
+            // Προαιρετικά: Μπορείς να βάλεις CellFactory και εδώ αν θες συγκεκριμένο φορμάτ εμφάνισης
+            summaryListView.setCellFactory(param -> new javafx.scene.control.ListCell<Course>() {
+                @Override
+                protected void updateItem(Course item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.getCourseID() + " - " + item.getTitle() + " (" + item.getECTS() + " ECTS)");
+                    }
+                }
+            });
         }
 
-        // Υπολογισμός και εμφάνιση συνόλου ECTS
-        if (ectsLabel != null && courses != null) {
+        // 3. Υπολογισμός και εμφάνιση συνολικών ECTS
+        if (totalEctsLabel != null && courses != null) {
             int totalEcts = courses.stream().mapToInt(Course::getECTS).sum();
-            ectsLabel.setText("Συνολικά ECTS: " + totalEcts + " / 270");
+            totalEctsLabel.setText("Συνολικά ECTS: " + totalEcts);
         }
     }
+
+
 
     public void confirmSave() {
         manageStudyPlan.onConfirmPlan(scenario, courses);

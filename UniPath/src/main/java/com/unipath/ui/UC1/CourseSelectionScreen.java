@@ -61,7 +61,7 @@ public class CourseSelectionScreen {
     }
 
     @FXML
-    private void handleNext() {
+    private void handleNextStep() {
         List<Course> selectedCourses = courseListView.getSelectionModel().getSelectedItems();
         if (selectedCourses.isEmpty()) {
             if (errorLabel != null) {

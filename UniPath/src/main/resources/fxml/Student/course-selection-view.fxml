@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.unipath.ui.UC1.CourseSelectionScreen"
+      alignment="CENTER" spacing="20" prefWidth="650" prefHeight="550" styleClass="root-pane">
+
+    <VBox styleClass="login-card" maxWidth="500" alignment="TOP_CENTER">
+        <VBox styleClass="card-top" alignment="CENTER" spacing="5">
+            <Label fx:id="scenarioTitleLabel" styleClass="app-name"/>
+            <Label text="Βήμα 2: Επιλογή Μαθημάτων" styleClass="uni-name"/>
+        </VBox>
+
+        <VBox styleClass="card-body" spacing="15">
+            <HBox styleClass="step-dots-container" alignment="CENTER" spacing="8">
+                <Circle radius="5" styleClass="dot-inactive"/>
+                <Circle radius="5" styleClass="dot-active"/>
+                <Circle radius="5" styleClass="dot-inactive"/>
+            </HBox>
+
+            <Label text="Κρατήστε πατημένο το Ctrl για πολλαπλή επιλογή:" styleClass="field-label"/>
+            <ListView fx:id="courseListView" prefHeight="200"/>
+
+            <Label fx:id="errorLabel" styleClass="error-label" visible="false"/>
+
+            <HBox alignment="CENTER" spacing="10">
+                <Button text="Πίσω" styleClass="btn-secondary"/>
+                <Button text="Προεπισκόπηση" styleClass="btn-primary" prefWidth="200" onAction="#handleNextStep"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</VBox>

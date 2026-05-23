@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.unipath.ui.UC1.ScenarioSelectionScreen"
+      alignment="CENTER" spacing="20" prefWidth="600" prefHeight="500" styleClass="root-pane">
+
+    <VBox styleClass="login-card" maxWidth="450" alignment="TOP_CENTER">
+        <VBox styleClass="card-top" alignment="CENTER" spacing="5">
+            <Label text="UniPath - Δημιουργία Προγράμματος" styleClass="app-name"/>
+            <Label text="Βήμα 1: Επιλογή Σεναρίου / Κατεύθυνσης" styleClass="uni-name"/>
+        </VBox>
+
+        <VBox styleClass="card-body" spacing="15">
+            <HBox styleClass="step-dots-container" alignment="CENTER" spacing="8">
+                <Circle radius="5" styleClass="dot-active"/>
+                <Circle radius="5" styleClass="dot-inactive"/>
+                <Circle radius="5" styleClass="dot-inactive"/>
+            </HBox>
+
+            <Label text="Παρακαλώ επιλέξτε ένα Ακαδημαϊκό Σενάριο:" styleClass="field-label"/>
+            <ListView fx:id="scenarioListView" prefHeight="150"/>
+
+            <Label fx:id="errorLabel" styleClass="error-label" visible="false"/>
+            <Button text="Επόμενο Βήμα" styleClass="btn-primary" maxWidth="Infinity" onAction="#handleNextStep"/>
+        </VBox>
+    </VBox>
+</VBox>

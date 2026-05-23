@@ -1,19 +1,17 @@
 package com.unipath.model;
 
 import java.util.Date;
-import java.util.List;
 
 public class Course {
 
-    public String courseID; // otan exoume conflict prepei na meinei string gia na tairiazei me ti vasi tis milenas
-
+    public String courseID;
     private String title;
     private String description;
     private int ects;
     private int semester;
     private boolean groupA;
     private boolean groupB;
-    private String directions; // format: "K1:A,K2:B"
+    private String directions;
     private boolean isActive;
     private float averageRating;
     private float workloadScore;
@@ -23,13 +21,16 @@ public class Course {
     private String rules;
     private String prerequisites;
 
+    // ΠΡΟΣΘΗΚΗ: Το απαραίτητο πεδίο για το φιλτράρισμα ανά καθηγητή
+    private int professorId;
+
     // Constructor
     public Course() {
     }
 
-    // Getters & Setters
+    // --- GETTERS & SETTERS ---
+
     public String getCourseID() { return courseID; }
-    // ΔΙΟΡΘΩΣΗ: setCourseID (με μικρό d στο τέλος)
     public void setCourseID(String courseID) { this.courseID = courseID; }
 
     public String getTitle() { return title; }
@@ -38,8 +39,8 @@ public class Course {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public int getEcts() { return ects; }
-    public void setEcts(int ects) { this.ects = ects; }
+    public int getECTS() { return ects; }
+    public void setECTS(int ects) { this.ects = ects; }
 
     public int getSemester() { return semester; }
     public void setSemester(int semester) { this.semester = semester; }
@@ -66,7 +67,6 @@ public class Course {
     public void setWorkloadRank(int workloadRank) { this.workloadRank = workloadRank; }
 
     public Date getLastModifiedDate() { return lastModifiedDate; }
-    // ΔΙΟΡΘΩΣΗ: setLastModifiedDate (με μικρό d)
     public void setLastModifiedDate(Date lastModifiedDate) { this.lastModifiedDate = lastModifiedDate; }
 
     public String getLastModifiedBy() { return lastModifiedBy; }
@@ -77,4 +77,8 @@ public class Course {
 
     public String getPrerequisites() { return prerequisites; }
     public void setPrerequisites(String prerequisites) { this.prerequisites = prerequisites; }
+
+    // --- ΠΡΟΣΘΗΚΗ GETTER/SETTER ΓΙΑ ΤΟΝ ΚΑΘΗΓΗΤΗ ---
+    public int getProfessorId() { return professorId; }
+    public void setProfessorId(int professorId) { this.professorId = professorId; }
 }

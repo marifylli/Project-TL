@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 40; -fx-background-color: #f4f6f9;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://fxml.com/fxml/1"
+      fx:controller="com.unipath.ui.UC9.RulesScreen">
+    <children>
+        <Label text="Διαχείριση Ακαδημαϊκών Κανόνων &amp; Προαπαιτουμένων" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1a237e;" />
+        <Separator prefWidth="200.0" />
+        <VBox spacing="10" alignment="CENTER_LEFT">
+            <children>
+                <Label text="Εισάγετε τους κανόνες και τα προαπαιτούμενα του μαθήματος:" style="-fx-font-weight: bold;" />
+                <TextArea fx:id="rulesTextArea" prefHeight="250.0" wrapText="true" style="-fx-font-size: 14px;" />
+            </children>
+        </VBox>
+        <HBox alignment="CENTER_RIGHT" spacing="15">
+            <children>
+                <Button text="Ακύρωση" onAction="#clickCancel" style="-fx-background-color: #e53935; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 20; -fx-cursor: hand;" />
+                <Button fx:id="saveButtonId" text="Αποθήκευση Κανόνων" style="-fx-background-color: #43a047; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 20; -fx-cursor: hand;" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

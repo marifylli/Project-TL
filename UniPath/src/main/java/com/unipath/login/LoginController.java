@@ -1,6 +1,5 @@
 package com.unipath.login;
 
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -103,15 +102,48 @@ public class LoginController {
     @FXML
     private void onVerifyOtp() {
         String entered = getEnteredOtp();
-        if (entered.length() < 6) { otpErrorLabel.setText("Συμπληρώστε και τα 6 ψηφία."); return; }
-        if (!entered.equals(generatedOtp)) {
-            otpErrorLabel.setText("Λάθος κωδικός. Δοκιμάστε ξανά.");
-            clearOtpFields(); otp1.requestFocus(); return;
+
+        // --- LOGIC ΓΙΑ TESTING ---
+        if (currentEmail.startsWith("test.") && entered.equals("000000")) {
+            generatedOtp = "000000"; // Παράκαμψη για τα test emails
         }
+        // -------------------------
+
+        if (entered.length() < 6) { otpErrorLabel.setText("Συμπληρώστε 6 ψηφία."); return; }
+        if (!entered.equals(generatedOtp)) {
+            otpErrorLabel.setText("Λάθος κωδικός.");
+            return;
+        }
+
         stopCountdown();
         new Thread(() -> {
             try {
-                loggedInUser = firestoreService.getUserByEmail(currentEmail);
+                // --- ΕΛΕΓΧΟΣ ΓΙΑ MOCK USER ---
+                if (currentEmail.startsWith("test.")) {
+                    loggedInUser = getMockUser(currentEmail);
+                } else {
+                    loggedInUser = firestoreService.getUserByEmail(currentEmail);
+                }
+                // ----------------------------
+
+                // --- ΕΝΣΩΜΑΤΩΣΗ ΔΥΝΑΜΙΚΟΥ USER SESSION ---
+                int intUserId;
+                try {
+                    // Μετατροπή UID σε int
+                    intUserId = Integer.parseInt(loggedInUser.getUid().replaceAll("[^0-9]", ""));
+                } catch (NumberFormatException e) {
+                    intUserId = Math.abs(loggedInUser.getUid().hashCode() % 100000);
+                }
+
+                // ΔΙΟΡΘΩΣΗ: Χρησιμοποιούμε τη σωστή μέθοδο getDisplayName() από την κλάση User
+                UserSession.getInstance().startSession(
+                        intUserId,
+                        loggedInUser.getEmail(),
+                        loggedInUser.getDisplayName(), // ΕΔΩ ΗΤΑΝ ΤΟ ΛΑΘΟΣ
+                        loggedInUser.getRole().name()
+                );
+                // -----------------------------------------
+
                 Platform.runLater(() -> {
                     roleLabel.setText("Ρόλος: " + loggedInUser.getRoleDisplayName());
                     redirectLabel.setText("Ανακατεύθυνση στο dashboard...");
@@ -146,17 +178,72 @@ public class LoginController {
 
     @FXML
     private void onEnterDashboard() {
-        System.out.println("Είσοδος ως: " + loggedInUser.getRoleDisplayName());
-        // TODO: φόρτωσε το dashboard ανάλογα με τον ρόλο
+        // ΔΙΟΡΘΩΣΗ: Μεταφέρουμε όλη τη φόρτωση και αλλαγή οθονών στο JavaFX Application Thread
+        Platform.runLater(() -> {
+            try {
+                javafx.fxml.FXMLLoader loader;
+
+                switch (loggedInUser.getRole()) {
+                    case STUDENT:
+                        java.net.URL studentFxml = getClass().getResource("/fxml/Student/student-main-screen.fxml");
+                        if (studentFxml == null) {
+                            studentFxml = getClass().getClassLoader().getResource("fxml/Student/student-main-screen.fxml");
+                        }
+                        if (studentFxml == null) {
+                            throw new java.io.IOException("Το αρχείο student-main-screen.fxml δεν βρέθηκε στον φάκελο fxml/Student/");
+                        }
+                        loader = new javafx.fxml.FXMLLoader(studentFxml);
+                        break;
+
+                    case PROFESSOR:
+                        loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
+                        break;
+
+                    case SECRETARY:
+                        loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Secretary/secretary-main-view.fxml"));
+                        break;
+
+                    default:
+                        loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
+                        break;
+                }
+
+                // Φόρτωση του FXML που επιλέχθηκε
+                javafx.scene.Parent root = loader.load();
+
+                // Αλλαγή της σκηνής στο παράθυρο με ασφάλεια
+                javafx.stage.Stage stage = (javafx.stage.Stage) emailField.getScene().getWindow();
+                stage.setScene(new javafx.scene.Scene(root, 1000, 650));
+                stage.setTitle("UniPath - Dashboard");
+                stage.show();
+
+            } catch (Exception e) {
+                System.out.println("Σφάλμα φόρτωσης οθόνης: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+    }
+
+
+    private User getMockUser(String email) {
+        if (email.startsWith("test.secretary")) {
+            return new User("1001", email, Role.SECRETARY, "Γραμματεία (Test)");
+        } else if (email.startsWith("test.student")) {
+            return new User("2002", email, Role.STUDENT, "Φοιτητής (Test)");
+        } else {
+            // Δυναμικό Test για Καθηγητές: Αν γράψεις π.χ. test.georgiou@ceid.upatras.gr,
+            // θα βγάλει το όνομα "Prof. test.georgiou" αντί για καρφωμένο κείμενο
+            String namePart = email.substring(5, email.indexOf("@"));
+            String capitalizedName = namePart.substring(0, 1).toUpperCase() + namePart.substring(1);
+            return new User("1", email, Role.PROFESSOR, capitalizedName + " (Test)");
+        }
     }
 
     private boolean isValidEmail(String email) {
-        if (email.equals("secretary@ceid.upatras.gr"))
-            return true;
-        if (email.matches("st\\d+@ceid\\.upatras\\.gr"))
-            return true;
-        if (email.matches(".+@ceid\\.upatras\\.gr"))
-            return true;
+        if (email.startsWith("test.")) return true; // Επιτρέπουμε άμεσα όλα τα test emails
+        if (email.equals("secretary@ceid.upatras.gr")) return true;
+        if (email.matches("st\\d+@ceid\\.upatras\\.gr")) return true;
+        if (email.matches(".+@ceid\\.upatras\\.gr")) return true;
         return false;
     }
 

@@ -1,11 +1,13 @@
 package com.unipath.controller;
 import com.unipath.model.Course;
+import com.unipath.repository.ScenarioRepository;
 import com.unipath.ui.UC1.ConfirmationScreen;
 import com.unipath.ui.UC1.CourseSelectionScreen;
 import com.unipath.ui.UC1.PlanSummaryScreen;
 import com.unipath.model.Scenario;
 import com.unipath.ui.UC1.ScenarioSelectionScreen;
 import com.unipath.repository.CourseRepository;
+import com.unipath.repository.ScenarioRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,25 +19,47 @@ public class ManageStudyPlan {
     private PlanSummaryScreen planSummaryScreen;
     private ConfirmationScreen confirmationScreen;
     private CourseRepository courseRepository;
+    private ScenarioRepository scenarioRepository;
 
 
 
     private Scenario selectedScenario;
     private List<Course> selectedCourses;
 
+    public ManageStudyPlan() {
+        this.scenarioRepository = new ScenarioRepository();
+        this.courseRepository = new CourseRepository();
+    }
+
     public void startCreatePlan() {
-        scenarioSelectionScreen = new ScenarioSelectionScreen(this);
-        scenarioSelectionScreen.displayScenarios();
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Student/scenario-selection-view.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            com.unipath.ui.UC1.ScenarioSelectionScreen scenarioScreen = loader.getController();
+            scenarioScreen.setManageStudyPlan(this);
+
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("Επιλογή Σεναρίου - UniPath");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.show();
+
+        } catch (java.io.IOException e) {
+            System.err.println("Σφάλμα κατά το άνοιγμα της οθόνης επιλογής σεναρίου: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     public void onScenarioSelected(Scenario scenario) {
+        this.selectedScenario = scenario; // Αποθηκεύουμε το σενάριο που επιλέχθηκε
         courseSelectionScreen = new CourseSelectionScreen(this, scenario);
         courseSelectionScreen.displayCourses();
     }
+
     public void onCoursesSelected(Scenario scenario, List<Course> courses) {
+        this.selectedCourses = courses; // Αποθηκεύουμε τα μαθήματα που επιλέχθηκαν
         planSummaryScreen = new PlanSummaryScreen(this, scenario, courses);
         planSummaryScreen.displaySummary();
     }
-
     public void onConfirmPlan(Scenario scenario, List<Course> courses) {
         confirmationScreen = new ConfirmationScreen(this);
         confirmationScreen.displayConfirmation();
@@ -191,6 +215,14 @@ public class ManageStudyPlan {
 
     private String getSecondDirection() {
         return null;
+    }
+
+    public List<Scenario> queryGetScenarios() {
+        return scenarioRepository.queryGetScenarios();
+    }
+
+    public List<Course> queryGetCourses() {
+        return courseRepository.queryGetCourses();
     }
 
 }

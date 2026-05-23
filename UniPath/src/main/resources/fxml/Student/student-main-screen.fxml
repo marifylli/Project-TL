@@ -38,9 +38,9 @@
                         styleClass="prof-action-btn-primary" onAction="#clickEvaluateCourses"
                         maxWidth="Infinity" wrapText="true"/>
 
-                <Button fx:id="studyPlanButton" text="📅 Πρόγραμμα Σπουδών"
+                <Button fx:id="studyPlanButton" text="Δημιουγία και έλεγχος πλάνου"
                         styleClass="prof-action-btn-secondary" onAction="#clickCreatePlan"
-                        maxWidth="Infinity"/>
+                        maxWidth="Infinity" wrapText="true\"/>
             </VBox>
         </HBox>
     </center>

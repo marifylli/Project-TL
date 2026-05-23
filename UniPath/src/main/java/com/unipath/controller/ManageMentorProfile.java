@@ -35,7 +35,7 @@ public class ManageMentorProfile {
                 course.setCourseID(rs.getString("courseID"));
                 course.setTitle(rs.getString("title"));
                 course.setSemester(rs.getInt("semester"));
-                course.setEcts(rs.getInt("ects"));
+                course.setECTS(rs.getInt("ects"));
                 coursesList.add(course);
             }
         } catch (java.sql.SQLException e) {

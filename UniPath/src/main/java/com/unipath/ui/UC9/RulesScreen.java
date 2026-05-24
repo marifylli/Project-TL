@@ -27,7 +27,6 @@ public class RulesScreen {
         this.course = course;
     }
 
-    // Εμφάνιση της οθόνης και αρχικοποίηση των δεδομένων
     public void display() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/rules-screen-view.fxml"));
@@ -38,24 +37,24 @@ public class RulesScreen {
                 controller.manageProfCourseEdit = this.manageProfCourseEdit;
                 controller.course = this.course;
 
-                // Φόρτωση των υπαρχόντων κανόνων στο TextArea από το αντικείμενο Course
+
                 if (controller.rulesTextArea != null && this.course != null && this.course.getRules() != null) {
                     controller.rulesTextArea.setText(this.course.getRules());
                 }
 
-                // Listener για την παρακολούθηση της πληκτρολόγησης των κανόνων
+
                 if (controller.rulesTextArea != null) {
                     controller.rulesTextArea.textProperty().addListener((obs, oldVal, newVal) -> controller.editRules(newVal));
                 }
 
-                // Σύνδεση του Save Button μέσω κώδικα αν χρειάζεται, ή χρησιμοποιείται το @FXML onAction
+
                 Button saveBtn = (Button) root.lookup("#saveButtonId");
                 if (saveBtn != null && controller.rulesTextArea != null) {
                     saveBtn.setOnAction(e -> controller.clickSaveRules());
                 }
             }
 
-            // Αντικατάσταση του Root στο τρέχον Stage της εφαρμογής
+
             Stage stage = (Stage) javafx.stage.Window.getWindows().stream()
                     .filter(javafx.stage.Window::isShowing)
                     .findFirst()
@@ -69,15 +68,15 @@ public class RulesScreen {
         }
     }
 
-    // Από το Class Diagram: editRules(text)
+
     public void editRules(String text) {
-        // Καταγράφει την προσωρινή πληκτρολόγηση κανόνων από τον καθηγητή
+
         if (this.course != null) {
             this.course.setRules(text);
         }
     }
 
-    // Από το Class Diagram: clickSaveRules() - Χωρίς ορίσματα
+
     @FXML
     public void clickSaveRules() {
         if (course != null && rulesTextArea != null) {
@@ -86,7 +85,7 @@ public class RulesScreen {
 
             String professorUsername = com.unipath.login.UserSession.getInstance().getDisplayName();
 
-            // 🔥 ΑΠΕΥΘΕΙΑΣ ΚΛΗΣΗ ΣΤΟ REPOSITORY (Μόνο η saveCourseChanges όπως ζήτησες)
+
             CourseEditRepository repo = new CourseEditRepository();
             try {
                 repo.saveCourseChanges(course.getCourseID(), newRules, professorUsername);
@@ -94,18 +93,15 @@ public class RulesScreen {
                 System.out.println("[SQL Bypassed] Mock Course ID εντοπίστηκε κατά την παρουσίαση.");
             }
 
-            // Εμφάνιση Success Window
+
             showSuccessPopup();
         }
     }
 
-    // Από το Class Diagram: clickCancel()
-    // Από το Class Diagram: clickCancel()
+
     @FXML
     public void clickCancel() {
-        // ΑΦΑΙΡΕΘΗΚΕ η deleteChanges() για να μην αδειάζει το TextArea στην οθόνη!
 
-        // Εμφάνιση Error Window για την ακύρωση
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
             Parent root = loader.load();
@@ -117,10 +113,10 @@ public class RulesScreen {
             stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
 
-            // Παγώνει την εφαρμογή με το μήνυμα. Το κείμενο από πίσω φαίνεται κανονικά!
+
             stage.showAndWait();
 
-            // Μόλις ο χρήστης πατήσει οκ στο μήνυμα, τότε τον επιστρέφει στην κεντρική οθόνη
+
             returnToMainScreen();
         } catch (IOException e) {
             System.err.println("Σφάλμα φόρτωσης ErrorScreen: " + e.getMessage());

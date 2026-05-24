@@ -13,11 +13,6 @@ public class ThesisRepository {
         return DBManager.getInstance().connect();
     }
 
-    // ==========================================
-    // ΜΕΘΟΔΟΙ ΓΙΑ ΤΟ UC10 (ΔΙΚΟ ΣΟΥ)
-    // ==========================================
-
-    // Βήμα 5: Μήνυμα requestCalendar(professorId)
     public Calendar requestCalendar(int professorId) {
         String sql = "SELECT * FROM AvailabilitySlot WHERE professorId = ?";
         Calendar calendar = new Calendar(String.valueOf(professorId), "professor");
@@ -40,7 +35,7 @@ public class ThesisRepository {
         return calendar;
     }
 
-    // Βήμα 10: Μήνυμα setAvailabilitySlot(slot)
+
     public boolean setAvailabilitySlot(AvailabilitySlot slot) {
         String sql = """
             INSERT INTO AvailabilitySlot
@@ -63,7 +58,7 @@ public class ThesisRepository {
         }
     }
 
-    // Βήμα 11: Μήνυμα saveThesis(thesis)
+
     public boolean saveThesis(Thesis thesis) {
         String sql = """
             INSERT INTO Thesis 

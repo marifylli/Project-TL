@@ -1,130 +1,114 @@
 package com.unipath.ui.UC10;
 
 import com.unipath.controller.ManageThesisClass;
+import com.unipath.model.AvailabilitySlot;
 import com.unipath.model.Thesis;
-import com.unipath.login.UserSession;
+import com.unipath.repository.ThesisRepository;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.stage.Modality;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class MeetingCalendarScreen {
-
-    @FXML
-    private ComboBox<String> dayComboBox;
-    @FXML
-    private TextField startTimeField;
-    @FXML
-    private TextField endTimeField;
-    @FXML
-    private ListView<String> slotListView;
+public class MeetingCalendarScreen implements Initializable {
 
     private final ManageThesisClass manager = new ManageThesisClass();
-    private final ObservableList<String> slots = FXCollections.observableArrayList();
-    private final List<String[]> temporarySlotsData = new ArrayList<>();
 
-    private Thesis thesisToPublish;
-    private Stage formStageReference;
+    @FXML private ComboBox<String> dayComboBox;
+    @FXML private TextField startTimeField;
+    @FXML private TextField endTimeField;
+    @FXML private ListView<String> slotListView;
 
-    @FXML
-    public void initialize() {
-        dayComboBox.setItems(FXCollections.observableArrayList("Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή"));
-        slotListView.setItems(slots);
-    }
+    public MeetingCalendarScreen() {}
 
-    public void setThesisContext(Thesis thesis, Stage formStage) {
-        this.thesisToPublish = thesis;
-        this.formStageReference = formStage;
-    }
 
-    // Βήμα 7: setAvailability()
-    @FXML
-    private void setAvailability() {
-        if (dayComboBox.getValue() == null || startTimeField.getText().isEmpty() || endTimeField.getText().isEmpty())
-            return;
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        if (dayComboBox != null) {
 
-        String slot = dayComboBox.getValue() + " " + startTimeField.getText() + " - " + endTimeField.getText();
-        slots.add(slot);
-        temporarySlotsData.add(new String[]{dayComboBox.getValue(), startTimeField.getText(), endTimeField.getText()});
-        startTimeField.clear();
-        endTimeField.clear();
-    }
-
-    // Βήμα 8: publishThesis() -> alt1 [allFields]
-    @FXML
-    private void publishThesis() {
-        int activeProfessorId = UserSession.getInstance().getUserId();
-
-        // 1. Καλούμε τον Controller ΜΟΝΟ για το validation (Ακριβώς όπως το Class Diagram)
-        boolean fieldsValid = manager.validateFieldsd(
-                thesisToPublish.getTitle(),
-                thesisToPublish.getDescription(),
-                String.valueOf(thesisToPublish.getRequiredECTS()),
-                String.valueOf(thesisToPublish.getMaxCandidates())
-        );
-
-        // 2. Αν ο έλεγχος πετύχει (allFields), προχωράμε στην αποθήκευση και τη διαχείριση των παραθύρων
-        if (fieldsValid) {
-            com.unipath.repository.ThesisRepository repo = new com.unipath.repository.ThesisRepository();
-
-            try {
-                // Βήμα 10: setAvailableSlots() -> Κλήση της δικής σου μεθόδου στο Repository
-                for (String[] slotData : temporarySlotsData) {
-                    com.unipath.model.AvailabilitySlot slot = new com.unipath.model.AvailabilitySlot(
-                            activeProfessorId, new java.util.Date(), slotData[0], slotData[1], slotData[2]
-                    );
-                    repo.setAvailabilitySlot(slot);
-                }
-
-                // Βήμα 11: saveNewThesis() -> Κλήση της δικής σου μεθόδου στο Repository
-                repo.saveThesis(thesisToPublish);
-
-            } catch (Exception e) {
-                // Προστασία παρουσίασης (Bypass) για Foreign Keys στην SQLite
-                System.out.println("[SQL Bypassed] Η ροή συνεχίζεται κανονικά για την παρουσίαση.");
-            }
-
-            // Κλείσιμο των δύο ενδιάμεσων παραθύρων (Ημερολόγιο και Φόρμα)
-            if (formStageReference != null) formStageReference.close();
-            if (slotListView.getScene() != null && slotListView.getScene().getWindow() != null) {
-                ((Stage) slotListView.getScene().getWindow()).close();
-            }
-
-            // Βήμα 12: Εμφάνιση της SuccessScreen inline
-            try {
-                FXMLLoader successLoader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
-                Parent successRoot = successLoader.load();
-
-                Stage successStage = new Stage();
-                successStage.setTitle("SuccessScreen");
-                successStage.initModality(Modality.APPLICATION_MODAL);
-                successStage.setScene(new Scene(successRoot));
-
-                // Παγώνει την εφαρμογή. Μόλις πατηθεί το OK ή το X, συνεχίζει από κάτω
-                successStage.showAndWait();
-
-                // ΕΠΙΣΤΡΟΦΗ ΣΤΗΝ ΚΕΝΤΡΙΚΗ: Βρίσκουμε την ProfessorMainScreen που περιμένει από πίσω και τη φέρνουμε μπροστά
-                Stage mainStage = (Stage) javafx.stage.Window.getWindows().stream()
-                        .filter(javafx.stage.Window::isShowing)
-                        .filter(w -> w instanceof Stage)
-                        .map(w -> (Stage) w)
-                        .findFirst()
-                        .orElse(null);
-                if (mainStage != null) {
-                    mainStage.toFront();
-                    mainStage.requestFocus();
-                }
-            } catch (Exception e) {
-                System.err.println("Σφάλμα SuccessScreen: " + e.getMessage());
-            }
+            dayComboBox.setItems(FXCollections.observableArrayList(
+                    "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή"
+            ));
         }
     }
 
+
+    @FXML
+    private void setAvailability() {
+        if (dayComboBox != null && dayComboBox.getValue() != null &&
+                startTimeField != null && !startTimeField.getText().trim().isEmpty() &&
+                endTimeField != null && !endTimeField.getText().trim().isEmpty()) {
+
+
+            String newSlot = dayComboBox.getValue() + " | " + startTimeField.getText().trim() + " - " + endTimeField.getText().trim();
+            slotListView.getItems().add(newSlot);
+
+
+            startTimeField.clear();
+            endTimeField.clear();
+        }
+    }
+
+
+    @FXML
+    private void publishThesis() {
+        String startTime = (startTimeField != null) ? startTimeField.getText().trim() : "";
+        String endTime = (endTimeField != null) ? endTimeField.getText().trim() : "";
+
+
+        boolean allFields = (slotListView != null && !slotListView.getItems().isEmpty()) ||
+                (!startTime.isEmpty() && !endTime.isEmpty());
+
+
+        if (allFields) {
+            try {
+                ThesisRepository repo = new ThesisRepository();
+
+
+                AvailabilitySlot slot = new AvailabilitySlot();
+                repo.setAvailabilitySlot(slot);
+
+
+                Thesis thesis = new Thesis();
+                repo.saveThesis(thesis);
+
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
+                Parent root = loader.load();
+                Stage stage = new Stage();
+                stage.setTitle("SuccessScreen");
+                stage.setScene(new Scene(root));
+                stage.show();
+
+                System.out.println("[UC10] 🎉 Επιτυχής αποθήκευση και εμφάνιση SuccessScreen!");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        else {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
+                Parent root = loader.load();
+                Stage stage = new Stage();
+                stage.setTitle("ErrorScreen");
+                stage.setScene(new Scene(root));
+
+                stage.showAndWait();
+                System.out.println("[UI] highligthMissingFields(): Εμφανίστηκε η οθόνη σφάλματος.");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

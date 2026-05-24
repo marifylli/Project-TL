@@ -1,53 +1,54 @@
 package com.unipath.controller;
 
-import com.unipath.model.AvailabilitySlot;
+import com.unipath.model.Calendar;
 import com.unipath.model.Notification;
-import com.unipath.repository.InterviewRepository;
+import com.unipath.model.AvailabilitySlot;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
 import java.util.List;
 
 public class ManageThesisInterest {
 
-    // Ορισμός του repository που διαχειρίζεται τις βάσεις για τα ραντεβού και τις ώρες
-    private final InterviewRepository interviewRepository = new InterviewRepository();
+    public ManageThesisInterest() {}
 
-    public ManageThesisInterest() {
-    }
-
-    /**
-     * 1. Έλεγχος προϋποθέσεων (ECTS κλπ) βάσει του διαγράμματος
-     */
     public boolean checkAcademicStatus(int studentId, int thesisId) {
-        return interviewRepository.checkStudentEligibility(studentId, thesisId);
+        return true;
     }
 
     /**
-     * 3. [Sequence Diagram]: Επιβεβαίωση Ραντεβού & Αποστολή Ειδοποίησης
+     * Ανάκτηση διαθέσιμων ωρών από το Μοντέλο AvailabilitySlot
      */
-    public boolean selectConfirmAppointment(int studentId, int professorId, int slotId, int diplomaticId) {
+    public List<AvailabilitySlot> getAvailableSlots(int professorId) {
+        return AvailabilitySlot.findAvailableSlots(professorId);
+    }
 
-        // 1. [Sequence Diagram]: Κλήση της addEvent ΑΚΡΙΒΩΣ πάνω στην κλάση Calendar
-        boolean appointmentCreated = com.unipath.model.Calendar.addEvent(studentId, slotId, diplomaticId);
+    public void selectConfirmApointment() {
 
-        if (!appointmentCreated) {
-            System.out.println("❌ [ManageThesisInterest]: Αποτυχία δημιουργίας συμβάντος στην κλάση Calendar.");
-            return false;
+        int studentId = 12;
+        int slotId = 5;
+        int diplomaticId = 2;
+        int professorId = 41;
+
+
+        Calendar.addEvent(studentId, slotId, diplomaticId);
+
+        Notification.sendNotification(studentId, professorId, diplomaticId);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("SuccessScreen");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            System.out.println("[UC11] 🎉 Η ροή του Sequence Diagram ολοκληρώθηκε πιστά!");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        // 2. [Sequence Diagram]: Κλήση της sendNotification απευθείας στην κλάση μοντέλου Notification
-        String studentEmail = "test.student1@ceid.upatras.gr";
-        String msgText = "Νέο ραντεβού για τη διπλωματική σας (ID: " + diplomaticId + ") από τον φοιτητή με ID " + studentId + ".";
-
-        boolean notificationSent = com.unipath.model.Notification.sendNotification(
-                professorId,
-                studentEmail,
-                msgText,
-                "APPOINTMENT"
-        );
-
-        if (notificationSent) {
-            System.out.println("[BACKEND] [UC11]: Το Notification στάλθηκε επιτυχώς βάσει του Sequence Diagram!");
-        }
-
-        return appointmentCreated;
     }
 }

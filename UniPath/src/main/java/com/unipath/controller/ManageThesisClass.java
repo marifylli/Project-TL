@@ -1,5 +1,7 @@
 package com.unipath.controller;
 
+import com.unipath.dataBase.DBManager;
+import com.unipath.model.Calendar;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -8,36 +10,36 @@ import java.io.IOException;
 
 public class ManageThesisClass {
 
-    public ManageThesisClass() {
-    }
+    public ManageThesisClass() {}
 
-    // 1. ΑΚΡΙΒΩΣ ΟΠΩΣ ΤΟ CLASS DIAGRAM
-    public boolean validateFieldsd(String title, String description, String ects, String maxCandidates) {
-        if (title == null || title.isBlank() || description == null || description.isBlank() ||
-                ects == null || ects.isBlank() || maxCandidates == null || maxCandidates.isBlank()) {
 
-            highligthMissingFields("Σφάλμα: Δεν έχουν συμπληρωθεί όλα τα υποχρεωτικά πεδία!");
-            return false;
-        }
-        return true;
-    }
+    public void requestCalendar() {
 
-    // 2. ΑΚΡΙΒΩΣ ΟΠΩΣ ΤΟ CLASS DIAGRAM
-    public void highligthMissingFields(String errorMessage) {
+        Calendar calendar = Calendar.requestCalendar(41); // test professorId
+
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/meeting-calendar-view.fxml"));
             Parent root = loader.load();
 
-            javafx.scene.control.Label lbl = (javafx.scene.control.Label) root.lookup("#errorLabel");
-            if (lbl != null) lbl.setText(errorMessage);
 
             Stage stage = new Stage();
-            stage.setTitle("ErrorScreen");
-            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.setTitle("Ημερολόγιο Συναντήσεων");
             stage.setScene(new Scene(root));
-            stage.showAndWait();
+            stage.show();
+
         } catch (IOException e) {
-            System.err.println("Σφάλμα φόρτωσης ErrorScreen: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public boolean validateFields(String title, String ects, String maxCandidates) {
+        if (title == null || title.isEmpty()) return false;
+        try {
+            Integer.parseInt(ects);
+            Integer.parseInt(maxCandidates);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 }

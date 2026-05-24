@@ -23,23 +23,31 @@ import java.util.ResourceBundle;
 
 public class ProfessorMainScreen implements Initializable {
 
-    @FXML private Label professorNameLabel;
-    @FXML private Label coursesCountLabel;
-    @FXML private VBox coursesContainer;
+    @FXML
+    private Label professorNameLabel;
+    @FXML
+    private Label coursesCountLabel;
+    @FXML
+    private VBox coursesContainer;
 
-    // Αρχικοποίηση του Controller ως πεδίο της κλάσης
+
     private final ManageProfCourseEdit manageProfCourseEdit = new ManageProfCourseEdit();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        String dynamicName = UserSession.getInstance().getDisplayName();
+        int currentProfessorId = UserSession.getInstance().getUserId();
 
-        if (dynamicName != null) {
-            professorNameLabel.setText("Prof. " + dynamicName);
-        } else {
-            professorNameLabel.setText("Prof. Test Mode");
-        }
+
+        loadNotifications(currentProfessorId);
         loadCourses();
+    }
+
+    private void loadNotifications(int professorId) {
+
+        String sql = "SELECT * FROM Notification WHERE recipientId = 'prof" + professorId + "'";
+
+
+        System.out.println("Ελέγχω ειδοποιήσεις για τον καθηγητή με ID: " + professorId);
     }
 
     private void loadCourses() {
@@ -76,12 +84,12 @@ public class ProfessorMainScreen implements Initializable {
         Button editBtn = new Button("Επεξεργασία");
         editBtn.getStyleClass().add("prof-edit-btn");
 
-        // ΒΑΣΙΚΗ ΡΟΗ: Όταν πατηθεί η επεξεργασία, ανοίγει απευθείας η CourseDetailScreen
+
         editBtn.setOnAction(ActionEvent -> {
-            // Δημιουργούμε τον manager για τα πεδία
+
             com.unipath.controller.ManageProfCourseEdit manager = new com.unipath.controller.ManageProfCourseEdit();
 
-            // Ανοίγουμε την οθόνη λεπτομερειών περνώντας της τον manager και το επιλεγμένο course
+
             com.unipath.ui.UC9.CourseDetailScreen detailScreen = new com.unipath.ui.UC9.CourseDetailScreen(manager, course);
             detailScreen.displayCourseDetails();
         });
@@ -104,9 +112,4 @@ public class ProfessorMainScreen implements Initializable {
             e.printStackTrace();
         }
     }
-
-    @FXML private void onCalendarButtonClick() {}
-
-    // Η ΠΑΛΙΑ ΜΕΘΟΔΟΣ clickMyCourses() ΑΦΑΙΡΕΘΗΚΕ ΠΛΗΡΩΣ
-    // καθώς πλέον η επιλογή γίνεται απευθείας από την createCourseCard παραπάνω.
 }

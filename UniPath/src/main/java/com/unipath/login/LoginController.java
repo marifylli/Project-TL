@@ -231,11 +231,11 @@ public class LoginController {
         } else if (email.startsWith("test.student")) {
             return new User("2002", email, Role.STUDENT, "Φοιτητής (Test)");
         } else {
-            // Δυναμικό Test για Καθηγητές: Αν γράψεις π.χ. test.georgiou@ceid.upatras.gr,
-            // θα βγάλει το όνομα "Prof. test.georgiou" αντί για καρφωμένο κείμενο
+            // Δυναμικό Test για Καθηγητές
             String namePart = email.substring(5, email.indexOf("@"));
             String capitalizedName = namePart.substring(0, 1).toUpperCase() + namePart.substring(1);
-            return new User("1", email, Role.PROFESSOR, capitalizedName + " (Test)");
+            // 🔥 ΕΔΩ ΕΙΝΑΙ ΤΟ ΛΑΘΟΣ - ΑΛΛΑΞΕ ΤΟ "1" ΜΕ ΤΟ ΣΩΣΤΟ ID (π.χ. "41")
+            return new User("41", email, Role.PROFESSOR, capitalizedName + " (Test)");
         }
     }
 

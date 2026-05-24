@@ -62,7 +62,7 @@ public class CourseDetailScreen {
         }
     }
 
-    // Αντιστοίχιση με το clicksRules() του Class Diagram
+
     @FXML
     public void clicksRules() {
         if (manageProfCourseEdit != null) {

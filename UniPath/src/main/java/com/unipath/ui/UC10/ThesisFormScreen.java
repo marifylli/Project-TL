@@ -1,17 +1,19 @@
 package com.unipath.ui.UC10;
 
 import com.unipath.controller.ManageThesisClass;
-import com.unipath.model.Thesis;
-import com.unipath.login.UserSession;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import java.io.IOException;
 
 public class ThesisFormScreen {
+
+
+    private final ManageThesisClass manager = new ManageThesisClass();
 
     @FXML private TextField titleField;
     @FXML private TextArea descriptionArea;
@@ -20,48 +22,41 @@ public class ThesisFormScreen {
     @FXML private TextField maxCandidatesField;
     @FXML private TextArea requiredSkillsArea;
 
-    // Σύνδεση με τον Controller που έχει τις 2 μεθόδους του Class Diagram
-    private final ManageThesisClass manager = new ManageThesisClass();
+    public ThesisFormScreen() {}
 
-    // Αλλαγή σε selectCalendar() με κεφαλαίο C για να κουμπώσει με το OnAction του FXML σου
+
     @FXML
-    public void selectCalendar() {
-        try {
-            int ects = ectsField.getText().trim().isEmpty() ? 0 : Integer.parseInt(ectsField.getText().trim());
-            int maxCandidates = maxCandidatesField.getText().trim().isEmpty() ? 0 : Integer.parseInt(maxCandidatesField.getText().trim());
-
-            Thesis temporaryThesis = new Thesis(
-                    UserSession.getInstance().getUserId(),
-                    titleField.getText().trim(),
-                    descriptionArea.getText().trim(),
-                    prerequisitesArea.getText().trim(),
-                    ects,
-                    maxCandidates,
-                    requiredSkillsArea.getText().trim()
-            );
-
-            // Κλήση του requestCalendar απευθείας από το Repository
-            com.unipath.repository.ThesisRepository thesisRepo = new com.unipath.repository.ThesisRepository();
-            thesisRepo.requestCalendar(UserSession.getInstance().getUserId());
-
-            // Βήμα 6: Δημιουργία και εμφάνιση της MeetingCalendarScreen
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/meeting-calendar-view.fxml"));
-            Parent root = loader.load();
-
-            MeetingCalendarScreen calendarScreen = loader.getController();
+    private void selectCalendar() {
 
 
-            calendarScreen.setThesisContext(temporaryThesis, (Stage) titleField.getScene().getWindow());
+        if (titleField.getText().trim().isEmpty() ||
+                descriptionArea.getText().trim().isEmpty() ||
+                ectsField.getText().trim().isEmpty() ||
+                maxCandidatesField.getText().trim().isEmpty()) {
 
-            Stage stage = new Stage();
-            stage.setTitle("Ημερολόγιο Συναντήσεων");
-            stage.setScene(new Scene(root));
-            stage.show();
+            System.out.println("[UC10] ❌ Εντοπίστηκαν ελλιπή πεδία. Ενεργοποίηση Εναλλακτικής Ροής [not all Fields].");
 
-        } catch (NumberFormatException e) {
-            manager.highligthMissingFields("Τα πεδία ECTS και Μέγιστος Αριθμός Υποψηφίων πρέπει να είναι έγκυροι αριθμοί!");
-        } catch (Exception e) {
-            e.printStackTrace();
+            try {
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
+                Parent root = loader.load();
+
+                Stage stage = new Stage();
+                stage.setTitle("ErrorScreen");
+                stage.setScene(new Scene(root));
+
+                stage.showAndWait();
+
+                System.out.println("[UC10] Η ροή επιστρέφει στο βήμα 3 της φόρμας.");
+            } catch (IOException e) {
+                System.err.println("❌ Σφάλμα κατά τη φόρτωση του error-window-view.fxml: " + e.getMessage());
+                e.printStackTrace();
+            }
+            return;
         }
+
+
+        System.out.println("[UC10] ✅ Όλα τα πεδία είναι συμπληρωμένα. Αποστολή requestCalendar() στον Controller.");
+        manager.requestCalendar();
     }
 }

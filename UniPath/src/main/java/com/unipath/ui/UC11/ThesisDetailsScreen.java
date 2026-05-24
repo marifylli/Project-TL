@@ -27,7 +27,6 @@ public class ThesisDetailsScreen {
 
     public ThesisDetailsScreen() {}
 
-    // Μέθοδος αρχικοποίησης των δεδομένων της διπλωματικής από την προηγούμενη οθόνη (ThesisBoardScreen)
     public void setThesis(Thesis thesis) {
         this.selectedThesis = thesis;
 
@@ -40,13 +39,10 @@ public class ThesisDetailsScreen {
         }
     }
 
-    /**
-     * Βήμα 5: Εκδήλωση Ενδιαφέροντος
-     * 🔥 Προστέθηκε το @FXML για να συνδεθεί με το OnAction του κουμπιού στο FXML!
-     */
+
     @FXML
     private void selectExpressInterest() {
-        // 1. Έλεγχος καταλληλότητας (το κρατάμε true για το testing)
+
         boolean isEligible = true;
 
         if (!isEligible) {
@@ -62,17 +58,15 @@ public class ThesisDetailsScreen {
         System.out.println("[DEBUG] Επιλεγμένη Διπλωματική: " + selectedThesis.getTitle());
         System.out.println("[DEBUG] ID Καθηγητή που διαβάστηκε: " + selectedThesis.getProfessorId());
 
-        // 2. Ανάκτηση των slots
-        List<AvailabilitySlot> slots = manager.findAvailableSlots(selectedThesis.getProfessorId());
 
-        // 3. Έλεγχος αν η βάση επέστρεψε δεδομένα
+        List<AvailabilitySlot> slots = manager.getAvailableSlots(selectedThesis.getProfessorId());
+
         if (slots == null || slots.isEmpty()) {
             System.out.println("[❌ ERROR] Η βάση δεν επέστρεψε κανένα slot για τον καθηγητή με ID: " + selectedThesis.getProfessorId());
             showPopup("/fxml/common/error-window-view.fxml", "Απόρριψη: Δεν υπάρχουν διαθέσιμες ώρες στη βάση για αυτόν τον καθηγητή.");
             return;
         }
 
-        // 4. Άνοιγμα της οθόνης ημερολογίου με τα πραγματικά slots της βάσης
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Student/student-meeting-calendar-view.fxml"));
             Parent root = loader.load();
@@ -80,8 +74,8 @@ public class ThesisDetailsScreen {
             StudentMeetingCalendarScreen calendarScreen = loader.getController();
             Stage currentStage = (Stage) titleLabel.getScene().getWindow();
 
-            // Περνάμε τα αυθεντικά slots στην οθόνη
-            calendarScreen.setCalendarContext(manager, selectedThesis, slots, currentStage);
+
+            calendarScreen.setCalendarContext(selectedThesis, slots, currentStage);
 
             Stage stage = new Stage();
             stage.setTitle("Επιλογή Ώρας Συνέντευξης");
@@ -94,7 +88,7 @@ public class ThesisDetailsScreen {
         }
     }
 
-    // Βοηθητική μέθοδος για την εμφάνιση των Modal Windows (Error Screens)
+
     private void showPopup(String fxmlPath, String message) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));

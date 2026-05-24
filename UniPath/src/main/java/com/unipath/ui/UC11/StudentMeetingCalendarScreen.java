@@ -3,96 +3,73 @@ package com.unipath.ui.UC11;
 import com.unipath.controller.ManageThesisInterest;
 import com.unipath.model.AvailabilitySlot;
 import com.unipath.model.Thesis;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.stage.Stage;
-import java.util.List;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.List;
 
 public class StudentMeetingCalendarScreen {
 
+    private final ManageThesisInterest manager = new ManageThesisInterest();
+
+    @FXML private ComboBox<String> timeSlotComboBox;
     @FXML private ListView<String> availableSlotsListView;
 
-    private final ObservableList<String> displaySlots = FXCollections.observableArrayList();
-    private ManageThesisInterest manager;
-    private Thesis thesis;
-    private List<AvailabilitySlot> rawSlots;
-    private Stage parentStage;
+    private Thesis selectedThesis;
+    private List<AvailabilitySlot> slots;
+    private Stage currentStage;
+
+    public StudentMeetingCalendarScreen() {}
 
     @FXML
-    public void initialize() {
-        availableSlotsListView.setItems(displaySlots);
-    }
+    public void selectConfirmAppointment() {
 
-    public void setCalendarContext(ManageThesisInterest manager, Thesis thesis, List<AvailabilitySlot> slots, Stage parentStage) {
-        this.manager = manager;
-        this.thesis = thesis;
-        this.rawSlots = slots;
-        this.parentStage = parentStage;
+        String selectedSlot = availableSlotsListView.getSelectionModel().getSelectedItem();
 
-        displaySlots.clear();
-        for (AvailabilitySlot slot : slots) {
-            displaySlots.add(slot.getDayOfWeek() + " | " + slot.getStartTime() + " - " + slot.getEndTime());
+        if (selectedSlot == null) {
+            System.out.println("[UC11] ❌ Εναλλακτική ροή: Δεν επιλέχθηκε slot.");
+
+
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+            alert.setTitle("Σφάλμα Επιλογής");
+            alert.setHeaderText(null);
+            alert.setContentText("Παρακαλώ επιλέξτε μια διαθέσιμη ώρα από τη λίστα για να προχωρήσετε.");
+            alert.showAndWait();
+
+            return;
+        }
+
+        try {
+            manager.selectConfirmApointment();
+            System.out.println("[UC11] 📬 Βήμα 9: Η ειδοποίηση στάλθηκε στον καθηγητή!");
+
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Ειδοποίηση Συστήματος");
+            alert.setHeaderText(null);
+            alert.setContentText("Η επιλογή ώρας καταχωρήθηκε και η ειδοποίηση στάλθηκε επιτυχώς!");
+            alert.showAndWait();
+
+        } catch (Exception e) {
+            System.out.println("[UC11] ❌ Σφάλμα κατά την καταχώρηση: " + e.getMessage());
         }
     }
 
-    @FXML
-    private void selectConfirmAppointment() {
-        int selectedIndex = availableSlotsListView.getSelectionModel().getSelectedIndex();
-        if (selectedIndex < 0 || manager == null || thesis == null || rawSlots == null) return;
+    public void setCalendarContext(Thesis selectedThesis, List<AvailabilitySlot> slots, Stage currentStage) {
+        this.selectedThesis = selectedThesis;
+        this.slots = slots;
+        this.currentStage = currentStage;
 
-        AvailabilitySlot selectedSlot = rawSlots.get(selectedIndex);
-        int currentStudentId = 41; // test.student1 (st1) από το InsertTestData
-
-        // [Sequence Diagram] 1. selectConfirmAppointment(studentId, professorId, slotId, diplomaticId)
-        boolean success = manager.selectConfirmAppointment(
-                currentStudentId,
-                thesis.getProfessorId(),
-                selectedSlot.getSlotId(),
-                thesis.getDiplomaticId()
-        );
-
-        if (success) {
-            System.out.println("[UC11] [Sequence Step]: 1.1 Appointment & Notification Created via Controller/Repositories");
-
-            // [Sequence Diagram] Εμφάνιση του Μηνύματος Κράτησης (showSuccessMessage) στο ίδιο Boundary
-            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-            alert.setTitle("Μήνυμα Κράτησης");
-            alert.setHeaderText("🎉 Επιτυχής Προγραμματισμός Συνέντευξης!");
-            alert.setContentText("Η κράτησή σας καταχωρήθηκε στη ΒΔ.\n\n" +
-                    "Θέμα: " + thesis.getTitle() + "\n" +
-                    "Ημέρα/Ώρα: " + selectedSlot.getDayOfWeek() + " " + selectedSlot.getStartTime() + " - " + selectedSlot.getEndTime());
-
-            // Το σύστημα παγώνει μέχρι ο φοιτητής να πατήσει το "OK"
-            alert.showAndWait();
-
-            // [Sequence Diagram / Ροή]: Επιστροφή στην Οθόνη Κεντρικής Σελίδας Φοιτητή
-            try {
-                // Φορτώνουμε την υπάρχουσα Κεντρική Οθόνη Φοιτητή που ήδη έχεις στο project σου
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Student/student-main-screen.fxml"));
-                Parent root = loader.load();
-
-                // Αλλάζουμε το root της κεντρικής σκηνής (parentStage) ώστε να μην κλείσει η εφαρμογή
-                if (parentStage != null) {
-                    parentStage.getScene().setRoot(root);
-                }
-
-                // Κλείνουμε μόνο το έξτρα αναδυόμενο παράθυρο του ημερολογίου
-                Stage calendarStage = (Stage) availableSlotsListView.getScene().getWindow();
-                calendarStage.close();
-
-                System.out.println("[UC11] [Sequence Step]: Επιστροφή στην Οθόνη Κεντρικής Σελίδας Φοιτητή. Η ροή ολοκληρώθηκε πιστά!");
-
-            } catch (IOException e) {
-                System.err.println("❌ Σφάλμα κατά την επιστροφή στην Κεντρική Οθόνη: " + e.getMessage());
-                e.printStackTrace();
+        if (slots != null) {
+            for (AvailabilitySlot slot : slots) {
+                availableSlotsListView.getItems().add(slot.getDayOfWeek() + " " + slot.getStartTime());
             }
-        } else {
-            System.out.println("❌ Αποτυχία καταχώρησης ραντεβού.");
         }
     }
 }

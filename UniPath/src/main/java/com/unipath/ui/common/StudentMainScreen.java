@@ -22,6 +22,7 @@ public class StudentMainScreen {
     @FXML private Button profileButton;
     @FXML private Button addNewOfferButton;
     @FXML private Button getHelpButton;
+    @FXML private Button thesisBoardButton;
     @FXML
     public void initialize() {
         studentNameLabel.setText("Καλωσήλθατε στο Κεντρικό Μενού");
@@ -148,5 +149,30 @@ public class StudentMainScreen {
         }
     }
 
+    @FXML
+    public void clickThesisBoard() {
+        try {
+            System.out.println("[UC11] Μετάβαση στην Πινακίδα (από τον φάκελο Professor)...");
+
+            // Το path δείχνει πλέον σωστά στον φάκελο Professor
+            URL fxmlUrl = getClass().getResource("/fxml/Professor/thesis-board-view.fxml");
+
+            if (fxmlUrl == null) {
+                System.err.println("❌ Σφάλμα: Το αρχείο ΔΕΝ βρέθηκε στο: /fxml/Professor/thesis-board-view.fxml");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Parent root = loader.load();
+
+            Stage stage = (Stage) thesisBoardButton.getScene().getWindow();
+            stage.getScene().setRoot(root);
+            stage.setTitle("UniPath - Πινακίδα Διπλωματικών");
+
+        } catch (Exception e) {
+            System.err.println("❌ Σφάλμα φόρτωσης: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }
 

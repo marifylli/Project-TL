@@ -63,4 +63,8 @@ public class Scenario {
         this.groupBRequiredECTS = groupBRequiredECTS;
     }
 
+    @Override
+    public String toString() {
+        return this.title != null ? this.title : "Σενάριο " + scenarioId;
+    }
 }

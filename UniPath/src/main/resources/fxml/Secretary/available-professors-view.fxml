@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefWidth="1000" prefHeight="650"
+            stylesheets="@../../css/styles.css">
+
+    <top>
+        <HBox styleClass="prof-header" alignment="CENTER_LEFT" spacing="10">
+            <padding><Insets top="16" right="24" bottom="16" left="24"/></padding>
+            <Label text="👨‍🏫 Επιλογή Διδάσκοντα" styleClass="prof-header-name"/>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="24">
+            <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+            <!-- Αριστερά: Λίστα Καθηγητών -->
+            <VBox spacing="12" HBox.hgrow="ALWAYS">
+                <Label text="Διαθέσιμοι Καθηγητές" styleClass="prof-section-title"/>
+                <ListView fx:id="professorsListView" VBox.vgrow="ALWAYS" styleClass="prof-scroll"/>
+            </VBox>
+
+            <!-- Δεξιά: Πληροφορίες & Επιλογή -->
+            <VBox spacing="20" minWidth="300" alignment="TOP_CENTER"
+                  style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8;
+                         -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+
+                <Label text="Στοιχεία Μαθήματος"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #4a5568;"/>
+
+                <Label fx:id="courseInfoLabel"
+                       text=""
+                       wrapText="true"
+                       style="-fx-font-size: 13px; -fx-text-fill: #718096;"/>
+
+                <Separator/>
+
+                <Label text="Επιλέξτε έναν διδάσκοντα από τη λίστα."
+                       wrapText="true"
+                       style="-fx-font-size: 13px; -fx-text-fill: #4a5568;"/>
+
+                <!-- Error Label -->
+                <Label fx:id="errorLabel"
+                       text=""
+                       visible="false"
+                       wrapText="true"
+                       style="-fx-text-fill: #e53e3e; -fx-font-size: 13px;"/>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <Button fx:id="btnSelect"
+                        text="✓ Επιλογή Διδάσκοντα"
+                        styleClass="prof-action-btn-primary"
+                        onAction="#onSelectProfessor"
+                        maxWidth="Infinity"/>
+            </VBox>
+        </HBox>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.unipath.ui.UC7.OfferSubmissionFormScreen"
+      alignment="CENTER"
+      spacing="20"
+      styleClass="root-pane"
+      stylesheets="@../../css/styles.css">
+
+    <VBox alignment="CENTER" spacing="15" styleClass="login-card" maxWidth="450" style="-fx-padding: 30;">
+        <Label text="UniPath - Υποβολή Υλικού" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1ea1e2;"/>
+        <Label text="Βήμα 2: Προσθήκη Σημειώσεων ή Τηλεδιάσκεψης" style="-fx-font-size: 14px; -fx-text-fill: gray;"/>
+        <Region minHeight="10"/>
+
+        <VBox alignment="CENTER_LEFT" spacing="5">
+            <Label text="Διαδρομή Αρχείου Σημειώσεων (Προαιρετικό):" style="-fx-font-weight: bold;"/>
+            <HBox spacing="10">
+                <TextField fx:id="fileRootTextField" promptText="π.χ. C:/docs/notes.pdf" HBox.hgrow="ALWAYS"/>
+                <Button text="Browse..." onAction="#handleBrowseFile"/>
+            </HBox>
+        </VBox>
+
+        <VBox alignment="CENTER_LEFT" spacing="5">
+            <Label text="Σύνδεσμος Τηλεδιάσκεψης (Προαιρετικό):" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="meetingUrlTextField" promptText="π.χ. https://teams.microsoft.com/..."/>
+        </VBox>
+
+        <Region minHeight="15"/>
+        <HBox spacing="15" alignment="CENTER">
+            <Button text=" Πίσω" onAction="#handleBack"
+                    style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <Button fx:id="submitOfferButton" text="Δημοσίευση " onAction="#handleSubmit"
+                    style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        </HBox>
+    </VBox>
+</VBox>

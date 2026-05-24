@@ -81,4 +81,9 @@ public class Course {
     // --- ΠΡΟΣΘΗΚΗ GETTER/SETTER ΓΙΑ ΤΟΝ ΚΑΘΗΓΗΤΗ ---
     public int getProfessorId() { return professorId; }
     public void setProfessorId(int professorId) { this.professorId = professorId; }
+    @Override
+    public String toString() {
+        // 💡 Επιστρέφει μια όμορφη μορφή για να τη διαβάζει το ListView
+        return this.getCourseID() + " - " + this.getTitle() + " (" + this.getECTS() + " ECTS)";
+    }
 }

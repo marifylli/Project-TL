@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.unipath.ui.UC8.EnrolledCoursesScreen"
+      alignment="CENTER"
+      spacing="20"
+      styleClass="root-pane"
+      stylesheets="@../../css/styles.css">
+
+    <VBox alignment="CENTER" spacing="10" styleClass="login-card" maxWidth="500" style="-fx-padding: 30;">
+        <Label text="UniPath - Κέντρο Βοήθειας" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1ea1e2;"/>
+        <Label text="Βήμα 1: Επιλέξτε Μάθημα για Λήψη Υποστήριξης" style="-fx-font-size: 14px; -fx-text-fill: gray;"/>
+        <Region minHeight="15"/>
+
+        <VBox alignment="CENTER_LEFT" spacing="5" maxWidth="Infinity">
+            <Label text="Τα Μαθήματα του Πλάνου Σπουδών σας:" style="-fx-font-weight: bold;"/>
+            <ListView fx:id="coursesListView" prefHeight="250" maxWidth="Infinity"/>
+        </VBox>
+
+        <Region minHeight="20"/>
+
+        <HBox spacing="15" alignment="CENTER" maxWidth="Infinity">
+            <Button text="Ακύρωση" onAction="#handleCancel"
+                    maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                    style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand;"/>
+            <Button fx:id="nextButton" text="Αναζήτηση Προσφορών" onAction="#handleSearchOffers"
+                    maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                    style="-fx-background-color: #1ea1e2; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand;"/>
+        </HBox>
+    </VBox>
+</VBox>

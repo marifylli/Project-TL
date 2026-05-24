@@ -20,7 +20,8 @@ public class StudentMainScreen {
     @FXML private Button evaluateButton;
     @FXML private Button studyPlanButton;
     @FXML private Button profileButton;
-
+    @FXML private Button addNewOfferButton;
+    @FXML private Button getHelpButton;
     @FXML
     public void initialize() {
         studentNameLabel.setText("Καλωσήλθατε στο Κεντρικό Μενού");
@@ -58,9 +59,25 @@ public class StudentMainScreen {
         }
     }
 
-    // 📅 ΕΝΕΡΓΕΙΑ ΓΙΑ ΤΟ USE CASE ΤΗΣ ΟΜΑΔΑΣ (UC1)
     @FXML
     public void clickCreatePlan() {
+        try {
+            System.out.println("=== Έναρξη UC1: Δημιουργία και Έλεγχος Πλάνου Σπουδών ===");
+
+            // Αρχικοποιούμε τον σωστό controller για το UC1 (ManageStudyPlan)
+            com.unipath.controller.ManageStudyPlan studyPlanController = new com.unipath.controller.ManageStudyPlan();
+
+            // Εκκινούμε τη διαδικασία, η οποία θα φορτώσει το scenario-selection-view.fxml
+            studyPlanController.startCreatePlan();
+
+        } catch (Exception e) {
+            System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC1 (ManageStudyPlan):");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void clickfortosioannas() {
         try {
             System.out.println("=== Έναρξη UC3: Προσομοίωση και Εξισορρόπηση Φόρτου Εργασίας ===");
 
@@ -77,7 +94,59 @@ public class StudentMainScreen {
         }
     }
 
+    @FXML
+    public void clickAddNewOffer() {
+        try {
+            System.out.println("=== Έναρξη UC7: Προσθήκη Νέας Προσφοράς Βοήθειας (Add New Offer) ===");
 
+            // Αρχικοποιούμε τον Controller του UC7
+            com.unipath.controller.ManageMentorProfile mentorController = new com.unipath.controller.ManageMentorProfile();
+
+            // Παίρνουμε το τρέχον Stage από ένα υπάρχον κουμπί (π.χ. το studyPlanButton)
+            Stage stage = (Stage) studyPlanButton.getScene().getWindow();
+
+            // Ξεκινάμε τη διαδικασία του UC7 περνώντας το stage
+            mentorController.startMentorFlow(stage);
+
+        } catch (Exception e) {
+            System.err.println(" Σφάλμα κατά την εκκίνηση του UC7 (Add New Offer):");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void clickGetHelp() {
+        try {
+            System.out.println("=== Έναρξη UC8: Λήψη Ακαδημαϊκής Βοήθειας από Mentor ===");
+
+            // Αρχικοποιούμε τον Controller του UC8
+            com.unipath.controller.ManageGetHelp getHelpController = new com.unipath.controller.ManageGetHelp();
+
+            // Παίρνουμε το τρέχον Stage και ξεκινάμε τη ροή (θα τη φτιάξουμε σε λίγο)
+            Stage stage = (Stage) studyPlanButton.getScene().getWindow();
+
+            // Θα καλέσουμε μια μέθοδο εκκίνησης στον Controller, π.χ. startGetHelpFlow(stage)
+            // (Θα την προσθέσουμε στον Controller στο επόμενο βήμα)
+            // getHelpController.startGetHelpFlow(stage);
+
+            // Προσωρινά για δοκιμή, θα φορτώνουμε την πρώτη οθόνη του UC8
+            java.net.URL fxmlUrl = getClass().getResource("/fxml/Student/enrolled-courses-view.fxml");
+            if (fxmlUrl == null) {
+                fxmlUrl = getClass().getClassLoader().getResource("fxml/Student/enrolled-courses-view.fxml");
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Parent root = loader.load();
+
+            stage.setScene(new Scene(root, 1000, 650));
+            stage.setTitle("UniPath - Κέντρο Βοήθειας: Δηλωμένα Μαθήματα");
+            stage.show();
+
+        } catch (Exception e) {
+            System.err.println(" Σφάλμα κατά την εκκίνηση του UC8 (Λήψη Βοήθειας):");
+            e.printStackTrace();
+        }
+    }
 
 }
 

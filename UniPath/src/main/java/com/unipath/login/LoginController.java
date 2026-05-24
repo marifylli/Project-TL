@@ -200,8 +200,9 @@ public class LoginController {
                         break;
 
                     case SECRETARY:
-                        loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Secretary/secretary-main-view.fxml"));
+                        loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Secretary/secretary-main-screen.fxml"));
                         break;
+
 
                     default:
                         loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));

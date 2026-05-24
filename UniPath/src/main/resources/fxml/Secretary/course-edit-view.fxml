@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.unipath.ui.UC6.CourseEditScreen"
+            prefWidth="1000" prefHeight="650"
+            stylesheets="@../../css/styles.css">
+    <top>
+        <HBox styleClass="prof-header" alignment="CENTER_LEFT" spacing="10">
+            <padding><Insets top="16" right="24" bottom="16" left="24"/></padding>
+            <Label text="✏️ Επεξεργασία Στοιχείων Μαθήματος" styleClass="prof-header-name"/>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="prof-scroll">
+            <VBox spacing="20">
+                <padding><Insets top="24" right="40" bottom="24" left="40"/></padding>
+                <VBox spacing="6">
+                    <Label text="Τίτλος Μαθήματος *" styleClass="prof-section-title"/>
+                    <TextField fx:id="titleField" promptText="Εισάγετε τίτλο..." styleClass="prof-input"/>
+                </VBox>
+                <VBox spacing="6">
+                    <Label text="Περιγραφή" styleClass="prof-section-title"/>
+                    <TextArea fx:id="descriptionField" promptText="Εισάγετε περιγραφή..."
+                              prefRowCount="4" styleClass="prof-input" wrapText="true"/>
+                </VBox>
+                <HBox spacing="20">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="ECTS *" styleClass="prof-section-title"/>
+                        <TextField fx:id="ectsField" promptText="π.χ. 5" styleClass="prof-input"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Εξάμηνο *" styleClass="prof-section-title"/>
+                        <TextField fx:id="semesterField" promptText="π.χ. 6" styleClass="prof-input"/>
+                    </VBox>
+                </HBox>
+                <VBox spacing="6">
+                    <Label text="Κανόνες" styleClass="prof-section-title"/>
+                    <TextArea fx:id="rulesField" promptText="Εισάγετε κανόνες..."
+                              prefRowCount="3" styleClass="prof-input" wrapText="true"/>
+                </VBox>
+                <VBox spacing="6">
+                    <Label text="Προαπαιτούμενα" styleClass="prof-section-title"/>
+                    <TextArea fx:id="prerequisitesField" promptText="Εισάγετε προαπαιτούμενα..."
+                              prefRowCount="3" styleClass="prof-input" wrapText="true"/>
+                </VBox>
+                <Label fx:id="errorLabel" text=""
+                       style="-fx-text-fill: #e53e3e; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                <HBox spacing="15" alignment="CENTER_RIGHT">
+                    <Button text="← Πίσω" styleClass="prof-action-btn" onAction="#onBack"/>
+                    <Button text="💾 Αποθήκευση Αλλαγών" styleClass="prof-action-btn-primary" onAction="#onSave"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
+

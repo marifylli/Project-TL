@@ -27,6 +27,7 @@ public class ManageMentorProfile {
 
     public ManageMentorProfile() {
     }
+
     /**
      * ΕΚΚΙΝΗΣΗ ΡΟΗΣ UC7: Καλείται όταν ο χρήστης πατάει "Add New Offer" στη StudentMainScreen
      */
@@ -40,14 +41,24 @@ public class ManageMentorProfile {
      */
     public void navigateToNewOfferForm() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/new-offer-form-view.fxml"));
+            java.net.URL fxmlLocation = getClass().getResource("/fxml/Student/new-offer-form-view.fxml");
+            if (fxmlLocation == null) {
+                fxmlLocation = getClass().getClassLoader().getResource("fxml/Student/new-offer-form-view.fxml");
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
+
+            // ✨ ΔΙΑΣΩΣΗ: Αν το mainStage είναι null, "κλέβουμε" το τρέχον ανοιχτό παράθυρο
+            if (this.mainStage == null) {
+                this.mainStage = (Stage) Stage.getWindows().filtered(window -> window.isShowing()).get(0);
+            }
 
             mainStage.setScene(new Scene(root, 1000, 650));
             mainStage.setTitle("UniPath - Επιλογή Μαθήματος & Τύπου Βοήθειας");
             mainStage.show();
         } catch (Exception e) {
-            System.err.println(" Σφάλμα κατά τη φόρτωση του new-offer-form-view.fxml:");
+            System.err.println("❌ Σφάλμα κατά τη φόρτωση του new-offer-form-view.fxml:");
             e.printStackTrace();
             showErrorPopup("Αδυναμία φόρτωσης της οθόνης φόρμας.");
         }
@@ -56,16 +67,31 @@ public class ManageMentorProfile {
     /**
      * Μετάβαση στη δεύτερη φόρμα υποβολής αρχείων (OfferSubmissionFormScreen)
      */
-    public void navigateToOfferSubmission() {
+    public void navigateToOfferSubmission(String selectedCourse, String assistanceType) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/offer-submission-view.fxml"));
+            // Καταγράφουμε τις επιλογές από το 1ο βήμα για να μην χαθούν
+            selectCourse(selectedCourse);
+            selectHelp(assistanceType);
+
+            // Κρατάμε το Path με το σωστό, κεφαλαίο Student
+            java.net.URL fxmlLocation = getClass().getResource("/fxml/Student/offer-submission-view.fxml");
+            if (fxmlLocation == null) {
+                fxmlLocation = getClass().getClassLoader().getResource("fxml/Student/offer-submission-view.fxml");
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
 
+            // ✨ ΔΙΑΣΩΣΗ: Αν το mainStage είναι null, "κλέβουμε" το τρέχον ανοιχτό παράθυρο
+            if (this.mainStage == null) {
+                this.mainStage = (Stage) Stage.getWindows().filtered(window -> window.isShowing()).get(0);
+            }
+
             mainStage.setScene(new Scene(root, 1000, 650));
-            mainStage.setTitle("UniPath - Υποβολή Υλικού Προσφοράς");
-            mainStage.show();
+            mainStage.setTitle("UniPath - Συμπλήρωση Στοιχείων Προσφοράς");
+
         } catch (Exception e) {
-            System.err.println(" Σφάλμα κατά τη φόρτωση του offer-submission-view.fxml:");
+            System.err.println("❌ Σφάλμα κατά το φόρτωμα του offer-submission-view.fxml:");
             e.printStackTrace();
             showErrorPopup("Αδυναμία φόρτωσης της οθόνης υποβολής.");
         }
@@ -76,7 +102,12 @@ public class ManageMentorProfile {
      */
     public void showSuccessPopup(String message) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-view.fxml"));
+            java.net.URL fxmlLocation = getClass().getResource("/fxml/common/success-window-view.fxml");
+            if (fxmlLocation == null) {
+                fxmlLocation = getClass().getClassLoader().getResource("fxml/common/success-window-view.fxml");
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
 
             SuccessScreen controller = loader.getController();
@@ -90,7 +121,7 @@ public class ManageMentorProfile {
 
             returnToMainMenu();
         } catch (Exception e) {
-            System.err.println(" Σφάλμα κατά την εμφάνιση του SuccessScreen: " + e.getMessage());
+            System.err.println("❌ Σφάλμα κατά την εμφάνιση του SuccessScreen: " + e.getMessage());
         }
     }
 
@@ -99,7 +130,12 @@ public class ManageMentorProfile {
      */
     public void showErrorPopup(String message) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-view.fxml"));
+            java.net.URL fxmlLocation = getClass().getResource("/fxml/common/error-window-view.fxml");
+            if (fxmlLocation == null) {
+                fxmlLocation = getClass().getClassLoader().getResource("fxml/common/error-window-view.fxml");
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
 
             ErrorScreen controller = loader.getController();
@@ -111,22 +147,34 @@ public class ManageMentorProfile {
             popupStage.setScene(new Scene(root));
             popupStage.showAndWait();
         } catch (Exception e) {
-            System.err.println(" Σφάλμα κατά την εμφάνιση του ErrorScreen: " + e.getMessage());
+            System.err.println("❌ Σφάλμα κατά την εμφάνιση του ErrorScreen: " + e.getMessage());
         }
     }
 
     /**
      * Επιστροφή στην Κεντρική Οθόνη Φοιτητή μετά από επιτυχία ή ακύρωση
      */
-    private void returnToMainMenu() {
+    public void returnToMainMenu() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/common/student-main-view.fxml"));
+            // Διορθώθηκε σε Κεφαλαίο Student και προστέθηκε ασφαλής έλεγχος τοποθεσίας
+            java.net.URL fxmlLocation = getClass().getResource("/fxml/Student/student-main-screen.fxml");
+            if (fxmlLocation == null) {
+                fxmlLocation = getClass().getClassLoader().getResource("fxml/Student/student-main-screen.fxml");
+            }
+
+            Parent root = FXMLLoader.load(fxmlLocation);
+
+            if (this.mainStage == null) {
+                this.mainStage = (Stage) Stage.getWindows().filtered(window -> window.isShowing()).get(0);
+            }
+
             mainStage.setScene(new Scene(root, 1000, 650));
             mainStage.setTitle("UniPath - Κεντρικό Μενού");
         } catch (Exception e) {
-            System.err.println(" Σφάλμα κατά την επιστροφή στο κεντρικό μενού: " + e.getMessage());
+            System.err.println("❌ Σφάλμα κατά την επιστροφή στο κεντρικό μενού: " + e.getMessage());
         }
     }
+
     /**
      * Βήμα 2 Λεκτικού: Το Σύστημα ανακτά όλα τα διαθέσιμα μαθήματα (queryCourses())
      */
@@ -141,14 +189,14 @@ public class ManageMentorProfile {
 
             while (rs.next()) {
                 Course course = new Course();
-                course.setCourseID(rs.getString("courseID"));
+                course.setCourseID(rs.getString("courseId")); // Προσοχή στο Case της SQLite
                 course.setTitle(rs.getString("title"));
                 course.setSemester(rs.getInt("semester"));
                 course.setECTS(rs.getInt("ects"));
                 coursesList.add(course);
             }
         } catch (java.sql.SQLException e) {
-            System.err.println("Σφάλμα στην queryCourses: " + e.getMessage());
+            System.err.println("❌ Σφάλμα στην queryCourses: " + e.getMessage());
         }
         return coursesList;
     }

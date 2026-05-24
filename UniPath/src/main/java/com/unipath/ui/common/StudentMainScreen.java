@@ -20,7 +20,7 @@ public class StudentMainScreen {
     @FXML private Button evaluateButton;
     @FXML private Button studyPlanButton;
     @FXML private Button profileButton;
-
+    @FXML private Button addNewOfferButton;
     @FXML
     public void initialize() {
         studentNameLabel.setText("Καλωσήλθατε στο Κεντρικό Μενού");

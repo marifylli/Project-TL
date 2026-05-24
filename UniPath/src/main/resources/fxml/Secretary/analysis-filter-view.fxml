@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefWidth="1000" prefHeight="650"
+            stylesheets="@../../css/styles.css">
+
+    <top>
+        <HBox styleClass="prof-header" alignment="CENTER_LEFT" spacing="10">
+            <padding><Insets top="16" right="24" bottom="16" left="24"/></padding>
+            <Label text="📊 Φίλτρα Ανάλυσης Στατιστικών" styleClass="prof-header-name"/>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox alignment="CENTER" spacing="0">
+            <padding><Insets top="32" right="48" bottom="32" left="48"/></padding>
+
+            <VBox spacing="20" maxWidth="560" HBox.hgrow="ALWAYS">
+                <Label text="Παράμετροι Αναζήτησης"
+                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2d3748;"/>
+
+                <!-- Ακαδημαϊκό Έτος -->
+                <VBox spacing="6">
+                    <Label text="Ακαδημαϊκό Έτος" styleClass="prof-section-title"/>
+                    <ComboBox fx:id="academicYearCombo" maxWidth="Infinity" styleClass="prof-text-field"/>
+                </VBox>
+
+                <!-- Κατεύθυνση -->
+                <VBox spacing="6">
+                    <Label text="Κατεύθυνση" styleClass="prof-section-title"/>
+                    <ComboBox fx:id="directionCombo" maxWidth="Infinity" styleClass="prof-text-field"/>
+                </VBox>
+
+                <!-- Κατάσταση Πλάνου -->
+                <VBox spacing="6">
+                    <Label text="Κατάσταση Πλάνου" styleClass="prof-section-title"/>
+                    <ComboBox fx:id="statusCombo" maxWidth="Infinity" styleClass="prof-text-field"/>
+                </VBox>
+
+                <!-- Κωδικός Μαθήματος -->
+                <VBox spacing="6">
+                    <Label text="Κωδικός Μαθήματος (προαιρετικό)" styleClass="prof-section-title"/>
+                    <TextField fx:id="courseIdField"
+                               promptText="π.χ. CEID_24Y334"
+                               styleClass="prof-text-field"/>
+                </VBox>
+
+                <!-- Buttons -->
+                <HBox spacing="12">
+                    <Button text="Καθαρισμός Φίλτρων"
+                            onAction="#onClearFilters"
+                            style="-fx-background-color: #e2e8f0; -fx-text-fill: #4a5568;
+                                   -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 10 20 10 20;
+                                   -fx-background-radius: 6;"
+                            HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <Button text="Προβολή Στατιστικών →"
+                            onAction="#onViewStatistics"
+                            styleClass="prof-action-btn-primary"
+                            HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                </HBox>
+            </VBox>
+        </HBox>
+    </center>
+
+</BorderPane>

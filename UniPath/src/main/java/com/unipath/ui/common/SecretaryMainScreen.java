@@ -1,6 +1,8 @@
 package com.unipath.ui.common;
 
 import com.unipath.controller.ManageSecCourEditClass;
+import com.unipath.controller.ManageStatAnalysis;
+import com.unipath.ui.UC4.AnalysisFilterScreen;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -23,6 +25,19 @@ public class SecretaryMainScreen {
             new ManageSecCourEditClass();
         } catch (Exception e) {
             System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC6:");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void clickStats() {
+        try {
+            System.out.println("=== Έναρξη UC4: Στατιστικά & Αναφορές ===");
+            ManageStatAnalysis controller = new ManageStatAnalysis();
+            AnalysisFilterScreen filterScreen = new AnalysisFilterScreen(controller);
+            filterScreen.displayFilterForm();
+        } catch (Exception e) {
+            System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC4:");
             e.printStackTrace();
         }
     }

@@ -1,134 +1,101 @@
 package com.unipath.ui.UC4;
 
 import com.unipath.controller.ManageStatAnalysis;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.Map;
 
 public class StatisticsAnalysisScreen {
-    private final ManageStatAnalysis manageStatAnalysis;
-    private final Stage stage;
+
+    @FXML private Label totalPlansLabel;
+    @FXML private Label avgEctsLabel;
+    @FXML private Label perDirectionLabel;
+    @FXML private Label perYearLabel;
+
+    private ManageStatAnalysis manageStatAnalysis;
+    private Stage stage;
+
+    public StatisticsAnalysisScreen() {}
 
     public StatisticsAnalysisScreen(ManageStatAnalysis manageStatAnalysis) {
         this.manageStatAnalysis = manageStatAnalysis;
         this.stage = new Stage();
     }
 
-    // vima 8: emfanisi statistikin
-
-    public void displayStatistics() {
-        stage.setTitle("Ανάλυση Στατιστικών");
+    @FXML
+    public void initialize() {
+        if (manageStatAnalysis == null) return;
 
         Map<String, Object> stats = manageStatAnalysis.getComputedStatistics();
+        if (stats == null) return;
 
-        // titlos
-        Label titleLabel = new Label("Αποτελέσματα Στατιστικής Ανάλυσης");
-        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
+        int totalPlans = stats.containsKey("totalPlans") ? (int) stats.get("totalPlans") : 0;
+        totalPlansLabel.setText(String.valueOf(totalPlans));
 
-        // total plans
-        int totalPlans = stats.containsKey("totalPlans")
-                ? (int) stats.get("totalPlans") : 0;
-        Label totalLabel = new Label("Συνολικά Οριστικοποιημένα Πλάνα: " + totalPlans);
-        totalLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        double avgEcts = stats.containsKey("averageECTS") ? (double) stats.get("averageECTS") : 0.0;
+        avgEctsLabel.setText(String.format("%.1f", avgEcts));
 
-        // ects
-        double avgEcts = stats.containsKey("averageECTS")
-                ? (double) stats.get("averageECTS") : 0.0;
-        Label avgEctsLabel = new Label(
-                String.format("Μέσος Όρος ECTS: %.1f", avgEcts));
-
-        // plans per direction
-        Label directionTitle = new Label("Κατανομή ανά Κατεύθυνση:");
-        directionTitle.setFont(Font.font("System", FontWeight.BOLD, 13));
-
-        VBox directionBox = new VBox(5);
         if (stats.containsKey("plansPerDirection")) {
             @SuppressWarnings("unchecked")
-            Map<String, Long> perDirection =
-                    (Map<String, Long>) stats.get("plansPerDirection");
-            perDirection.forEach((dir, count) -> {
-                Label lbl = new Label("  • " + dir + ": " + count + " πλάνα");
-                directionBox.getChildren().add(lbl);
-            });
+            Map<String, Long> perDirection = (Map<String, Long>) stats.get("plansPerDirection");
+            StringBuilder sb = new StringBuilder();
+            perDirection.forEach((dir, count) -> sb.append(dir).append(": ").append(count).append(" πλάνα\n"));
+            perDirectionLabel.setText(sb.toString().trim());
         }
 
-        Label yearTitle = new Label("Κατανομή ανά Ακαδημαϊκό Έτος:");
-        yearTitle.setFont(Font.font("System", FontWeight.BOLD, 13));
-
-        VBox yearBox = new VBox(5);
         if (stats.containsKey("plansPerYear")) {
             @SuppressWarnings("unchecked")
-            Map<String, Long> perYear =
-                    (Map<String, Long>) stats.get("plansPerYear");
-            perYear.forEach((year, count) -> {
-                Label lbl = new Label("  • " + year + ": " + count + " πλάνα");
-                yearBox.getChildren().add(lbl);
-            });
+            Map<String, Long> perYear = (Map<String, Long>) stats.get("plansPerYear");
+            StringBuilder sb = new StringBuilder();
+            perYear.forEach((year, count) -> sb.append(year).append(": ").append(count).append(" πλάνα\n"));
+            perYearLabel.setText(sb.toString().trim());
         }
-
-        // export button
-        Button exportButton = new Button("Εξαγωγή Εγγράφου");
-        exportButton.setStyle(
-                "-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;");
-        exportButton.setMaxWidth(Double.MAX_VALUE);
-        exportButton.setOnAction(e -> generateReport());
-
-        Button backButton = new Button("Πίσω στα Φίλτρα");
-        backButton.setMaxWidth(Double.MAX_VALUE);
-        backButton.setOnAction(e -> goBack());
-
-        HBox buttonBox = new HBox(10, backButton, exportButton);
-        buttonBox.setAlignment(Pos.CENTER_RIGHT);
-
-        // layout
-        VBox root = new VBox(12);
-        root.setPadding(new Insets(20));
-        root.getChildren().addAll(
-                titleLabel,
-                new Separator(),
-                totalLabel,
-                avgEctsLabel,
-                new Separator(),
-                directionTitle,
-                directionBox,
-                new Separator(),
-                yearTitle,
-                yearBox,
-                new Separator(),
-                buttonBox
-        );
-
-        ScrollPane scrollPane = new ScrollPane(root);
-        scrollPane.setFitToWidth(true);
-
-        Scene scene = new Scene(scrollPane, 500, 500);
-        stage.setScene(scene);
-        stage.show();
     }
 
-    // vima 9: o ipallilos pataei eksagogi eggrafou
+    public void displayStatistics() {
+        try {
+            URL fxmlUrl = getClass().getResource("/fxml/Secretary/statistics-analysis-view.fxml");
+            if (fxmlUrl == null) {
+                fxmlUrl = getClass().getClassLoader().getResource("fxml/Secretary/statistics-analysis-view.fxml");
+            }
+            if (fxmlUrl == null) {
+                System.err.println(" Δεν βρέθηκε το statistics-analysis-view.fxml!");
+                return;
+            }
 
-    private void generateReport() {
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            loader.setController(this);
+            Parent root = loader.load();
+
+            stage.setScene(new Scene(root, 1000, 650));
+            stage.setTitle("UniPath - Ανάλυση Στατιστικών");
+            stage.show();
+
+        } catch (Exception e) {
+            System.err.println(" Απέτυχε η φόρτωση της οθόνης στατιστικών:");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void onExportReport() {
         stage.close();
-        ReportExportScreen reportScreen =
-                new ReportExportScreen(manageStatAnalysis);
+        ReportExportScreen reportScreen = new ReportExportScreen(manageStatAnalysis);
         reportScreen.createReport();
     }
 
-    private void goBack() {
+    @FXML
+    private void onBack() {
         stage.close();
-        AnalysisFilterScreen filterScreen =
-                new AnalysisFilterScreen(manageStatAnalysis);
+        AnalysisFilterScreen filterScreen = new AnalysisFilterScreen(manageStatAnalysis);
         filterScreen.displayFilterForm();
     }
 
     public Stage getStage() { return stage; }
-
 }

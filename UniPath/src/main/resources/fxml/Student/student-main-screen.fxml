@@ -41,11 +41,11 @@
                 <Button fx:id="studyPlanButton" text="📅 Πρόγραμμα Σπουδών"
                         styleClass="prof-action-btn-secondary" onAction="#clickCreatePlan"
                         maxWidth="Infinity"/>
+
+                <Button fx:id="thesisBoardButton" text="📋 Πινακίδα Διπλωματικών"
+                        styleClass="prof-action-btn-secondary" onAction="#clickThesisBoard"
+                        maxWidth="Infinity"/>
             </VBox>
         </HBox>
     </center>
 </BorderPane>
-
-
-
-

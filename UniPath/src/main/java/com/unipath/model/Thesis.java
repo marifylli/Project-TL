@@ -113,8 +113,14 @@ public class Thesis {
     }
 
 
-
-
     public void findAllThesis() {}
     public void findThesisDetails() {}
+
+    @Override
+    public String toString() {
+        if (this.title != null) {
+            return this.title + " (Απαιτούμενα ECTS: " + this.requiredECTS + ")";
+        }
+        return "Διπλωματική Εργασία (ID: " + this.diplomaticId + ")";
+    }
 }

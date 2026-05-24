@@ -74,7 +74,7 @@ public class DBManager {
                 FOREIGN KEY (userId) REFERENCES User(userId)
             )
         """);
-     //Πινακασ Proffesor
+     //Πινακασ Professor
         stmt.execute("""
             CREATE TABLE IF NOT EXISTS Professor (
                 professorId INTEGER PRIMARY KEY,

@@ -2,6 +2,13 @@ package com.unipath.model;
 
 import java.util.Date;
 import java.util.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 
 public class AvailabilitySlot {
 
@@ -26,24 +33,31 @@ public class AvailabilitySlot {
     }
 
     public int getSlotId()       {
+
         return slotId;
     }
     public int getProfessorId()  {
+
         return professorId;
     }
     public Date getDate()        {
+
         return date;
     }
     public String getDayOfWeek() {
+
         return dayOfWeek;
     }
     public String getStartTime() {
+
         return startTime;
     }
     public String getEndTime()   {
+
         return endTime;
     }
     public boolean isAvailable() {
+
         return isAvailable;
     }
 
@@ -75,5 +89,35 @@ public class AvailabilitySlot {
 
 
     public void setAvailableSlots() {}
-    public List<AvailabilitySlot> findAvailableSlots() { return null; }
+    public static List<AvailabilitySlot> findAvailableSlots(int professorId) {
+
+        List<AvailabilitySlot> slots = new ArrayList<>();
+        String URL = "jdbc:sqlite:unipath.db";
+
+        // SQL ερώτημα που φέρνει τις ελεύθερες ώρες (όπου δεν έχει κλειστεί ακόμα ραντεβού)
+        String sql = "SELECT * FROM AvailabilitySlot WHERE professorId = ? " +
+                "AND slotId NOT IN (SELECT slotId FROM Appointment WHERE status != 'REJECTED')";
+
+        try (Connection conn = DriverManager.getConnection(URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, professorId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                AvailabilitySlot slot = new AvailabilitySlot();
+                slot.setSlotId(rs.getInt("slotId"));
+                slot.setProfessorId(rs.getInt("professorId"));
+                slot.setDayOfWeek(rs.getString("dayOfWeek"));
+                slot.setStartTime(rs.getString("startTime"));
+                slot.setEndTime(rs.getString("endTime"));
+
+                slots.add(slot);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ [AvailabilitySlot Model]: Σφάλμα κατά την εκτέλεση του findAvailableSlots: " + e.getMessage());
+        }
+
+        return slots;
+    }
 }

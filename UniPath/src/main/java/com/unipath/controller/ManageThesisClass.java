@@ -1,24 +1,43 @@
 package com.unipath.controller;
 
-import com.unipath.model.*;
-import com.unipath.repository.ThesisRepository;
-import java.util.Date;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
 
 public class ManageThesisClass {
-    private final ThesisRepository repository = new ThesisRepository();
 
-    // Βήμα 5: Μήνυμα requestCalendar(pId)
-    public Calendar requestCalendar(int pId) {
-        return repository.getCalendarByProfessor(pId);
+    public ManageThesisClass() {
     }
 
-    // Βήμα 10: Μήνυμα setAvailableSlots(...)
-    public boolean setAvailableSlots(int pId, String day, String start, String end) {
-        return repository.saveAvailabilitySlot(new AvailabilitySlot(pId, new Date(), day, start, end));
+    // 1. ΑΚΡΙΒΩΣ ΟΠΩΣ ΤΟ CLASS DIAGRAM
+    public boolean validateFieldsd(String title, String description, String ects, String maxCandidates) {
+        if (title == null || title.isBlank() || description == null || description.isBlank() ||
+                ects == null || ects.isBlank() || maxCandidates == null || maxCandidates.isBlank()) {
+
+            highligthMissingFields("Σφάλμα: Δεν έχουν συμπληρωθεί όλα τα υποχρεωτικά πεδία!");
+            return false;
+        }
+        return true;
     }
 
-    // Βήμα 11: Μήνυμα saveNewThesis(...)
-    public boolean saveNewThesis(int pId, String title, String desc, String pre, int ects, int max, String skills) {
-        return repository.saveThesis(new Thesis(pId, title, desc, pre, ects, max, skills));
+    // 2. ΑΚΡΙΒΩΣ ΟΠΩΣ ΤΟ CLASS DIAGRAM
+    public void highligthMissingFields(String errorMessage) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
+            Parent root = loader.load();
+
+            javafx.scene.control.Label lbl = (javafx.scene.control.Label) root.lookup("#errorLabel");
+            if (lbl != null) lbl.setText(errorMessage);
+
+            Stage stage = new Stage();
+            stage.setTitle("ErrorScreen");
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (IOException e) {
+            System.err.println("Σφάλμα φόρτωσης ErrorScreen: " + e.getMessage());
+        }
     }
 }

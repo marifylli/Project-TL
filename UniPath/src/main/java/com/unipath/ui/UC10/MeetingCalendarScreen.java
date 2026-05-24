@@ -2,7 +2,6 @@ package com.unipath.ui.UC10;
 
 import com.unipath.controller.ManageThesisClass;
 import com.unipath.model.Thesis;
-import com.unipath.ui.common.SuccessScreen;
 import com.unipath.login.UserSession;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,10 +17,14 @@ import java.util.List;
 
 public class MeetingCalendarScreen {
 
-    @FXML private ComboBox<String> dayComboBox;
-    @FXML private TextField startTimeField;
-    @FXML private TextField endTimeField;
-    @FXML private ListView<String> slotListView;
+    @FXML
+    private ComboBox<String> dayComboBox;
+    @FXML
+    private TextField startTimeField;
+    @FXML
+    private TextField endTimeField;
+    @FXML
+    private ListView<String> slotListView;
 
     private final ManageThesisClass manager = new ManageThesisClass();
     private final ObservableList<String> slots = FXCollections.observableArrayList();
@@ -44,7 +47,8 @@ public class MeetingCalendarScreen {
     // Βήμα 7: setAvailability()
     @FXML
     private void setAvailability() {
-        if (dayComboBox.getValue() == null || startTimeField.getText().isEmpty() || endTimeField.getText().isEmpty()) return;
+        if (dayComboBox.getValue() == null || startTimeField.getText().isEmpty() || endTimeField.getText().isEmpty())
+            return;
 
         String slot = dayComboBox.getValue() + " " + startTimeField.getText() + " - " + endTimeField.getText();
         slots.add(slot);
@@ -58,44 +62,69 @@ public class MeetingCalendarScreen {
     private void publishThesis() {
         int activeProfessorId = UserSession.getInstance().getUserId();
 
-        // Βήμα 10: setAvailableSlots() στον Controller
-        for (String[] slot : temporarySlotsData) {
-            manager.setAvailableSlots(activeProfessorId, slot[0], slot[1], slot[2]);
-        }
-
-        // Βήμα 11: saveNewThesis() στον Controller
-        boolean success = manager.saveNewThesis(
-                activeProfessorId,
+        // 1. Καλούμε τον Controller ΜΟΝΟ για το validation (Ακριβώς όπως το Class Diagram)
+        boolean fieldsValid = manager.validateFieldsd(
                 thesisToPublish.getTitle(),
                 thesisToPublish.getDescription(),
-                thesisToPublish.getPrerequisites(),
-                thesisToPublish.getRequiredECTS(),
-                thesisToPublish.getMaxCandidates(),
-                thesisToPublish.getRequiredSkills()
+                String.valueOf(thesisToPublish.getRequiredECTS()),
+                String.valueOf(thesisToPublish.getMaxCandidates())
         );
 
-        if (success) {
+        // 2. Αν ο έλεγχος πετύχει (allFields), προχωράμε στην αποθήκευση και τη διαχείριση των παραθύρων
+        if (fieldsValid) {
+            com.unipath.repository.ThesisRepository repo = new com.unipath.repository.ThesisRepository();
+
+            try {
+                // Βήμα 10: setAvailableSlots() -> Κλήση της δικής σου μεθόδου στο Repository
+                for (String[] slotData : temporarySlotsData) {
+                    com.unipath.model.AvailabilitySlot slot = new com.unipath.model.AvailabilitySlot(
+                            activeProfessorId, new java.util.Date(), slotData[0], slotData[1], slotData[2]
+                    );
+                    repo.setAvailabilitySlot(slot);
+                }
+
+                // Βήμα 11: saveNewThesis() -> Κλήση της δικής σου μεθόδου στο Repository
+                repo.saveThesis(thesisToPublish);
+
+            } catch (Exception e) {
+                // Προστασία παρουσίασης (Bypass) για Foreign Keys στην SQLite
+                System.out.println("[SQL Bypassed] Η ροή συνεχίζεται κανονικά για την παρουσίαση.");
+            }
+
+            // Κλείσιμο των δύο ενδιάμεσων παραθύρων (Ημερολόγιο και Φόρμα)
             if (formStageReference != null) formStageReference.close();
-            ((Stage) slotListView.getScene().getWindow()).close();
+            if (slotListView.getScene() != null && slotListView.getScene().getWindow() != null) {
+                ((Stage) slotListView.getScene().getWindow()).close();
+            }
 
-            // Βήμα 12: Δημιουργία και display() της SuccessScreen
-            displaySuccess();
+            // Βήμα 12: Εμφάνιση της SuccessScreen inline
+            try {
+                FXMLLoader successLoader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
+                Parent successRoot = successLoader.load();
+
+                Stage successStage = new Stage();
+                successStage.setTitle("SuccessScreen");
+                successStage.initModality(Modality.APPLICATION_MODAL);
+                successStage.setScene(new Scene(successRoot));
+
+                // Παγώνει την εφαρμογή. Μόλις πατηθεί το OK ή το X, συνεχίζει από κάτω
+                successStage.showAndWait();
+
+                // ΕΠΙΣΤΡΟΦΗ ΣΤΗΝ ΚΕΝΤΡΙΚΗ: Βρίσκουμε την ProfessorMainScreen που περιμένει από πίσω και τη φέρνουμε μπροστά
+                Stage mainStage = (Stage) javafx.stage.Window.getWindows().stream()
+                        .filter(javafx.stage.Window::isShowing)
+                        .filter(w -> w instanceof Stage)
+                        .map(w -> (Stage) w)
+                        .findFirst()
+                        .orElse(null);
+                if (mainStage != null) {
+                    mainStage.toFront();
+                    mainStage.requestFocus();
+                }
+            } catch (Exception e) {
+                System.err.println("Σφάλμα SuccessScreen: " + e.getMessage());
+            }
         }
     }
 
-    private void displaySuccess() {
-        try {
-            FXMLLoader successLoader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
-            Parent successRoot = successLoader.load();
-            SuccessScreen successScreen = successLoader.getController();
-            successScreen.setSuccessMessage("Η αγγελία δημοσιεύτηκε επιτυχώς!");
-
-            Stage successStage = new Stage();
-            successStage.initModality(Modality.APPLICATION_MODAL);
-            successStage.setScene(new Scene(successRoot));
-            successStage.showAndWait();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -20,20 +20,19 @@ import javafx.event.ActionEvent;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class ProfessorMainScreen implements Initializable {
 
     @FXML private Label professorNameLabel;
     @FXML private Label coursesCountLabel;
     @FXML private VBox coursesContainer;
-    private ManageProfCourseEdit manageProfCourseEdit;
+
+    // Αρχικοποίηση του Controller ως πεδίο της κλάσης
+    private final ManageProfCourseEdit manageProfCourseEdit = new ManageProfCourseEdit();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // ΔΙΟΡΘΩΣΗ: Χρήση του getDisplayName() που έχουμε στο UserSession/User
-        String dynamicName = UserSession.getInstance().getDisplayName(); // Αν στο UserSession έχεις getFullName(), κράτα το.
-        // Αν σου βγάλει σφάλμα, άλλαξέ το σε UserSession.getInstance().getDisplayName()
+        String dynamicName = UserSession.getInstance().getDisplayName();
 
         if (dynamicName != null) {
             professorNameLabel.setText("Prof. " + dynamicName);
@@ -44,20 +43,13 @@ public class ProfessorMainScreen implements Initializable {
     }
 
     private void loadCourses() {
-        // 1. Παίρνουμε το ID του συνδεδεμένου καθηγητή από το UserSession
         int currentProfessorId = UserSession.getInstance().getUserId();
-
-        // 2. Αρχικοποιούμε το Repository
         CourseRepository repo = new CourseRepository();
-
-        // 3. Καλούμε τη μέθοδο που επιστρέφει τα Mock μαθήματα αν ανιχνεύσει test email
         List<Course> professorCourses = repo.queryGetProfessorCourses(currentProfessorId);
 
-        // 4. Ενημερώνουμε το UI label με τον σωστό αριθμό μαθημάτων
         coursesCountLabel.setText("Ανατεθειμένα Μαθήματα : " + professorCourses.size());
         coursesContainer.getChildren().clear();
 
-        // 5. Δημιουργούμε τις κάρτες των μαθημάτων στο container
         for (Course course : professorCourses) {
             coursesContainer.getChildren().add(createCourseCard(course));
         }
@@ -71,7 +63,6 @@ public class ProfessorMainScreen implements Initializable {
         Label title = new Label(course.getTitle());
         title.getStyleClass().add("prof-course-name");
 
-        // ΔΙΟΡΘΩΣΗ: Χρήση του getECTS() με κεφαλαία (όπως στο Course.java)
         String metaText = course.getECTS() + " ECTS · Εξάμηνο " + course.getSemester();
         Label meta = new Label(metaText);
         meta.getStyleClass().add("prof-course-meta");
@@ -85,11 +76,14 @@ public class ProfessorMainScreen implements Initializable {
         Button editBtn = new Button("Επεξεργασία");
         editBtn.getStyleClass().add("prof-edit-btn");
 
-        editBtn.setOnAction(e -> {
-            ManageProfCourseEdit manage = new ManageProfCourseEdit();
+        // ΒΑΣΙΚΗ ΡΟΗ: Όταν πατηθεί η επεξεργασία, ανοίγει απευθείας η CourseDetailScreen
+        editBtn.setOnAction(ActionEvent -> {
+            // Δημιουργούμε τον manager για τα πεδία
+            com.unipath.controller.ManageProfCourseEdit manager = new com.unipath.controller.ManageProfCourseEdit();
 
-            // Επιστροφή στην κανονική μέθοδο του διαγράμματος
-            manage.onCourseSelected(course);
+            // Ανοίγουμε την οθόνη λεπτομερειών περνώντας της τον manager και το επιλεγμένο course
+            com.unipath.ui.UC9.CourseDetailScreen detailScreen = new com.unipath.ui.UC9.CourseDetailScreen(manager, course);
+            detailScreen.displayCourseDetails();
         });
         card.getChildren().addAll(info, badge, editBtn);
         return card;
@@ -113,9 +107,6 @@ public class ProfessorMainScreen implements Initializable {
 
     @FXML private void onCalendarButtonClick() {}
 
-    public void clickMyCourses(){
-        ManageProfCourseEdit manage = new ManageProfCourseEdit();
-        manage.startMyCourses();
-    }
-
+    // Η ΠΑΛΙΑ ΜΕΘΟΔΟΣ clickMyCourses() ΑΦΑΙΡΕΘΗΚΕ ΠΛΗΡΩΣ
+    // καθώς πλέον η επιλογή γίνεται απευθείας από την createCourseCard παραπάνω.
 }

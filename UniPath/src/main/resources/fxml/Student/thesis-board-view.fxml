@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="600.0" prefWidth="800.0" style="-fx-padding: 30; -fx-background-color: #f4f6f9;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.unipath.ui.UC11.ThesisBoardScreen">
+    <children>
+        <Label text="Πινακίδα Διαθέσιμων Διπλωματικών Εργασιών" textFill="#1e3a8a">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+        </Label>
+
+        <Label text="Επιλέξτε μια διπλωματική εργασία από την παρακάτω λίστα για να δείτε τις λεπτομέρειες:" textFill="#4b5563">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+
+        <ListView fx:id="thesisListView" VBox.vgrow="ALWAYS" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #d1d5db; -fx-padding: 10;" />
+    </children>
+</VBox>

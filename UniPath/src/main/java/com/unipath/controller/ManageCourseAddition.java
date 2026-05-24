@@ -32,7 +32,8 @@ public class ManageCourseAddition {
         // alt1: [duplicate entry / empty]
         if (isDuplicateOrEmpty) {
             ErrorScreen errorScreen = new ErrorScreen();
-            errorScreen.display(); // Εμφάνιση οθόνης σφάλματος
+            errorScreen.display(ErrorScreen.ErrorType.DUPLICATE_OR_EMPTY); // Ροή 1
+            errorScreen.display(ErrorScreen.ErrorType.MAX_TEACHING_LOAD);  // Ροή 2
             return;
         }
 

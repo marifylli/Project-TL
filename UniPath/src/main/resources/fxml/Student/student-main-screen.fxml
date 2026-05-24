@@ -42,6 +42,11 @@
                         styleClass="prof-action-btn-secondary" onAction="#clickCreatePlan"
                         maxWidth="Infinity" wrapText="true"/>
 
+                <Button fx:id="workloadButton" text="⚖️ Ανάλυση Φόρτου Εργασίας"
+                        styleClass="prof-action-btn-secondary" onAction="#clickfortosioannas"
+                        maxWidth="Infinity" wrapText="true"/>
+
+
                 <Button fx:id="addNewOfferButton" text="Προσθήκη Νέας Προσφοράς"
                         styleClass="prof-action-btn-primary" onAction="#clickAddNewOffer"
                         maxWidth="Infinity" wrapText="true"/>

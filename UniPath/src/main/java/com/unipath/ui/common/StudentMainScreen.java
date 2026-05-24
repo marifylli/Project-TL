@@ -22,6 +22,7 @@ public class StudentMainScreen {
     @FXML private Button profileButton;
     @FXML private Button addNewOfferButton;
     @FXML private Button getHelpButton;
+    @FXML private Button thesisBoardButton;
     @FXML
     public void initialize() {
         studentNameLabel.setText("Καλωσήλθατε στο Κεντρικό Μενού");
@@ -148,5 +149,34 @@ public class StudentMainScreen {
         }
     }
 
+
+    // =================================================================
+    // ΜΕΘΟΔΟΣ UC11 - ΕΚΔΗΛΩΣΗ ΕΝΔΙΑΦΕΡΟΝΤΟΣ ΔΙΠΛΩΜΑΤΙΚΗΣ (ΔΙΚΟ ΣΟΥ)
+    // =================================================================
+    @FXML
+    private void clickThesisBoard() {
+        try {
+            // Φορτώνουμε το δικό σου FXML της Πινακίδας Διπλωματικών
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Student/thesis-board-view.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // Βρίσκουμε το τρέχον Stage της εφαρμογής
+            javafx.stage.Stage stage = (javafx.stage.Stage) javafx.stage.Window.getWindows().stream()
+                    .filter(javafx.stage.Window::isShowing)
+                    .filter(w -> w instanceof javafx.stage.Stage)
+                    .map(w -> (javafx.stage.Stage) w)
+                    .findFirst()
+                    .orElse(null);
+
+            if (stage != null) {
+                // Αντικαθιστούμε το κεντρικό view με τη δική σου Πινακίδα!
+                stage.getScene().setRoot(root);
+                System.out.println("[UC11] Επιτυχής μετάβαση στην Πινακίδα Διπλωματικών.");
+            }
+        } catch (java.io.IOException e) {
+            System.err.println("Σφάλμα κατά τη μετάβαση στην ThesisBoardScreen: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }
 

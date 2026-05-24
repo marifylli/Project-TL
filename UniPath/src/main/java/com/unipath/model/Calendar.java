@@ -1,66 +1,47 @@
 package com.unipath.model;
 
+import com.unipath.repository.InterviewRepository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Calendar {
-
     private String calendarId;
     private Date lastUpdated;
     private String updatedBy;
-    private List<AvailabilitySlot> availabilitySlot;
+    private List<AvailabilitySlot> availabilitySlots;
 
     public Calendar() {
-        this.availabilitySlot = new ArrayList<>();
+        this.availabilitySlots = new ArrayList<>();
     }
 
     public Calendar(String calendarId, String updatedBy) {
         this.calendarId = calendarId;
         this.updatedBy = updatedBy;
         this.lastUpdated = new Date();
-        this.availabilitySlot = new ArrayList<>();
+        this.availabilitySlots = new ArrayList<>();
     }
 
-    public String getCalendarId()                        {
+    // Getters / Setters
+    public String getCalendarId() { return calendarId; }
+    public void setCalendarId(String id) { this.calendarId = id; }
+    public List<AvailabilitySlot> getAvailabilitySlots() { return availabilitySlots; }
+    public void setAvailabilitySlots(List<AvailabilitySlot> slots) { this.availabilitySlots = slots; }
+    public void addSlot(AvailabilitySlot slot) { this.availabilitySlots.add(slot); }
 
-        return calendarId;
-    }
-    public Date getLastUpdated()                         {
-
-        return lastUpdated;
-    }
-    public String getUpdatedBy()                         {
-
-        return updatedBy;
-    }
-    public List<AvailabilitySlot> getAvailabilitySlots() {
-
-        return availabilitySlot;
-    }
-
-    // Setters
-    public void setCalendarId(String id)                          {
-
-        this.calendarId = id;
-    }
-    public void setLastUpdated(Date date)                         {
-
-        this.lastUpdated = date;
-    }
-    public void setUpdatedBy(String user)                         {
-        this.updatedBy = user;
-    }
-    public void setAvailabilitySlots(List<AvailabilitySlot> slots){
-
-        this.availabilitySlot = slots;
+    // [UC10]: requestCalendar (Μένει ως έχει για το δικό σου UC)
+    public static Calendar requestCalendar(int professorId) {
+        com.unipath.repository.ThesisRepository repo = new com.unipath.repository.ThesisRepository();
+        return repo.requestCalendar(professorId);
     }
 
 
-    // Βοηθητική μέθοδος για προσθήκη slot
-    public void addSlot(AvailabilitySlot slot) {
+    public static boolean addEvent(int studentId, int slotId, int diplomaticId) {
+        InterviewRepository repo = new InterviewRepository();
 
-        this.availabilitySlot.add(slot);
+        List<AvailabilitySlot> slots = repo.getAvailableSlots(41);
+        int professorId = 1;
+
+        return repo.saveInterviewMeeting(studentId, professorId, slotId, diplomaticId);
     }
-
 }

@@ -58,7 +58,7 @@ public class InsertTestData {
             """);
             System.out.println("✅ Users-Secretary (5) προστέθηκαν!");
 
-            // ── USERS - STUDENTS (40) ────────────────────────────────
+            // ── USERS - STUDENTS (42) ────────────────────────────────
             conn.createStatement().execute("""
                 INSERT OR IGNORE INTO User 
                 (userId, username, passwordHash, email, firstName, lastName, createdAt)
@@ -102,9 +102,11 @@ public class InsertTestData {
                 ('st37','st37','hash','st1050037@ceid.upatras.gr','Apostolos','Karagiannidis',  datetime('now')),
                 ('st38','st38','hash','st1050038@ceid.upatras.gr','Melina',   'Fragkopoulou',   datetime('now')),
                 ('st39','st39','hash','st1050039@ceid.upatras.gr','Ioannis',  'Tzimas',         datetime('now')),
-                ('st40','st40','hash','st1050040@ceid.upatras.gr','Stavroula','Bekiari',        datetime('now'))
+                ('st40','st40','hash','st1050040@ceid.upatras.gr','Stavroula','Bekiari',        datetime('now')),
+                ('test.student1@ceid.upatras.gr', 'test_st1', 'hash', 'test.student1@ceid.upatras.gr', 'Testing', 'Student_Passed', datetime('now')),
+                ('test.student2@ceid.upatras.gr', 'test_st2', 'hash', 'test.student2@ceid.upatras.gr', 'Testing', 'Student_Failed', datetime('now'))
             """);
-            System.out.println("✅ Users-Students (40) προστέθηκαν!");
+            System.out.println("✅ Users-Students (42) προστέθηκαν!");
 
             // ── PROFESSORS ───────────────────────────────────────────
             conn.createStatement().execute("""
@@ -162,11 +164,13 @@ public class InsertTestData {
                 (33,'st33',2023,3,50,1,'GPA:7.6'),(34,'st34',2023,3,45,1,'GPA:7.3'),
                 (35,'st35',2023,3,40,0,'GPA:7.0'),(36,'st36',2023,3,35,1,'GPA:6.7'),
                 (37,'st37',2023,3,30,1,'GPA:7.1'),(38,'st38',2023,3,25,1,'GPA:7.4'),
-                (39,'st39',2023,3,20,1,'GPA:7.7'),(40,'st40',2023,3,15,1,'GPA:8.0')
+                (39,'st39',2023,3,20,1,'GPA:7.7'),(40,'st40',2023,3,15,1,'GPA:8.0'),
+                (41, 'test.student1@ceid.upatras.gr', 2020, 9, 240, 1, 'GPA:8.5'), 
+                (42, 'test.student2@ceid.upatras.gr', 2023, 3, 45,  1, 'GPA:6.0') 
             """);
-            System.out.println("✅ Students (40) προστέθηκαν!");
+            System.out.println("✅ Students (42) προστέθηκαν!");
 
-            // ── COURSES (πραγματικά CEID 2025-2026 με directions) ────
+            // ── COURSES ──────────────────────────────────────────────
             conn.createStatement().execute("""
                 INSERT OR IGNORE INTO Course 
                 (courseId,title,description,ects,semester,groupA,groupB,directions,isActive,averageRating,workloadScore)
@@ -203,13 +207,11 @@ public class InsertTestData {
                 ('CEID_24Y338','Προγραμματισμός στον Παγκόσμιο Ιστό','HTML, JS, React',6,6,0,0,'',1,8.7,7.8),
                 ('CEID_24Y301','Θεωρία Υπολογισμού','Αυτόματα, Turing, NP',6,6,0,0,'',1,7.4,7.5),
                 ('CEID_25Y401','Προγραμματισμός Συστημάτων','System programming',5,7,0,0,'',1,7.8,7.2),
-                -- Επιλογής Κ1 Ομάδα Α
                 ('CEID_NE5057','Αλγόριθμοι και Συνδυαστική Βελτιστοποίηση','LP, ILP, heuristics',5,7,1,0,'K1:A',1,7.9,8.0),
                 ('CEID_NE4117','Κατανεμημένα Συστήματα','Fault tolerance, consensus',5,7,1,1,'K1:A,K2:B,K4:B,K6:B',1,8.1,7.5),
                 ('CEID_NE5017','Πιθανοτικές Τεχνικές','Τυχαίοι αλγόριθμοι',5,7,1,0,'K1:A',1,7.5,7.8),
                 ('CEID_24EE594','Αλγοριθμικές Τεχνικές Επιστήμης Δεδομένων','Data science αλγόριθμοι',5,8,1,0,'K1:A',1,7.8,7.5),
                 ('CEID_NE4168','Κρυπτογραφία','Κρυπτογραφικά πρωτόκολλα',5,8,1,1,'K1:A,K2:B,K4:B,K6:B',1,8.0,7.8),
-                -- Κ1 Ομάδα Β
                 ('CEID_NE4128','Παράλληλοι Αλγόριθμοι','OpenMP, MPI',5,7,1,1,'K1:B,K2:B,K6:B',1,7.7,7.8),
                 ('CEID_NE5038','Σημασιολογία στην Επιστήμη Υπολογιστών','Σημασιολογικά μοντέλα',5,7,0,1,'K1:B',1,7.2,7.0),
                 ('CEID_NE5237','Στατιστικές Μέθοδοι Μηχανικής Μάθησης','Στατιστικές μέθοδοι ML',5,7,1,1,'K1:B,K3:A,K6:B',1,8.0,7.5),
@@ -219,13 +221,11 @@ public class InsertTestData {
                 ('CEID_NE509','Αλγοριθμική Θεωρία Παιγνίων','Game theory',5,8,0,1,'K1:B',1,7.8,7.5),
                 ('CEID_NE5288','Ειδικά Θέματα Υπολογιστικής Λογικής','Computational logic',5,8,0,1,'K1:B',1,7.3,7.5),
                 ('CEID_25EE606','Τοπολογική Ανάλυση Δεδομένων','Topological data analysis',5,8,1,1,'K1:B,K6:A',1,7.5,7.5),
-                -- Κ2 Ομάδα Α
                 ('CEID_NE592','Βασικές Αρχές Δικτύων Κινητών Επικοινωνιών','5G, κινητές επικοινωνίες',5,7,1,0,'K2:A',1,7.5,7.0),
                 ('CEID_NE489','Ευφυείς Τεχνολογίες Ασύρματων Επικοινωνιών','Ασύρματες επικοινωνίες',5,7,1,0,'K2:A',1,7.3,7.0),
                 ('CEID_NE575','Υλοποιήσεις Ασφάλειας Δικτύων','Network security',5,7,1,0,'K2:A',1,7.8,7.5),
                 ('CEID_NE577','Αρχιτεκτονικές Δικτύων Επόμενης Γενιάς','Next-gen networks',5,8,1,0,'K2:A',1,7.4,7.2),
                 ('CEID_NE5168','Ευρυζωνικές Τεχνολογίες','Broadband technologies',5,8,1,0,'K2:A',1,7.2,7.0),
-                -- Κ2 Ομάδα Β
                 ('CEID_NE4157','Δίκτυα Δημόσιας Χρήσης','WAN, Internet',5,7,0,1,'K2:B',1,7.4,7.0),
                 ('CEID_NE574','Οπτικά Δίκτυα Επικοινωνιών','Fiber, WDM',5,7,0,1,'K2:B',1,7.2,7.0),
                 ('CEID_NE4547','Τεχνικές Εκτίμησης Συστημάτων','Performance evaluation',5,7,0,1,'K2:B,K5:B,K6:B',1,7.0,6.8),
@@ -271,20 +271,21 @@ public class InsertTestData {
 
             // ── SCENARIOS ────────────────────────────────────────────
             conn.createStatement().execute("""
-    INSERT OR IGNORE INTO Scenario 
-    (scenarioId, title, description, groupARequiredECTS, groupBRequiredECTS)
-    VALUES 
-    (1,'Πρώτο Σενάριο',
-     'Μία κύρια Κατεύθυνση: 5A+5B+5A από 3 άλλες+2 ελεύθερα',
-     60, 30),
-    (2,'Δεύτερο Σενάριο',
-     'Δύο κύριες Κατευθύνσεις: (5A+2B)+(5A+2B)+3 ελεύθερα',
-     45, 45),
-    (3,'Τρίτο Σενάριο',
-     'Γενικής Κατεύθυνσης: 10 Α από όλες+7 ελεύθερα',
-     30, 30)
-""");
+                INSERT OR IGNORE INTO Scenario 
+                (scenarioId, title, description, groupARequiredECTS, groupBRequiredECTS)
+                VALUES 
+                (1,'Πρώτο Σενάριο',
+                 'Μία κύρια Κατεύθυνση: 5A+5B+5A από 3 άλλες+2 ελεύθερα',
+                 60, 30),
+                (2,'Δεύτερο Σενάριο',
+                 'Δύο κύριες Κατευθύνσεις: (5A+2B)+(5A+2B)+3 ελεύθερα',
+                 45, 45),
+                (3,'Τρίτο Σενάριο',
+                 'Γενικής Κατεύθυνσης: 10 Α από όλες+7 ελεύθερα',
+                 30, 30)
+            """);
             System.out.println("✅ Scenarios (3) προστέθηκαν!");
+
             // ── STUDY PLANS ──────────────────────────────────────────
             conn.createStatement().execute("""
                 INSERT OR IGNORE INTO StudyPlan 
@@ -479,7 +480,6 @@ public class InsertTestData {
                 (25,'CEID_NE592','teaches')
             """);
             System.out.println("✅ ProfessorCourse προστέθηκαν!");
-
 
             System.out.println("\n✅ Όλα τα δεδομένα εισήχθησαν επιτυχώς!");
 

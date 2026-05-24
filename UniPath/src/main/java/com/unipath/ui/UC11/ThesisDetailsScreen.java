@@ -1,4 +1,3 @@
-
 package com.unipath.ui.UC11;
 
 import com.unipath.controller.ManageThesisInterest;
@@ -20,19 +19,13 @@ public class ThesisDetailsScreen {
     private Thesis selectedThesis;
     private final ManageThesisInterest manager = new ManageThesisInterest();
 
-    @FXML
-    private Label titleLabel;
-    @FXML
-    private Label descriptionLabel;
-    @FXML
-    private Label prerequisitesLabel;
-    @FXML
-    private Label ectsLabel;
-    @FXML
-    private Label skillsLabel;
+    @FXML private Label titleLabel;
+    @FXML private Label descriptionLabel;
+    @FXML private Label prerequisitesLabel;
+    @FXML private Label ectsLabel;
+    @FXML private Label skillsLabel;
 
-    public ThesisDetailsScreen() {
-    }
+    public ThesisDetailsScreen() {}
 
     public void setThesis(Thesis thesis) {
         this.selectedThesis = thesis;

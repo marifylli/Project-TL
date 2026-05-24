@@ -7,6 +7,7 @@ public class Course {
     public String courseID;
     private String title;
     private String description;
+
     private int ects;
     private int semester;
     private boolean groupA;
@@ -21,15 +22,14 @@ public class Course {
     private String rules;
     private String prerequisites;
 
-    // ΠΡΟΣΘΗΚΗ: Το απαραίτητο πεδίο για το φιλτράρισμα ανά καθηγητή
+
     private int professorId;
 
     // Constructor
     public Course() {
     }
 
-    // --- GETTERS & SETTERS ---
-
+    //GETTERS & SETTERS
     public String getCourseID() { return courseID; }
     public void setCourseID(String courseID) { this.courseID = courseID; }
 

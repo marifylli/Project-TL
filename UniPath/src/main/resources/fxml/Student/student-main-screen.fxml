@@ -38,34 +38,14 @@
                         styleClass="prof-action-btn-primary" onAction="#clickEvaluateCourses"
                         maxWidth="Infinity" wrapText="true"/>
 
-                <Button fx:id="studyPlanButton" text="Δημιουγία και έλεγχος πλάνου"
+                <Button fx:id="studyPlanButton" text="📅 Πρόγραμμα Σπουδών"
                         styleClass="prof-action-btn-secondary" onAction="#clickCreatePlan"
-                        maxWidth="Infinity" wrapText="true"/>
+                        maxWidth="Infinity"/>
 
-                <Button fx:id="addNewOfferButton" text="Προσθήκη Νέας Προσφοράς"
-                        styleClass="prof-action-btn-primary" onAction="#clickAddNewOffer"
-                        maxWidth="Infinity" wrapText="true"/>
-
-                <Button fx:id="getHelpButton"
-                        text="Λήψη Βοήθειας"
-                        onAction="#clickGetHelp"
-                        styleClass="prof-action-btn-primary"
-                        maxWidth="Infinity"
-                        wrapText="true"/>
-
-                <Button fx:id="thesisBoardButton"
-                        text="🎓 Πινακίδα Διπλωματικών"
-                        onAction="#clickThesisBoard"
-                        styleClass="prof-action-btn-primary"
-                        maxWidth="Infinity"
-                        wrapText="true"/>
-
-
+                <Button fx:id="thesisBoardButton" text="📋 Πινακίδα Διπλωματικών"
+                        styleClass="prof-action-btn-secondary" onAction="#clickThesisBoard"
+                        maxWidth="Infinity"/>
             </VBox>
         </HBox>
     </center>
 </BorderPane>
-
-
-
-

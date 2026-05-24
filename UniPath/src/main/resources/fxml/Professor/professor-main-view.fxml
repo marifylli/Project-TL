@@ -45,7 +45,7 @@
                 <Button fx:id="calendarButton"
                         text="📅 Ακαδημαϊκό Ημερολόγιο"
                         styleClass="prof-action-btn-secondary"
-                        onAction="#onCalendarButtonClick"
+
                         maxWidth="Infinity"/>
             </VBox>
         </HBox>

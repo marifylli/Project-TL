@@ -23,7 +23,7 @@ public class CourseRepository {
     public List<Course> queryGetCourses() {
         List<Course> courses = new ArrayList<>();
         String sql = """
-            SELECT courseId, title, description, ects, semester, groupA, groupB, 
+            SELECT courseId, title, description, ects, semester, professorID, groupA, groupB, 
                    directions, isActive, averageRating, workloadScore, workloadRank, 
                    lastModifiedDate, lastModifiedBy, rules, prerequisites 
             FROM Course

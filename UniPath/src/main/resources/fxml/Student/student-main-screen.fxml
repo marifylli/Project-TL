@@ -57,6 +57,11 @@
                         styleClass="prof-action-btn-primary"
                         maxWidth="Infinity"
                         wrapText="true"/>
+                <Button fx:id="thesisBoardButton" text="📋 Πινακίδα Διπλωματικών"
+                        styleClass="prof-action-btn-secondary" onAction="#clickThesisBoard"
+                        maxWidth="Infinity"/>
+
+
             </VBox>
         </HBox>
     </center>

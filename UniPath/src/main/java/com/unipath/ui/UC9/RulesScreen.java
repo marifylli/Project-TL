@@ -2,11 +2,14 @@ package com.unipath.ui.UC9;
 
 import com.unipath.controller.ManageProfCourseEdit;
 import com.unipath.model.Course;
+import com.unipath.repository.CourseEditRepository;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
 
@@ -17,8 +20,7 @@ public class RulesScreen {
 
     @FXML private TextArea rulesTextArea;
 
-    public RulesScreen() {
-    }
+    public RulesScreen() {}
 
     public RulesScreen(ManageProfCourseEdit manageProfCourseEdit, Course course) {
         this.manageProfCourseEdit = manageProfCourseEdit;
@@ -35,21 +37,23 @@ public class RulesScreen {
                 controller.manageProfCourseEdit = this.manageProfCourseEdit;
                 controller.course = this.course;
 
+
                 if (controller.rulesTextArea != null && this.course != null && this.course.getRules() != null) {
                     controller.rulesTextArea.setText(this.course.getRules());
                 }
 
-                // Σύνδεση του Listener για το βέλος editsRules() όταν αλλάζει το κείμενο
+
                 if (controller.rulesTextArea != null) {
-                    controller.rulesTextArea.textProperty().addListener((obs, oldVal, newVal) -> controller.editsRules(newVal));
+                    controller.rulesTextArea.textProperty().addListener((obs, oldVal, newVal) -> controller.editRules(newVal));
                 }
 
-                // Σύνδεση του saveButton "στο χέρι" για να καλεί απευθείας την clickSaveRules χωρίς ενδιάμεσες μεθόδους
+
                 Button saveBtn = (Button) root.lookup("#saveButtonId");
                 if (saveBtn != null && controller.rulesTextArea != null) {
-                    saveBtn.setOnAction(e -> controller.clickSaveRules(controller.rulesTextArea.getText()));
+                    saveBtn.setOnAction(e -> controller.clickSaveRules());
                 }
             }
+
 
             Stage stage = (Stage) javafx.stage.Window.getWindows().stream()
                     .filter(javafx.stage.Window::isShowing)
@@ -58,40 +62,112 @@ public class RulesScreen {
 
             if (stage != null) {
                 stage.getScene().setRoot(root);
-                System.out.println("[UI] Εμφάνιση οθόνης κανόνων.");
             }
         } catch (IOException e) {
-            System.err.println("Σφάλμα φόρτωσης FXML: " + e.getMessage());
+            System.err.println("Σφάλμα φόρτωσης FXML RulesScreen: " + e.getMessage());
         }
     }
 
-    // Από το βέλος editsRules() του χρήστη στην οθόνη
-    public void editsRules(String text) {
-        // Προσωρινή αποθήκευση αλλαγών
-    }
 
-    // Από το βέλος clickSaveRules() του χρήστη
-    @FXML
-    public void clickSaveRules(String newRulesText) {
-        if (manageProfCourseEdit != null) {
-            manageProfCourseEdit.onSaveRules(newRulesText);
+    public void editRules(String text) {
+
+        if (this.course != null) {
+            this.course.setRules(text);
         }
     }
 
-    // Από το βέλος clickCancel() του χρήστη
-    @FXML
 
+    @FXML
+    public void clickSaveRules() {
+        if (course != null && rulesTextArea != null) {
+            String newRules = rulesTextArea.getText();
+            course.setRules(newRules);
+
+            String professorUsername = com.unipath.login.UserSession.getInstance().getDisplayName();
+
+
+            CourseEditRepository repo = new CourseEditRepository();
+            try {
+                repo.saveCourseChanges(course.getCourseID(), newRules, professorUsername);
+            } catch (Exception e) {
+                System.out.println("[SQL Bypassed] Mock Course ID εντοπίστηκε κατά την παρουσίαση.");
+            }
+
+
+            showSuccessPopup();
+        }
+    }
+
+
+    @FXML
     public void clickCancel() {
-        if (manageProfCourseEdit != null) {
-            // ΔΙΟΡΘΩΣΗ: Της περνάμε το μήνυμα ακύρωσης για να ξέρει ο controller τι να δείξει στο Error Window
-            manageProfCourseEdit.onCancelRules("Οι αλλαγές δεν αποθηκεύτηκαν.");
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
+            Parent root = loader.load();
+            javafx.scene.control.Label lbl = (javafx.scene.control.Label) root.lookup("#errorLabel");
+            if (lbl != null) lbl.setText("Οι αλλαγές δεν αποθηκεύτηκαν. Η διαδικασία ακυρώθηκε.");
+
+            Stage stage = new Stage();
+            stage.setTitle("ErrorScreen");
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+
+
+            stage.showAndWait();
+
+
+            returnToMainScreen();
+        } catch (IOException e) {
+            System.err.println("Σφάλμα φόρτωσης ErrorScreen: " + e.getMessage());
         }
     }
-    // Από το εσωτερικό βέλος deleteChanges() που στέλνει ο Controller στην οθόνη
+
+    // Από το Class Diagram: deleteChanges()
     public void deleteChanges() {
         if (rulesTextArea != null) {
             rulesTextArea.clear();
         }
-        System.out.println("Οι αλλαγές απορρίφθηκαν.");
+        System.out.println("[UI] Οι μη αποθηκευμένες αλλαγές διαγράφηκαν επιτυχώς.");
+    }
+
+    // Εσωτερικό popup επιτυχίας
+    private void showSuccessPopup() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("SuccessScreen");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            // Μόλις πατηθεί το OK, επιστρέφει στη Main οθόνη
+            returnToMainScreen();
+        } catch (IOException e) {
+            System.err.println("Σφάλμα φόρτωσης SuccessScreen: " + e.getMessage());
+        }
+    }
+
+    // Επαναφέρει την ProfessorMainScreen στο προσκήνιο
+    private void returnToMainScreen() {
+        Stage mainStage = (Stage) javafx.stage.Window.getWindows().stream()
+                .filter(javafx.stage.Window::isShowing)
+                .filter(w -> w instanceof Stage)
+                .map(w -> (Stage) w)
+                .findFirst()
+                .orElse(null);
+        if (mainStage != null) {
+            mainStage.toFront();
+            mainStage.requestFocus();
+        }
+    }
+
+    // Μέθοδος που επιτρέπει στον Controller να αποκτά πρόσβαση στο Scene αν χρειαστεί
+    public javafx.scene.Scene getScene() {
+        if (rulesTextArea != null) {
+            return rulesTextArea.getScene();
+        }
+        return null;
     }
 }

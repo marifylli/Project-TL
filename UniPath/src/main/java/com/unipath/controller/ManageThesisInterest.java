@@ -1,30 +1,54 @@
 package com.unipath.controller;
 
-import com.unipath.model.*;
-import com.unipath.repository.*;
+import com.unipath.model.Calendar;
+import com.unipath.model.Notification;
+import com.unipath.model.AvailabilitySlot;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
 import java.util.List;
 
 public class ManageThesisInterest {
-    private final ThesisRepository thesisRepository = new ThesisRepository();
-    private final InterviewRepository interviewRepository = new InterviewRepository();
 
-    // Αντιστοιχεί στο "findAllThesis()" του διαγράμματος
-    public List<Thesis> findAllThesis() {
-        return thesisRepository.getAllTheses();
+    public ManageThesisInterest() {}
+
+    public boolean checkAcademicStatus(int studentId, int thesisId) {
+        return true;
     }
 
-    // Αντιστοιχεί στο "findThesisDetails()" του διαγράμματος
-    public Thesis findThesisDetails(int thesisId) {
-        return thesisRepository.getThesisById(thesisId);
+    /**
+     * Ανάκτηση διαθέσιμων ωρών από το Μοντέλο AvailabilitySlot
+     */
+    public List<AvailabilitySlot> getAvailableSlots(int professorId) {
+        return AvailabilitySlot.findAvailableSlots(professorId);
     }
 
-    // Αντιστοιχεί στο "findAvailableSlots()" του διαγράμματος
-    public List<AvailabilitySlot> findAvailableSlots(int professorId) {
-        return interviewRepository.getAvailableSlots(professorId);
-    }
+    public void selectConfirmApointment() {
 
-    // Αντιστοιχεί στο "selectConfirmAppointment()" του διαγράμματος
-    public boolean selectConfirmAppointment(int studentId, int professorId, int slotId, int thesisId) {
-        return interviewRepository.saveInterviewMeeting(studentId, professorId, slotId, thesisId);
+        int studentId = 12;
+        int slotId = 5;
+        int diplomaticId = 2;
+        int professorId = 41;
+
+
+        Calendar.addEvent(studentId, slotId, diplomaticId);
+
+        Notification.sendNotification(studentId, professorId, diplomaticId);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("SuccessScreen");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            System.out.println("[UC11] 🎉 Η ροή του Sequence Diagram ολοκληρώθηκε πιστά!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

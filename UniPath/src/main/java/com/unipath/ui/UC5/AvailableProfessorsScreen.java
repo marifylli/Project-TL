@@ -41,9 +41,9 @@ public class AvailableProfessorsScreen {
 
     public void displayProfessorList() {
         try {
-            URL fxmlUrl = getClass().getResource("/fxml/UC5/available-professors-view.fxml");
+            URL fxmlUrl = getClass().getResource("/fxml/Secretary/available-professors-view.fxml");
             if (fxmlUrl == null) {
-                fxmlUrl = getClass().getClassLoader().getResource("fxml/UC5/available-professors-view.fxml");
+                fxmlUrl = getClass().getClassLoader().getResource("fxml/Secretary/available-professors-view.fxml");
             }
             if (fxmlUrl == null) {
                 System.err.println("❌ Σφάλμα: Δεν βρέθηκε το available-professors-view.fxml!");

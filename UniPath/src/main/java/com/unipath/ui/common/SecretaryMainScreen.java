@@ -1,5 +1,6 @@
 package com.unipath.ui.common;
 
+import com.unipath.controller.ManageCourseAddition;
 import com.unipath.controller.ManageSecCourEditClass;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,6 +24,18 @@ public class SecretaryMainScreen {
             new ManageSecCourEditClass();
         } catch (Exception e) {
             System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC6:");
+            e.printStackTrace();
+        }
+    }
+
+    // uc 5
+    @FXML
+    public void clickAddCourse() {
+        try {
+            System.out.println("=== Έναρξη UC5: Προσθήκη Μαθήματος ===");
+            new ManageCourseAddition();
+        } catch (Exception e) {
+            System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC5:");
             e.printStackTrace();
         }
     }

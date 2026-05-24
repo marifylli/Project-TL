@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 
-
 public class NewCourseFormScreen {
 
     @FXML private TextField courseIdField;
@@ -38,12 +37,12 @@ public class NewCourseFormScreen {
 
     public void display() {
         try {
-            URL fxmlUrl = getClass().getResource("/fxml/UC5/new-course-form-view.fxml");
+            URL fxmlUrl = getClass().getResource("/fxml/Secretary/new-course-form-view.fxml");
             if (fxmlUrl == null) {
-                fxmlUrl = getClass().getClassLoader().getResource("fxml/UC5/new-course-form-view.fxml");
+                fxmlUrl = getClass().getClassLoader().getResource("fxml/Secretary/new-course-form-view.fxml");
             }
             if (fxmlUrl == null) {
-                System.err.println("Σφάλμα: Δεν βρέθηκε το new-course-form-view.fxml!");
+                System.err.println("❌ Σφάλμα: Δεν βρέθηκε το new-course-form-view.fxml!");
                 return;
             }
 
@@ -57,7 +56,7 @@ public class NewCourseFormScreen {
             stage.show();
 
         } catch (Exception e) {
-            System.err.println("Απέτυχε η φόρτωση της φόρμας νέου μαθήματος:");
+            System.err.println("❌ Απέτυχε η φόρτωση της φόρμας νέου μαθήματος:");
             e.printStackTrace();
         }
     }
@@ -72,7 +71,7 @@ public class NewCourseFormScreen {
 
         // Βασικός έλεγχος κενών πεδίων στο UI
         if (courseId.isEmpty() || title.isEmpty() || ectsText.isEmpty() || semesterText.isEmpty()) {
-            errorLabel.setText("Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία.");
+            errorLabel.setText("⚠ Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία.");
             errorLabel.setVisible(true);
             return;
         }
@@ -82,7 +81,7 @@ public class NewCourseFormScreen {
             ects = Integer.parseInt(ectsText);
             semester = Integer.parseInt(semesterText);
         } catch (NumberFormatException e) {
-            errorLabel.setText("Τα ECTS και το Εξάμηνο πρέπει να είναι αριθμοί.");
+            errorLabel.setText("⚠ Τα ECTS και το Εξάμηνο πρέπει να είναι αριθμοί.");
             errorLabel.setVisible(true);
             return;
         }

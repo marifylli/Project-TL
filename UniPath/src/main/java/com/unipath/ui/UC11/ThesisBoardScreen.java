@@ -18,7 +18,7 @@ public class ThesisBoardScreen {
     @FXML
     public void initialize() {
         // Φόρτωση των διπλωματικών από τη βάση δεδομένων
-        java.util.List<Thesis> listFromDb = thesisRepository.getAllTheses();
+        java.util.List<com.unipath.model.Thesis> listFromDb = com.unipath.model.Thesis.findAllThesis();
         thesisListView.setItems(FXCollections.observableArrayList(listFromDb));
 
         // 🔥 ΕΔΩ ΕΙΝΑΙ ΤΟ ΚΛΙΚ: Όταν ο φοιτητής επιλέγει μια διπλωματική από τη λίστα

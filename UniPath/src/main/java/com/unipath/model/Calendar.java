@@ -31,10 +31,7 @@ public class Calendar {
     // Σταθερά URL για τη σύνδεση με την SQLite βάση δεδομένων σου
     private static final String URL = "jdbc:sqlite:unipath.db";
 
-    /**
-     * [Sequence Diagram]: addEvent()
-     * Καταχωρεί το νέο συμβάν/ραντεβού στον πίνακα Appointment της βάσης δεδομένων[cite: 38, 39].
-     */
+
     public static boolean addEvent(int studentId, int slotId, int diplomaticId) {
         String sql = "INSERT INTO Appointment (studentId, slotId, diplomaticId, status) VALUES (?, ?, ?, 'PENDING')";
 

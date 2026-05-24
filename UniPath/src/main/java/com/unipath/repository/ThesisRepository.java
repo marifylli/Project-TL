@@ -6,8 +6,6 @@ import com.unipath.model.Thesis;
 import com.unipath.dataBase.DBManager;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ThesisRepository {
 
@@ -88,59 +86,5 @@ public class ThesisRepository {
             System.out.println("Σφάλμα saveThesis: " + e.getMessage());
             return false;
         }
-    }
-
-    // ==========================================
-    // ΜΕΘΟΔΟΙ ΓΙΑ ΤΟ UC11 (ΜΑΡΙΑ ΕΛΕΝΗ ΣΚΟΝΔΡΑ)
-    // ==========================================
-
-    // Αντιστοιχεί στο findAllThesis() του Controller της
-    public List<Thesis> getAllTheses() {
-        String sql = "SELECT * FROM Thesis WHERE isAvailable = 1";
-        List<Thesis> theses = new ArrayList<>();
-        try (Statement stmt = getConnection().createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                Thesis thesis = new Thesis();
-                thesis.setDiplomaticId(rs.getInt("thesisId")); // Σωστό όνομα στήλης από DBManager
-                thesis.setProfessorId(rs.getInt("professorId"));
-                thesis.setTitle(rs.getString("title"));
-                thesis.setDescription(rs.getString("description"));
-                thesis.setPrerequisites(rs.getString("prerequisites"));
-                thesis.setRequiredECTS(rs.getInt("requiredECTS"));
-                thesis.setAvailable(rs.getInt("isAvailable") == 1);
-                thesis.setMaxCandidates(rs.getInt("maxCandidates"));
-                thesis.setRequiredSkills(rs.getString("requiredSkills"));
-                theses.add(thesis);
-            }
-        } catch (SQLException e) {
-            System.out.println("Σφάλμα getAllTheses: " + e.getMessage());
-        }
-        return theses;
-    }
-
-    // Αντιστοιχεί στο findThesisDetails() του Controller της
-    public Thesis getThesisById(int thesisId) {
-        String sql = "SELECT * FROM Thesis WHERE thesisId = ?";
-        try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
-            pstmt.setInt(1, thesisId);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                Thesis thesis = new Thesis();
-                thesis.setDiplomaticId(rs.getInt("thesisId")); // Σωστό όνομα στήλης από DBManager
-                thesis.setProfessorId(rs.getInt("professorId"));
-                thesis.setTitle(rs.getString("title"));
-                thesis.setDescription(rs.getString("description"));
-                thesis.setPrerequisites(rs.getString("prerequisites"));
-                thesis.setRequiredECTS(rs.getInt("requiredECTS"));
-                thesis.setAvailable(rs.getInt("isAvailable") == 1);
-                thesis.setMaxCandidates(rs.getInt("maxCandidates"));
-                thesis.setRequiredSkills(rs.getString("requiredSkills"));
-                return thesis;
-            }
-        } catch (SQLException e) {
-            System.out.println("Σφάλμα getThesisById: " + e.getMessage());
-        }
-        return null;
     }
 }

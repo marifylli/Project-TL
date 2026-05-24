@@ -36,16 +36,25 @@ public class ManageWorkLoadClass {
         int studentId = UserSession.getInstance().getUserId();
         System.out.println("✓ Έναρξη ανάλυσης για τον φοιτητή με ID: " + studentId);
 
-        studyPlanCourses.add("Τεχνολογία Λογισμικού");
-        studyPlanCourses.add("Βάσεις Δεδομένων");
-        studyPlanCourses.add("Δομές Δεδομένων");
-        studyPlanCourses.add("Αντικειμενοστραφής Προγραμματισμός");
+        studyPlanCourses.clear();
 
-        if (studyPlanCourses.isEmpty()) {
-            openErrorScreen(currentStage);
-            return;
+        // 🌟 ΔΙΑΒΑΣΜΑ ΑΠΟ ΤΗ ΜΝΗΜΗ ΤΟΥ SESSION (Ασφαλές & Δυναμικό)
+        // Παίρνουμε τα πραγματικά μαθήματα που επέλεξε ο χρήστης στο προηγούμενο βήμα (UC1)
+        if (ManageStudyPlan.sessionSavedCourseTitles != null && !ManageStudyPlan.sessionSavedCourseTitles.isEmpty()) {
+            studyPlanCourses.addAll(ManageStudyPlan.sessionSavedCourseTitles);
+            System.out.println("✓ [Session Read] Ανάκτηση " + studyPlanCourses.size() + " μαθημάτων από το τρέχον πλάνο του UC1.");
         }
 
+        // Backup Path: Αν ο χρήστης μπει κατευθείαν στο UC3 χωρίς να φτιάξει πλάνο στο UC1
+        if (studyPlanCourses.isEmpty()) {
+            System.out.println("💡 [Backup Mode] Το πλάνο στη μνήμη είναι κενό. Φόρτωση προσομοιωμένων μαθημάτων.");
+            studyPlanCourses.add("Τεχνολογία Λογισμικού");
+            studyPlanCourses.add("Βάσεις Δεδομένων");
+            studyPlanCourses.add("Δομές Δεδομένων");
+            studyPlanCourses.add("Αντικειμενοστραφής Προγραμματισμός");
+        }
+
+        // Υπολογισμός και ταξινόμηση πάνω στα μαθήματα που επιλέχθηκαν
         calculateWorkload();
         Collections.sort(sortedCourses);
         openResultScreen(currentStage);

@@ -32,8 +32,13 @@
 
                 <Region VBox.vgrow="ALWAYS"/>
 
+                <Region VBox.vgrow="ALWAYS"/>
+
                 <Button fx:id="btnConfirm" text="✓ Επιβεβαίωση &amp; Αποθήκευση"
                         styleClass="prof-action-btn-primary" onAction="#onConfirmAnalysis" maxWidth="Infinity"/>
+
+                <Button fx:id="btnCancel" text="❌ Ακύρωση &amp; Επιστροφή"
+                        styleClass="prof-action-btn-secondary" onAction="#onCancelAnalysis" maxWidth="Infinity"/>
             </VBox>
         </HBox>
     </center>

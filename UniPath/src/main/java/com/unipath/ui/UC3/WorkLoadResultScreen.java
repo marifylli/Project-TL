@@ -73,6 +73,29 @@ public class WorkLoadResultScreen {
         }
     }
 
+    @FXML
+    private void onCancelAnalysis() {
+        System.out.println("↩ Ακύρωση ανάλυσης. Επιστροφή στο Κεντρικό Μενού.");
+        try {
+            // Φορτώνουμε την αρχική οθόνη του φοιτητή
+            URL fxmlUrl = getClass().getResource("/fxml/Student/student-main-screen.fxml");
+            if (fxmlUrl == null) {
+                fxmlUrl = getClass().getClassLoader().getResource("fxml/Student/student-main-screen.fxml");
+            }
+
+            Parent root = FXMLLoader.load(fxmlUrl);
+
+            // Παίρνουμε το τρέχον stage από το κουμπί επιβεβαίωσης
+            Stage stage = (Stage) btnConfirm.getScene().getWindow();
+            stage.setScene(new Scene(root, 1000, 650));
+            stage.setTitle("UniPath - Κεντρικό Μενού");
+            stage.show();
+        } catch (Exception e) {
+            System.err.println("❌ Σφάλμα κατά την επιστροφή στο μενού: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
 
 }

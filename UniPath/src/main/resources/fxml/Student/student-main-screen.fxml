@@ -45,6 +45,13 @@
                 <Button fx:id="addNewOfferButton" text="Προσθήκη Νέας Προσφοράς"
                         styleClass="prof-action-btn-primary" onAction="#clickAddNewOffer"
                         maxWidth="Infinity" wrapText="true"/>
+
+                <Button fx:id="getHelpButton"
+                        text="Λήψη Βοήθειας"
+                        onAction="#clickGetHelp"
+                        styleClass="prof-action-btn-primary"
+                        maxWidth="Infinity"
+                        wrapText="true"/>
             </VBox>
         </HBox>
     </center>

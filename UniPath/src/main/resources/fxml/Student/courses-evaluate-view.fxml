@@ -12,7 +12,7 @@
     <top>
         <HBox styleClass="prof-header" alignment="CENTER_LEFT" spacing="10">
             <padding><Insets top="16" right="24" bottom="16" left="24"/></padding>
-            <Label text="📝 Αξιολόγηση Μαθημάτων (UC2)" styleClass="prof-header-name"/>
+            <Label text="Αξιολόγηση Μαθημάτων (UC2)" styleClass="prof-header-name"/>
             <Region HBox.hgrow="ALWAYS"/>
         </HBox>
     </top>
@@ -24,11 +24,14 @@
             <Label text="Παρακαλώ επιλέξτε το μάθημα που επιθυμείτε να αξιολογήσετε από την παρακάτω λίστα:"
                    styleClass="prof-section-title"/>
 
-            <ListView fx:id="coursesListView" VBox.vgrow="ALWAYS" styleClass="prof-scroll"
-                      onMouseClicked="#onCourseSelected"/>
+            <ListView fx:id="coursesListView" VBox.vgrow="ALWAYS" styleClass="prof-scroll"/>
 
-            <Label fx:id="errorLabel" text="" style="-fx-text-fill: #e53e3e; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Έναρξη Αξιολόγησης" styleClass="prof-action-btn-primary" onAction="#onCourseSelected"/>
+                <Label fx:id="errorLabel" text="" style="-fx-text-fill: #e53e3e; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            </HBox>
         </VBox>
     </center>
 </BorderPane>
+
 

@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
+import java.net.URL;
 
 import java.util.List;
 
@@ -26,20 +27,41 @@ public class CoursesToEvaluateScreen {
 
     @FXML
     public void initialize() {
-        coursesListView.setItems(courseList);
+        // 1. Πρώτα φορτώνουμε τα δεδομένα στην ObservableList
         loadAttendedCourses();
+
+        // 2. Μετά συνδέουμε τη λίστα με το ListView για να σιγουρέψουμε ότι θα τα σχεδιάσει
+        if (coursesListView != null) {
+            coursesListView.setItems(courseList);
+            System.out.println("✓ [UI] Η ObservableList συνδέθηκε επιτυχώς με το coursesListView. Μέγεθος: " + courseList.size());
+        } else {
+            System.err.println("[UI Error] Το coursesListView είναι NULL! Ελέγξτε το fx:id στο FXML αρχείο.");
+        }
     }
 
     private void loadAttendedCourses() {
-        // Παίρνουμε το ID του συνδεδεμένου φοιτητή από το Session
-        int studentId = UserSession.getInstance().getUserId();
+        courseList.clear();
 
-        // Βήμα 2 (sd2): queryCoursesAttended
-        List<String> attendedCourses = controller.queryCoursesAttended(studentId);
-        if (attendedCourses != null) {
-            courseList.addAll(attendedCourses);
+        // Αντί για το δυναμικό ID του session, βάζουμε καρφωτά το 41
+        // για να τραβήξει τις εγγραφές που βάλαμε στο InsertTestData
+        int studentId = 41;
+        System.out.println("🔍 [UC2] Ανάκτηση μαθημάτων από τη βάση για τον test φοιτητή: " + studentId);
+
+        List<com.unipath.model.Course> attendedCourses = controller.queryCoursesAttended(studentId);
+
+        if (attendedCourses != null && !attendedCourses.isEmpty()) {
+            for (com.unipath.model.Course c : attendedCourses) {
+                courseList.add(c.getTitle() + " (" + c.getCourseID() + ")");
+            }
+            System.out.println("✓ [UI] Η λίστα γέμισε με " + courseList.size() + " πραγματικά μαθήματα από την SQLite.");
+        } else {
+            errorLabel.setText("Δεν βρέθηκαν εγγεγραμμένα μαθήματα για αυτόν τον φοιτητή στη βάση.");
+            System.out.println("⚠️ [UI Warning] Το query επέστρεψε κενή λίστα από τη βάση.");
         }
     }
+
+
+
 
     @FXML
     private void onCourseSelected() {
@@ -65,13 +87,23 @@ public class CoursesToEvaluateScreen {
 
     private void openEvaluationForm(String courseId) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UC2/evaluation-form-view.fxml"));
+            URL fxmlUrl = getClass().getResource("/fxml/Student/evaluation-form-view.fxml");
+            // Backup path για το Maven target environment
+            if (fxmlUrl == null) {
+                fxmlUrl = getClass().getClassLoader().getResource("fxml/Student/courses-evaluate-view.fxml");
+            }
+
+            if (fxmlUrl == null) {
+                System.err.println("[FXML Error] Δεν βρέθηκε το αρχείο courses-evaluate-view.fxml στον φάκελο fxml/Student/");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
-            // Πεντακάθαρη ανάκτηση του controller χάρη στο import της κορυφής!
+            // Ανάκτηση του controller της φόρμας
             EvaluationFormScreen formScreen = loader.getController();
 
-            // Περνάμε το context στην επόμενη οθόνη χωρίς κανένα error πλέον
             Stage currentStage = (Stage) coursesListView.getScene().getWindow();
             formScreen.setEvaluationContext(courseId, currentStage);
 
@@ -79,11 +111,14 @@ public class CoursesToEvaluateScreen {
             stage.setTitle("Φόρμα Αξιολόγησης Μαθήματος");
             stage.setScene(new Scene(root));
             stage.show();
+
+            System.out.println("✓ [UI Success] Η φόρμα αξιολόγησης άνοιξε επιτυχώς!");
         } catch (Exception e) {
             System.err.println("Σφάλμα κατά το άνοιγμα της φόρμας: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
 
 }
 

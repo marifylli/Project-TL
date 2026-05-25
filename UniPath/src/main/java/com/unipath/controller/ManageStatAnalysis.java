@@ -116,7 +116,7 @@ public class ManageStatAnalysis {
 
             return currentReport;
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("Σφάλμα κατά την αποθήκευση αναφοράς: " + e.getMessage());
             return null;
         }

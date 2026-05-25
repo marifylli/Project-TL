@@ -48,6 +48,7 @@ public class CourseEditRepository {
                 System.out.println("[CourseEditRepository] Επιτυχές saveCourseChanges στη SQLite!");
                 return rowsAffected > 0;
             }
+
         } catch (SQLException e) {
             System.err.println("[CourseEditRepository] Σφάλμα saveCourseChanges: " + e.getMessage());
             return false;

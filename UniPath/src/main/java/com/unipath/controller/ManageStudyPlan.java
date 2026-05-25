@@ -17,7 +17,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
+
 public class ManageStudyPlan {
+
+    public static List<String> sessionSavedCourseTitles = new java.util.ArrayList<>();
     private ScenarioSelectionScreen scenarioSelectionScreen;
     private CourseSelectionScreen courseSelectionScreen;
     private PlanSummaryScreen planSummaryScreen;
@@ -59,24 +63,33 @@ public class ManageStudyPlan {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/Student/course-selection-view.fxml"));
             javafx.scene.Parent root = loader.load();
 
-            // 2. Σύνδεση δεδομένων με τον Controller της νέας οθόνης
+            // 2. Παίρνουμε τον Controller της νέας οθόνης
             com.unipath.ui.UC1.CourseSelectionScreen selectionScreen = loader.getController();
+
+            //  ΠΡΑΓΜΑΤΙΚΑ ΔΕΔΟΜΕΝΑ (Βήμα 4 SD): Ανάκτηση των μαθημάτων από τη ΒΔ μέσω του Repository
+            List<Course> databaseCourses = queryGetCourses();
+            System.out.println("DEBUG [UC1]: Ανακτήθηκαν " + (databaseCourses != null ? databaseCourses.size() : 0) + " μαθήματα από τη ΒΔ.");
+
+            // 3. Σύνδεση δεδομένων με την οθόνη.
+            // Περνάμε τον εαυτό μας (this), το σενάριο ΚΑΙ τη λίστα των αληθινών μαθημάτων για να γεμίσει το ListView!
             selectionScreen.setSelectionData(this, scenario);
 
-            // 3. 💡 ΔΙΟΡΘΩΣΗ: Δημιουργία νέου Scene και εξαναγκασμός εμφάνισης
+            // 💡 SOS: Αν η κλάση CourseSelectionScreen έχει ξεχωριστή μέθοδο για να δέχεται τη λίστα των μαθημάτων,
+            // π.χ. selectionScreen.populateCourses(databaseCourses); τη καλείς εδώ.
+            // Αν δεν έχει, στείλε μου τον κώδικα της CourseSelectionScreen.java να δούμε πώς τα εμφανίζει!
+
+            // 4. Εμφάνιση της σκηνής στο mainStage
             if (mainStage != null) {
-                // Φτιάχνουμε μια νέα σκηνή με τις διαστάσεις που ορίζει το FXML (650x550)
                 javafx.scene.Scene newScene = new javafx.scene.Scene(root, 650, 550);
 
-                // Προσθέτουμε το CSS αρχείο αν υπάρχει (προαιρετικό, αλλά βοηθάει αν χάνει τα styles)
                 if (getClass().getResource("/css/styles.css") != null) {
                     newScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
                 }
 
                 mainStage.setTitle("Επιλογή Μαθημάτων - UniPath");
                 mainStage.setScene(newScene);
-                mainStage.sizeToScene();  // Προσαρμογή μεγέθους παραθύρου
-                mainStage.show();         // Επανεμφάνιση
+                mainStage.sizeToScene();
+                mainStage.show();
             }
 
         } catch (java.io.IOException e) {
@@ -130,18 +143,21 @@ public class ManageStudyPlan {
         }
     }
     public void onConfirmPlan(Scenario scenario, List<Course> courses) {
-        System.out.println("DEBUG: Ο χρήστης επιβεβαίωσε το πρόγραμμα σπουδών. Αποθήκευση και εμφάνιση Success Screen...");
+        System.out.println("DEBUG: Ο χρήστης επιβεβαίωσε το πρόγραμμα σπουδών. Αποθήκευση στη μνήμη του Session...");
 
+        // Αποθηκεύουμε τους τίτλους στη στατική λίστα για να τους διαβάσει το UC3
+        sessionSavedCourseTitles.clear();
+        if (courses != null) {
+            for (Course course : courses) {
+                sessionSavedCourseTitles.add(course.getTitle());
+            }
+        }
+        System.out.println("✓ [Session Success] Αποθηκεύτηκαν " + sessionSavedCourseTitles.size() + " μαθήματα στη μνήμη.");
+
+        // Η ροή του UI που είχατε ήδη για την εμφάνιση της οθόνης επιτυχίας
         try {
-            // 1. Φόρτωση του FXML για την οθόνη επιτυχίας από τον κοινό φάκελο (common)
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
             javafx.scene.Parent root = loader.load();
-
-            // 2. Αν η κλάση SuccessScreen χρειάζεται κάποια αρχικοποίηση, την κάνεις εδώ.
-            // Για παράδειγμα, αν έχει μέθοδο setManageStudyPlan:
-            // com.unipath.ui.common.SuccessScreen successScreen = loader.getController();
-
-            // 3. Αλλαγή της σκηνής στο mainStage για να φανεί το Success Screen
             if (mainStage != null) {
                 javafx.scene.Scene scene = new javafx.scene.Scene(root, 650, 550);
                 if (getClass().getResource("/css/styles.css") != null) {
@@ -152,13 +168,10 @@ public class ManageStudyPlan {
                 mainStage.sizeToScene();
                 mainStage.show();
             }
-
         } catch (java.io.IOException e) {
-            System.err.println("Σφάλμα κατά τη φόρτωση της οθόνης επιτυχίας: " + e.getMessage());
             e.printStackTrace();
         }
     }
-
 
 
 

@@ -19,6 +19,7 @@ public class StudentMainScreen {
     @FXML private VBox coursesContainer;
     @FXML private Button evaluateButton;
     @FXML private Button studyPlanButton;
+    @FXML private Button workloadButton;
     @FXML private Button profileButton;
     @FXML private Button addNewOfferButton;
     @FXML private Button getHelpButton;

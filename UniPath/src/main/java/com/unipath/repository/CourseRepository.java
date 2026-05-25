@@ -190,8 +190,14 @@ public class CourseRepository {
         course.setECTS(rs.getInt("ects"));
         course.setSemester(rs.getInt("semester"));
 
-        // Διαβάζουμε τη νέα στήλη από τη βάση και τη δίνουμε στο Model
-        course.setProfessorId(rs.getInt("professorId"));
+        //  ΑΣΦΑΛΗΣ ΑΝΑΓΝΩΣΗ: Διαβάζουμε το professorId μόνο αν περιλαμβάνεται στο SQL Query
+        try {
+            course.setProfessorId(rs.getInt("professorId"));
+        } catch (SQLException e) {
+            // Αν η στήλη δεν υπάρχει στο query (όπως στο queryGetCourses),
+            // βάζουμε μια προεπιλεγμένη τιμή χωρίς να κρασάρει η εφαρμογή
+            course.setProfessorId(-1);
+        }
 
         course.setGroupA(rs.getInt("groupA") == 1);
         course.setGroupB(rs.getInt("groupB") == 1);

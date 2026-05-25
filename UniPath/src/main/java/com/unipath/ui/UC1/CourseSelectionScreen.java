@@ -8,15 +8,21 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import java.util.List;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CourseSelectionScreen {
 
     private ManageStudyPlan manageStudyPlan;
     private Scenario scenario;
     @FXML private Label scenarioTitleLabel;
-    @FXML private ListView<Course> courseListView;
+    // 1. Αλλαγή σε String
+    @FXML private ListView<String> courseListView;
     @FXML private Label errorLabel;
+
+    // 2. Προσθήκη του χάρτη (Map) αμέσως από κάτω
+    private final java.util.Map<String, Course> courseTitleMap = new java.util.HashMap<>();
 
 
     public CourseSelectionScreen() {
@@ -45,12 +51,18 @@ public class CourseSelectionScreen {
     public void displayCourses() {
         if (courseListView != null && manageStudyPlan != null) {
             courseListView.getItems().clear();
+            courseTitleMap.clear(); // Καθαρίζουμε τον χάρτη
 
-            // Καλούμε τον κεντρικό controller, ο οποίος θα πάρει τα δεδομένα από το CourseRepository
             List<Course> courses = manageStudyPlan.queryGetCourses();
 
-            if (courses != null) {
-                courseListView.getItems().addAll(courses);
+            if (courses != null && !courses.isEmpty()) {
+                for (Course course : courses) {
+                    // Φτιάχνουμε το κείμενο που θα φαίνεται στην οθόνη
+                    String displayString = course.getTitle() + " (" + course.getECTS() + " ECTS)";
+
+                    courseListView.getItems().add(displayString); // Το βάζουμε στη λίστα
+                    courseTitleMap.put(displayString, course);    // Το αντιστοιχίζουμε στον χάρτη
+                }
             }
         }
     }
@@ -62,8 +74,10 @@ public class CourseSelectionScreen {
 
     @FXML
     private void handleNextStep() {
-        List<Course> selectedCourses = courseListView.getSelectionModel().getSelectedItems();
-        if (selectedCourses.isEmpty()) {
+        // 1. Παίρνουμε τα επιλεγμένα κείμενα (Strings)
+        List<String> selectedTitles = courseListView.getSelectionModel().getSelectedItems();
+
+        if (selectedTitles == null || selectedTitles.isEmpty()) {
             if (errorLabel != null) {
                 errorLabel.setText("Πρέπει να επιλέξετε μαθήματα για το πρόγραμμα!");
                 errorLabel.setVisible(true);
@@ -75,9 +89,18 @@ public class CourseSelectionScreen {
             errorLabel.setVisible(false);
         }
 
-        // 💡 ΔΙΟΡΘΩΣΗ: Περνάμε 2 ορίσματα (scenario, selectedCourses) όπως ακριβώς αναμένεται
+        // 2. Μετατροπή των Strings πίσω σε αντικείμενα Course μέσω του χάρτη
+        List<Course> selectedCoursesList = new ArrayList<>();
+        for (String title : selectedTitles) {
+            Course c = courseTitleMap.get(title);
+            if (c != null) {
+                selectedCoursesList.add(c);
+            }
+        }
+
+        // 3. Στέλνουμε τη διορθωμένη λίστα μαθημάτων στον Controller
         if (manageStudyPlan != null) {
-            manageStudyPlan.onCoursesSelected(this.scenario, selectedCourses);
+            manageStudyPlan.onCoursesSelected(this.scenario, selectedCoursesList);
         }
     }
 

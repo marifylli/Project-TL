@@ -4,7 +4,7 @@ import java.util.Date;
 public class CourseEvaluation {
     private int evaluationId;
     private int studentID;
-    private int courseId;
+    private String courseId;
     private Date submissionDate;
     private boolean isSubmitted;
     private int rating;
@@ -19,8 +19,8 @@ public class CourseEvaluation {
     public int getStudentID() { return studentID; }
     public void setStudentID(int studentID) { this.studentID = studentID; }
 
-    public int getCourseId() { return courseId; }
-    public void setCourseId(int courseId) { this.courseId = courseId; }
+    public String getCourseId() { return courseId; }
+    public void setCourseId(String courseId) { this.courseId = courseId; }
 
     public Date getSubmissionDate() { return submissionDate; }
     public void setSubmissionDate(Date submissionDate) { this.submissionDate = submissionDate; }

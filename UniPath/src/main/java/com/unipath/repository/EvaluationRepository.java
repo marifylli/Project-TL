@@ -75,7 +75,7 @@ public class EvaluationRepository {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, evaluation.getStudentID());
-            pstmt.setInt(2, evaluation.getCourseId());
+            pstmt.setString(2, evaluation.getCourseId());
             pstmt.setInt(3, evaluation.getRating());
             pstmt.setString(4, evaluation.getComments());
             pstmt.setString(5, evaluation.getSubmissionDate().toString());
@@ -105,7 +105,7 @@ public class EvaluationRepository {
                 CourseEvaluation eval = new CourseEvaluation();
                 eval.setEvaluationId(rs.getInt("evaluationId"));
                 eval.setStudentID(rs.getInt("studentId"));
-                eval.setCourseId(rs.getInt("courseId"));
+                eval.setCourseId(rs.getString("courseId"));
                 eval.setRating(rs.getInt("rating"));
                 eval.setComments(rs.getString("comments"));
                 eval.setSubmitted(rs.getInt("isSubmitted") == 1);

@@ -483,6 +483,18 @@ public class InsertTestData {
 
             System.out.println("\n✅ Όλα τα δεδομένα εισήχθησαν επιτυχώς!");
 
+             //  ΣΥΝΔΕΣΗ ΦΟΙΤΗΤΗ ΜΕ ΜΑΘΗΜΑΤΑ (UC2 TESTING) ──────
+            // Χρησιμοποιούμε το ID 'test.student1@ceid.upatras.gr'
+            // και το συνδέουμε με 3 υπαρκτά μαθήματα από τη λίστα των COURSES (π.χ. Βάσεις, Λογισμικό, Δίκτυα)
+            conn.createStatement().execute("""
+                INSERT OR IGNORE INTO StudentCourse (studentId, courseId)
+                VALUES 
+                (41, 'CEID_24Y334'), -- Βάσεις Δεδομένων (ID: 41 για τον test.student1)
+                (41, 'CEID_24Y332'), -- Τεχνολογία Λογισμικού
+                (41, 'CEID_24Y387')  -- Δίκτυα Υπολογιστών
+            """);
+            System.out.println("✅ Δοκιμαστικές εγγραφές StudentCourse (UC2) προστέθηκαν!");
+
             db.disconnect();
 
         } catch (SQLException e) {

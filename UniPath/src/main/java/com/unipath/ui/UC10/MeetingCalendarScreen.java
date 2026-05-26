@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Label; // Προσθήκη για την αναζήτηση του Label στο pop-up
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
@@ -29,17 +30,14 @@ public class MeetingCalendarScreen implements Initializable {
 
     public MeetingCalendarScreen() {}
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         if (dayComboBox != null) {
-
             dayComboBox.setItems(FXCollections.observableArrayList(
                     "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή"
             ));
         }
     }
-
 
     @FXML
     private void setAvailability() {
@@ -47,39 +45,36 @@ public class MeetingCalendarScreen implements Initializable {
                 startTimeField != null && !startTimeField.getText().trim().isEmpty() &&
                 endTimeField != null && !endTimeField.getText().trim().isEmpty()) {
 
-
             String newSlot = dayComboBox.getValue() + " | " + startTimeField.getText().trim() + " - " + endTimeField.getText().trim();
             slotListView.getItems().add(newSlot);
-
 
             startTimeField.clear();
             endTimeField.clear();
         }
     }
 
-
     @FXML
     private void publishThesis() {
+        // Επαναφορά του στυλ της λίστας στο κανονικό σε κάθε πάτημα
+        if (slotListView != null) {
+            slotListView.setStyle("");
+        }
+
         String startTime = (startTimeField != null) ? startTimeField.getText().trim() : "";
         String endTime = (endTimeField != null) ? endTimeField.getText().trim() : "";
 
-
         boolean allFields = (slotListView != null && !slotListView.getItems().isEmpty()) ||
                 (!startTime.isEmpty() && !endTime.isEmpty());
-
 
         if (allFields) {
             try {
                 ThesisRepository repo = new ThesisRepository();
 
-
                 AvailabilitySlot slot = new AvailabilitySlot();
                 repo.setAvailabilitySlot(slot);
 
-
                 Thesis thesis = new Thesis();
                 repo.saveThesis(thesis);
-
 
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
                 Parent root = loader.load();
@@ -94,11 +89,24 @@ public class MeetingCalendarScreen implements Initializable {
                 e.printStackTrace();
             }
         }
-
         else {
+            // 1. Κοκκίνισμα του πλαισίου της λίστας αφού δεν υπάρχουν slots
+            if (slotListView != null) {
+                slotListView.setStyle("-fx-border-color: red; -fx-border-width: 1.5px; -fx-border-radius: 4;");
+            }
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
                 Parent root = loader.load();
+
+                // 2. Δυναμική αλλαγή του κειμένου μέσα στο ήδη υπάρχον pop-up παράθυρο
+                for (javafx.scene.Node node : root.lookupAll("Label")) {
+                    if (node instanceof Label && ((Label) node).getText().contains("Μήνυμα Σφάλματος")) {
+                        ((Label) node).setText("Δεν έχουν προστεθεί διαθέσιμες ώρες (Slots)\nστο ημερολόγιο συναντήσεων.");
+                        break;
+                    }
+                }
+
                 Stage stage = new Stage();
                 stage.setTitle("ErrorScreen");
                 stage.setScene(new Scene(root));

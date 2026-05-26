@@ -3,7 +3,7 @@ package com.unipath.ui.UC11;
 import com.unipath.controller.ManageThesisInterest;
 import com.unipath.model.AvailabilitySlot;
 import com.unipath.model.Thesis;
-import com.unipath.login.UserSession;
+import com.unipath.ui.common.ErrorScreen; // ‼️ Χρειάζεται αυτό το import για τον controller του σφάλματος
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -39,14 +39,30 @@ public class ThesisDetailsScreen {
         }
     }
 
-
     @FXML
     private void selectExpressInterest() {
 
         boolean isEligible = true;
 
+        // ❌ 1ο Σφάλμα: Ακαδημαϊκές Προϋποθέσεις
         if (!isEligible) {
-            showPopup("/fxml/common/error-window-view.fxml", "Απόρριψη: Δεν πληροίτε τις απαραίτητες ακαδημαϊκές προϋποθέσεις.");
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
+                Parent root = loader.load();
+
+                ErrorScreen errorController = loader.getController();
+                if (errorController != null) {
+                    errorController.setErrorMessage("Απόρριψη: Δεν πληροίτε τις απαραίτητες ακαδημαϊκές προϋποθέσεις.");
+                }
+
+                Stage stage = new Stage();
+                stage.setTitle("ErrorScreen");
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setScene(new Scene(root));
+                stage.showAndWait();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return;
         }
 
@@ -58,22 +74,38 @@ public class ThesisDetailsScreen {
         System.out.println("[DEBUG] Επιλεγμένη Διπλωματική: " + selectedThesis.getTitle());
         System.out.println("[DEBUG] ID Καθηγητή που διαβάστηκε: " + selectedThesis.getProfessorId());
 
-
         List<AvailabilitySlot> slots = manager.getAvailableSlots(selectedThesis.getProfessorId());
 
+        // ❌ 2ο Σφάλμα: Μη διαθέσιμα Slots στη Βάση
         if (slots == null || slots.isEmpty()) {
             System.out.println("[❌ ERROR] Η βάση δεν επέστρεψε κανένα slot για τον καθηγητή με ID: " + selectedThesis.getProfessorId());
-            showPopup("/fxml/common/error-window-view.fxml", "Απόρριψη: Δεν υπάρχουν διαθέσιμες ώρες στη βάση για αυτόν τον καθηγητή.");
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
+                Parent root = loader.load();
+
+                ErrorScreen errorController = loader.getController();
+                if (errorController != null) {
+                    errorController.setErrorMessage("Απόρριψη: Δεν υπάρχουν διαθέσιμες ώρες για αυτόν τον καθηγητή.");
+                }
+
+                Stage stage = new Stage();
+                stage.setTitle("ErrorScreen");
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setScene(new Scene(root));
+                stage.showAndWait();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return;
         }
 
+        // ✅ Κανονική Ροή: Εμφάνιση Ημερολογίου
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Student/student-meeting-calendar-view.fxml"));
             Parent root = loader.load();
 
             StudentMeetingCalendarScreen calendarScreen = loader.getController();
             Stage currentStage = (Stage) titleLabel.getScene().getWindow();
-
 
             calendarScreen.setCalendarContext(selectedThesis, slots, currentStage);
 
@@ -85,25 +117,6 @@ public class ThesisDetailsScreen {
         } catch (IOException e) {
             System.out.println("❌ Σφάλμα κατά το φόρτωμα του student-meeting-calendar-view.fxml");
             e.printStackTrace();
-        }
-    }
-
-
-    private void showPopup(String fxmlPath, String message) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent root = loader.load();
-
-            Label lbl = (Label) root.lookup("#errorLabel");
-            if (lbl != null) lbl.setText(message);
-
-            Stage stage = new Stage();
-            stage.setTitle("ErrorScreen");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-        } catch (IOException e) {
-            System.err.println("Σφάλμα κατά την εμφάνιση του popup σφάλματος: " + e.getMessage());
         }
     }
 }

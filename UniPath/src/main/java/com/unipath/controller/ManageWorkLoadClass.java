@@ -38,27 +38,27 @@ public class ManageWorkLoadClass {
 
         studyPlanCourses.clear();
 
-        // 🌟 ΔΙΑΒΑΣΜΑ ΑΠΟ ΤΗ ΜΝΗΜΗ ΤΟΥ SESSION (Ασφαλές & Δυναμικό)
-        // Παίρνουμε τα πραγματικά μαθήματα που επέλεξε ο χρήστης στο προηγούμενο βήμα (UC1)
+        // 1. Ανάκτηση των μαθημάτων από τη μνήμη του Session (UC1)
         if (ManageStudyPlan.sessionSavedCourseTitles != null && !ManageStudyPlan.sessionSavedCourseTitles.isEmpty()) {
             studyPlanCourses.addAll(ManageStudyPlan.sessionSavedCourseTitles);
             System.out.println("✓ [Session Read] Ανάκτηση " + studyPlanCourses.size() + " μαθημάτων από το τρέχον πλάνο του UC1.");
         }
 
-        // Backup Path: Αν ο χρήστης μπει κατευθείαν στο UC3 χωρίς να φτιάξει πλάνο στο UC1
+        // ΕΛΕΓΧΟΣ ΕΝΑΛΛΑΚΤΙΚΗΣ ΡΟΗΣ 1: [empty or no study plan] ──
         if (studyPlanCourses.isEmpty()) {
-            System.out.println("💡 [Backup Mode] Το πλάνο στη μνήμη είναι κενό. Φόρτωση προσομοιωμένων μαθημάτων.");
-            studyPlanCourses.add("Τεχνολογία Λογισμικού");
-            studyPlanCourses.add("Βάσεις Δεδομένων");
-            studyPlanCourses.add("Δομές Δεδομένων");
-            studyPlanCourses.add("Αντικειμενοστραφής Προγραμματισμός");
+            System.out.println("⚠️ [Alternative Flow 1] Το πλάνο είναι κενό. Ενεργοποίηση ErrorScreen.");
+            openErrorScreen(currentStage);
+            return; // Τερματισμός περίπτωσης χρήσης
         }
 
-        // Υπολογισμός και ταξινόμηση πάνω στα μαθήματα που επιλέχθηκαν
+        // 2. [Βασική Ροή]: Υπολογισμός και ταξινόμηση
         calculateWorkload();
         Collections.sort(sortedCourses);
+
+        // Άνοιγμα της οθόνης αποτελεσμάτων
         openResultScreen(currentStage);
     }
+
 
     private void calculateWorkload() {
         totalWorkloadIndex = 0.0;
@@ -92,7 +92,6 @@ public class ManageWorkLoadClass {
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
-            // ✅ ΔΙΟΡΘΩΣΗ: WorkloadResultScreen (πεζό 'l') αντί για WorkLoadResultScreen
             com.unipath.ui.UC3.WorkLoadResultScreen view = loader.getController();
             view.setContext(this);
 
@@ -105,17 +104,33 @@ public class ManageWorkLoadClass {
 
     private void openErrorScreen(Stage stage) {
         try {
+            // Στοχεύουμε στο ακριβές όνομα αρχείου της ομάδας
             URL fxmlUrl = getClass().getResource("/fxml/common/error-window-view.fxml");
-            if (fxmlUrl == null) fxmlUrl = getClass().getClassLoader().getResource("fxml/common/error-window-view.fxml");
 
-            FXMLLoader loader = new FXMLLoader(fxmlUrl);
-            Parent root = loader.load();
+            if (fxmlUrl == null) {
+                fxmlUrl = getClass().getClassLoader().getResource("fxml/common/error-window-view.fxml");
+            }
 
-            stage.setScene(new Scene(root));
-            stage.setTitle("Σφάλμα");
+            if (fxmlUrl != null) {
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(fxmlUrl);
+                Parent root = loader.load();
+
+                com.unipath.ui.common.ErrorScreen errorController = loader.getController();
+                errorController.setErrorMessage("Δεν έχετε αποθηκευμένο πλάνο μαθημάτων!");
+
+                stage.setScene(new Scene(root));
+                stage.setTitle("UniPath - Προσοχή");
+                stage.show();
+                System.out.println("[UI] Εμφανίστηκε το κοινό Error Screen επιτυχώς.");
+            } else {
+                System.err.println("Κρίσιμο Σφάλμα: Δεν βρέθηκε πουθενά το αρχείο fxml/common/error-window-view.fxml");
+            }
         } catch (Exception e) {
-            System.err.println("Δεν ήταν δυνατή η φόρτωση της οθόνης σφάλματος.");
+            System.err.println("Απέτυχε η φόρτωση της κοινής οθόνης σφάλματος: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
+
 }
 

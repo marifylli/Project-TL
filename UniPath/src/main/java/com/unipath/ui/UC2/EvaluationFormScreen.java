@@ -63,6 +63,10 @@ public class EvaluationFormScreen {
             com.unipath.repository.EvaluationRepository repo = new com.unipath.repository.EvaluationRepository();
             repo.saveEvaluation(evaluation);
             success = true;
+
+            // ✅ ΠΡΟΣΤΕΘΗΚΕ: Ενημέρωση στατιστικών μαθήματος (Βήμα 11 - sd2)
+            controller.updateCourseStats(currentCourseName);
+
         } catch (Exception e) {
             System.err.println("Σφάλμα κατά την αποθήκευση: " + e.getMessage());
         }

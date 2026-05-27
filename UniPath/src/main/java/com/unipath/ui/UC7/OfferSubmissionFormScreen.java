@@ -44,17 +44,17 @@ public class OfferSubmissionFormScreen {
         String notesFile = fileRootTextField.getText();
         String meetingUrl = meetingUrlTextField.getText();
 
-        // 1. Περνάμε τα δεδομένα της φόρμας στον Controller
+
         controller.offerDataType(notesFile, meetingUrl);
 
-        // 2.  Παίρνουμε το ID του συνδεδεμένου χρήστη από το UserSession
+
         int loggedInStudentId = com.unipath.login.UserSession.getInstance().getUserId();
 
-        // 3. Δημιουργούμε το StudentProfile χρησιμοποιώντας το ΑΛΗΘΙΝΟ ID
+
         com.unipath.model.StudentProfile realProfile = new com.unipath.model.StudentProfile();
         realProfile.setStudentId(loggedInStudentId);
 
-        // 4. Καλούμε την postOffer. Ο Controller θα αποθηκεύσει την προσφορά με το δικό σου ID στη βάση!
+
         controller.postOffer(realProfile);
     }
 

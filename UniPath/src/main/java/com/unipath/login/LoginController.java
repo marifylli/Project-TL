@@ -135,7 +135,7 @@ public class LoginController {
                     intUserId = Math.abs(loggedInUser.getUid().hashCode() % 100000);
                 }
 
-                // ΔΙΟΡΘΩΣΗ: Χρησιμοποιούμε τη σωστή μέθοδο getDisplayName() από την κλάση User
+
                 UserSession.getInstance().startSession(
                         intUserId,
                         loggedInUser.getEmail(),
@@ -178,7 +178,7 @@ public class LoginController {
 
     @FXML
     private void onEnterDashboard() {
-        // ΔΙΟΡΘΩΣΗ: Μεταφέρουμε όλη τη φόρτωση και αλλαγή οθονών στο JavaFX Application Thread
+
         Platform.runLater(() -> {
             try {
                 javafx.fxml.FXMLLoader loader;
@@ -209,10 +209,10 @@ public class LoginController {
                         break;
                 }
 
-                // Φόρτωση του FXML που επιλέχθηκε
+
                 javafx.scene.Parent root = loader.load();
 
-                // Αλλαγή της σκηνής στο παράθυρο με ασφάλεια
+
                 javafx.stage.Stage stage = (javafx.stage.Stage) emailField.getScene().getWindow();
                 stage.setScene(new javafx.scene.Scene(root, 1000, 650));
                 stage.setTitle("UniPath - Dashboard");
@@ -232,16 +232,16 @@ public class LoginController {
         } else if (email.startsWith("test.student")) {
             return new User("2002", email, Role.STUDENT, "Φοιτητής (Test)");
         } else {
-            // Δυναμικό Test για Καθηγητές
+
             String namePart = email.substring(5, email.indexOf("@"));
             String capitalizedName = namePart.substring(0, 1).toUpperCase() + namePart.substring(1);
-            // 🔥 ΕΔΩ ΕΙΝΑΙ ΤΟ ΛΑΘΟΣ - ΑΛΛΑΞΕ ΤΟ "1" ΜΕ ΤΟ ΣΩΣΤΟ ID (π.χ. "41")
+
             return new User("41", email, Role.PROFESSOR, capitalizedName + " (Test)");
         }
     }
 
     private boolean isValidEmail(String email) {
-        if (email.startsWith("test.")) return true; // Επιτρέπουμε άμεσα όλα τα test emails
+        if (email.startsWith("test.")) return true;
         if (email.equals("secretary@ceid.upatras.gr")) return true;
         if (email.matches("st\\d+@ceid\\.upatras\\.gr")) return true;
         if (email.matches(".+@ceid\\.upatras\\.gr")) return true;

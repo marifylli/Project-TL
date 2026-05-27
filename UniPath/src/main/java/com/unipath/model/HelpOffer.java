@@ -5,10 +5,10 @@ import java.util.List;
 
 public class HelpOffer {
     private int offerId;
-    private int mentorId; // int για συμβατότητα με το studentId του Student table
-    private String courseId; // String για συμβατότητα με το courseId του Course table
+    private int mentorId;
+    private String courseId;
     private String helpType;
-    private String notesFile; // Αντιστοιχεί στο fileUrl της βάσης δεδομένων
+    private String notesFile;
     private String meetingUrl;
     private boolean isActive;
 
@@ -16,7 +16,7 @@ public class HelpOffer {
     public HelpOffer() {
     }
 
-    // Constructor για πλήρη αρχικοποίηση (χρήσιμος στο Repository κατά την ανάκτηση)
+
     public HelpOffer(int offerId, int mentorId, String courseId, String helpType, String notesFile, String meetingUrl, boolean isActive) {
         this.offerId = offerId;
         this.mentorId = mentorId;
@@ -27,7 +27,7 @@ public class HelpOffer {
         this.isActive = isActive;
     }
 
-    // Η στατική μέθοδος create() που απαιτείται από το Domain (Happy Path του SD7)
+
     public static HelpOffer create(int mentorId, String courseId, String helpType, String notesFile, String meetingUrl) {
         HelpOffer offer = new HelpOffer();
         offer.setMentorId(mentorId);
@@ -39,7 +39,7 @@ public class HelpOffer {
         return offer;
     }
 
-    // Μέθοδος getOfferServices() που καλείται στο SD8
+
     public List<String> getOfferServices() {
         List<String> services = new ArrayList<>();
         if (notesFile != null && !notesFile.isBlank()) {

@@ -44,7 +44,7 @@ public class ThesisDetailsScreen {
 
         boolean isEligible = true;
 
-        // ❌ 1ο Σφάλμα: Ακαδημαϊκές Προϋποθέσεις
+
         if (!isEligible) {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
@@ -67,7 +67,7 @@ public class ThesisDetailsScreen {
         }
 
         if (selectedThesis == null) {
-            System.out.println("[❌ ERROR] Δεν έχει επιλεγεί διπλωματική εργασία.");
+            System.out.println("Δεν έχει επιλεγεί διπλωματική εργασία.");
             return;
         }
 
@@ -76,9 +76,9 @@ public class ThesisDetailsScreen {
 
         List<AvailabilitySlot> slots = manager.getAvailableSlots(selectedThesis.getProfessorId());
 
-        // ❌ 2ο Σφάλμα: Μη διαθέσιμα Slots στη Βάση
+
         if (slots == null || slots.isEmpty()) {
-            System.out.println("[❌ ERROR] Η βάση δεν επέστρεψε κανένα slot για τον καθηγητή με ID: " + selectedThesis.getProfessorId());
+            System.out.println(" Η βάση δεν επέστρεψε κανένα slot για τον καθηγητή με ID: " + selectedThesis.getProfessorId());
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
                 Parent root = loader.load();
@@ -99,7 +99,6 @@ public class ThesisDetailsScreen {
             return;
         }
 
-        // ✅ Κανονική Ροή: Εμφάνιση Ημερολογίου
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Student/student-meeting-calendar-view.fxml"));
             Parent root = loader.load();
@@ -115,7 +114,7 @@ public class ThesisDetailsScreen {
             stage.show();
 
         } catch (IOException e) {
-            System.out.println("❌ Σφάλμα κατά το φόρτωμα του student-meeting-calendar-view.fxml");
+            System.out.println("Σφάλμα κατά το φόρτωμα του student-meeting-calendar-view.fxml");
             e.printStackTrace();
         }
     }

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class EvaluationRepository {
 
-    // UC2 βήμα 4: έλεγξε αν έχει ήδη αξιολογήσει
+
     public boolean hasAlreadySubmitted(int studentId, int courseId) {
         String sql = "SELECT * FROM CourseEvaluation WHERE studentId=? AND courseId=?";
 
@@ -31,7 +31,7 @@ public class EvaluationRepository {
         }
     }
 
-    // UC2 βήμα 3: παίρνεις τα μαθήματα που παρακολούθησε
+
     public List<Course> getAttendedCourses(int studentId) {
         List<Course> courses = new ArrayList<>();
         String sql = """
@@ -63,7 +63,7 @@ public class EvaluationRepository {
         return courses;
     }
 
-    // UC2 βήμα 9: αποθήκευσε αξιολόγηση
+
     public void saveEvaluation(CourseEvaluation evaluation) {
         String sql = """
             INSERT INTO CourseEvaluation 
@@ -90,7 +90,7 @@ public class EvaluationRepository {
         }
     }
 
-    // UC4: ανάκτηση αξιολογήσεων για στατιστικά
+
     public List<CourseEvaluation> getEvaluationsByCourse(String courseId) {
         List<CourseEvaluation> evaluations = new ArrayList<>();
         String sql = "SELECT * FROM CourseEvaluation WHERE courseId=?";

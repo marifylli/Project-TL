@@ -18,9 +18,7 @@ public class ManageThesisInterest {
         return true;
     }
 
-    /**
-     * Ανάκτηση διαθέσιμων ωρών από το Μοντέλο AvailabilitySlot
-     */
+
     public List<AvailabilitySlot> getAvailableSlots(int professorId) {
         return AvailabilitySlot.findAvailableSlots(professorId);
     }
@@ -46,7 +44,7 @@ public class ManageThesisInterest {
             stage.setScene(new Scene(root));
             stage.show();
 
-            System.out.println("[UC11] 🎉 Η ροή του Sequence Diagram ολοκληρώθηκε πιστά!");
+
         } catch (IOException e) {
             e.printStackTrace();
         }

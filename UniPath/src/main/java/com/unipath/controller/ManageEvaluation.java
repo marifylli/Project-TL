@@ -50,6 +50,27 @@ public class ManageEvaluation {
         }
     }
 
+    // 4. Δημιουργεί και αποθηκεύει το αντικείμενο CourseEvaluation μέσω του Repository της ομάδας
+    public boolean saveEvaluation(String courseName, int rating, String comments) {
+        // Δημιουργία του αντικειμένου από το Model σας
+        CourseEvaluation evaluation = new CourseEvaluation();
+
+        // Γέμισμα των στοιχείων
+        evaluation.setStudentID(UserSession.getInstance().getUserId());
+        evaluation.setRating(rating);
+        evaluation.setComments(comments);
+        evaluation.setSubmissionDate(new Date());
+        evaluation.setSubmitted(true);
+
+        // Τώρα περνάμε String ID ("CEID_...") όπως ακριβώς το περιμένει το Model!
+        String courseId = convertCourseNameToId(courseName);
+        evaluation.setCourseId(courseId);
+
+        // Κλήση της πραγματικής μεθόδου saveEvaluation του Repository της ομάδας!
+        evaluationRepository.saveEvaluation(evaluation);
+
+        return true;
+    }
 
     // 5. Ενημέρωση στατιστικών μαθήματος (Βήμα 11 - sd2)
     public void updateCourseStats(String courseName) {

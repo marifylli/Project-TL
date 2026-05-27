@@ -44,7 +44,7 @@ public class CoursesToEvaluateScreen {
 
         // Αντί για το δυναμικό ID του session, βάζουμε καρφωτά το 41
         // για να τραβήξει τις εγγραφές που βάλαμε στο InsertTestData
-        int studentId = UserSession.getInstance().getUserId();
+        int studentId = 41;
         System.out.println("🔍 [UC2] Ανάκτηση μαθημάτων από τη βάση για τον test φοιτητή: " + studentId);
 
         List<com.unipath.model.Course> attendedCourses = controller.queryCoursesAttended(studentId);

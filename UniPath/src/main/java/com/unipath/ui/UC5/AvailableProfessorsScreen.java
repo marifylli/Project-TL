@@ -46,7 +46,7 @@ public class AvailableProfessorsScreen {
                 fxmlUrl = getClass().getClassLoader().getResource("fxml/Secretary/available-professors-view.fxml");
             }
             if (fxmlUrl == null) {
-                System.err.println("❌ Σφάλμα: Δεν βρέθηκε το available-professors-view.fxml!");
+                System.err.println("Σφάλμα: Δεν βρέθηκε το available-professors-view.fxml!");
                 return;
             }
 
@@ -54,14 +54,14 @@ public class AvailableProfessorsScreen {
             loader.setController(this);
             Parent root = loader.load();
 
-            // Βρίσκουμε το ανοιχτό stage από τυχόν υπάρχον παράθυρο
+
             Stage stage = new Stage();
             stage.setScene(new Scene(root, 1000, 650));
             stage.setTitle("UniPath - Επιλογή Διδάσκοντα");
             stage.show();
 
         } catch (Exception e) {
-            System.err.println("❌ Απέτυχε η φόρτωση της οθόνης καθηγητών:");
+            System.err.println("Απέτυχε η φόρτωση της οθόνης καθηγητών:");
             e.printStackTrace();
         }
     }
@@ -87,7 +87,7 @@ public class AvailableProfessorsScreen {
         int selectedIndex = professorsListView.getSelectionModel().getSelectedIndex();
 
         if (selectedIndex < 0) {
-            errorLabel.setText("⚠ Παρακαλώ επιλέξτε έναν διδάσκοντα.");
+            errorLabel.setText("Παρακαλώ επιλέξτε έναν διδάσκοντα.");
             errorLabel.setVisible(true);
             return;
         }

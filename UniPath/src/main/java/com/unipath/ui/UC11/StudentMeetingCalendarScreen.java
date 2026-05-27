@@ -33,7 +33,7 @@ public class StudentMeetingCalendarScreen {
         String selectedSlot = availableSlotsListView.getSelectionModel().getSelectedItem();
 
         if (selectedSlot == null) {
-            System.out.println("[UC11] ❌ Εναλλακτική ροή: Δεν επιλέχθηκε slot.");
+            System.out.println("Εναλλακτική ροή: Δεν επιλέχθηκε slot.");
 
 
             javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
@@ -47,7 +47,7 @@ public class StudentMeetingCalendarScreen {
 
         try {
             manager.selectConfirmApointment();
-            System.out.println("[UC11] 📬 Βήμα 9: Η ειδοποίηση στάλθηκε στον καθηγητή!");
+            System.out.println(" Η ειδοποίηση στάλθηκε στον καθηγητή!");
 
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -57,7 +57,7 @@ public class StudentMeetingCalendarScreen {
             alert.showAndWait();
 
         } catch (Exception e) {
-            System.out.println("[UC11] ❌ Σφάλμα κατά την καταχώρηση: " + e.getMessage());
+            System.out.println(" Σφάλμα κατά την καταχώρηση: " + e.getMessage());
         }
     }
 

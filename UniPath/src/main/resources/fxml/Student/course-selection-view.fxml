@@ -6,28 +6,93 @@
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.unipath.ui.UC1.CourseSelectionScreen"
-      alignment="CENTER" spacing="20" prefWidth="650" prefHeight="550" styleClass="root-pane">
+      alignment="CENTER" spacing="15" prefWidth="950" prefHeight="700" styleClass="root-pane">
 
-    <VBox styleClass="login-card" maxWidth="500" alignment="TOP_CENTER">
+    <VBox styleClass="login-card" maxWidth="900" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+
         <VBox styleClass="card-top" alignment="CENTER" spacing="5">
             <Label fx:id="scenarioTitleLabel" styleClass="app-name"/>
-            <Label text="Βήμα 2: Επιλογή Μαθημάτων" styleClass="uni-name"/>
+            <Label text="Βήμα 2: Αυστηρή Επιλογή Μαθημάτων ανά Κατηγορία" styleClass="uni-name"/>
         </VBox>
 
-        <VBox styleClass="card-body" spacing="15">
+        <VBox styleClass="card-body" spacing="10" VBox.vgrow="ALWAYS">
             <HBox styleClass="step-dots-container" alignment="CENTER" spacing="8">
                 <Circle radius="5" styleClass="dot-inactive"/>
                 <Circle radius="5" styleClass="dot-active"/>
                 <Circle radius="5" styleClass="dot-inactive"/>
             </HBox>
 
-            <Label text="Κρατήστε πατημένο το Ctrl για πολλαπλή επιλογή:" styleClass="field-label"/>
-            <ListView fx:id="courseListView" prefHeight="200"/>
+            <HBox spacing="20" alignment="CENTER">
+                <VBox fx:id="dir1Box" spacing="2">
+                    <Label text="1η Κύρια Κατεύθυνση:" styleClass="field-label"/>
+                    <ComboBox fx:id="directionComboBox1" prefWidth="400" styleClass="text-field"/>
+                </VBox>
+                <VBox fx:id="dir2Box" spacing="2">
+                    <Label text="2η Κύρια Κατεύθυνση:" styleClass="field-label"/>
+                    <ComboBox fx:id="directionComboBox2" prefWidth="400" styleClass="text-field"/>
+                </VBox>
+            </HBox>
 
-            <Label fx:id="errorLabel" styleClass="error-label" visible="false"/>
+            <TabPane fx:id="selectionTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-border-color: #cccccc;">
 
-            <HBox alignment="CENTER" spacing="10">
-                <Button text="Πίσω" styleClass="btn-secondary"/>
+                <Tab fx:id="tabMainDirection1" text="1η Κύρια Κατεύθυνση">
+                    <HBox spacing="15" style="-fx-padding: 10;">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblMain1A" text="Μαθήματα Ομάδας Α (Επιλεγμένα: 0)" style="-fx-text-fill: #1565c0; -fx-font-weight: bold;"/>
+                            <ListView fx:id="main1GroupAListView" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblMain1B" text="Μαθήματα Ομάδας Β (Επιλεγμένα: 0)" style="-fx-text-fill: #2e7d32; -fx-font-weight: bold;"/>
+                            <ListView fx:id="main1GroupBListView" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+                    </HBox>
+                </Tab>
+
+                <Tab fx:id="tabMainDirection2" text="2η Κύρια Κατεύθυνση">
+                    <HBox spacing="15" style="-fx-padding: 10;">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblMain2A" text="Μαθήματα Ομάδας Α (Επιλεγμένα: 0)" style="-fx-text-fill: #1565c0; -fx-font-weight: bold;"/>
+                            <ListView fx:id="main2GroupAListView" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblMain2B" text="Μαθήματα Ομάδας Β (Επιλεγμένα: 0)" style="-fx-text-fill: #2e7d32; -fx-font-weight: bold;"/>
+                            <ListView fx:id="main2GroupBListView" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+                    </HBox>
+                </Tab>
+
+                <Tab fx:id="tabOtherDirections" text="Λοιπές Κατευθύνσεις (Ομάδα Α)">
+                    <VBox spacing="5" style="-fx-padding: 10;">
+                        <Label fx:id="lblOtherA" text="Επιλέξτε Μαθήματα Ομάδας Α από τουλάχιστον 3 άλλες κατευθύνσεις (Επιλεγμένα: 0)" style="-fx-font-weight: bold;"/>
+                        <ListView fx:id="otherDirectionsListView" VBox.vgrow="ALWAYS"/>
+                    </VBox>
+                </Tab>
+
+                <Tab fx:id="tabGeneralPlan" text="Γενικό Πλάνο (Όλα τα Μαθήματα)">
+                    <HBox spacing="15" style="-fx-padding: 10;">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblGenA" text="Μαθήματα Ομάδας Α (Επιλεγμένα: 0)" style="-fx-text-fill: #1565c0; -fx-font-weight: bold;"/>
+                            <ListView fx:id="generalGroupAListView" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblGenB" text="Μαθήματα Ομάδας Β (Επιλεγμένα: 0)" style="-fx-text-fill: #2e7d32; -fx-font-weight: bold;"/>
+                            <ListView fx:id="generalGroupBListView" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+                    </HBox>
+                </Tab>
+
+                <Tab fx:id="tabElectives" text="Ελεύθερα / Άλλα Τμήματα / Erasmus">
+                    <VBox spacing="5" style="-fx-padding: 10;">
+                        <Label fx:id="lblElectives" text="Επιλέξτε Ελεύθερα Μαθήματα, Μαθήματα άλλων Τμημάτων ή Erasmus (Επιλεγμένα: 0)" style="-fx-font-weight: bold;"/>
+                        <ListView fx:id="electivesListView" VBox.vgrow="ALWAYS"/>
+                    </VBox>
+                </Tab>
+            </TabPane>
+
+            <Label fx:id="errorLabel" styleClass="error-label" visible="false" wrapText="true" style="-fx-font-size: 13px;"/>
+
+            <HBox alignment="CENTER" spacing="15" style="-fx-padding: 5 0 0 0;">
+                <Button text="Πίσω" styleClass="btn-secondary" onAction="#handleBack"/>
                 <Button text="Προεπισκόπηση" styleClass="btn-primary" prefWidth="200" onAction="#handleNextStep"/>
             </HBox>
         </VBox>

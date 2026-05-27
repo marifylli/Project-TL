@@ -64,7 +64,6 @@ public class EvaluationRepository {
         return courses;
     }
 
-
     // UC2 βήμα 9: αποθήκευσε αξιολόγηση
     public void saveEvaluation(CourseEvaluation evaluation) {
         String sql = """

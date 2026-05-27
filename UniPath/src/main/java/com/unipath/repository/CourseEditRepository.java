@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class CourseEditRepository {
 
-    // 1. Ανάκτηση πληροφοριών μαθήματος από τη βάση
+
     public Course getCourseDetails(String courseId) {
         String sql = "SELECT * FROM Course WHERE courseId = ?";
         try {
@@ -33,7 +33,7 @@ public class CourseEditRepository {
         return null;
     }
 
-    // 2. Αποθήκευση των αλλαγών (Κανόνων) στη βάση δεδομένων
+
     public boolean saveCourseChanges(String courseId, String newRulesText, String professorUsername) {
         String sql = "UPDATE Course SET rules = ?, lastModifiedBy = ? WHERE courseId = ?";
         try {

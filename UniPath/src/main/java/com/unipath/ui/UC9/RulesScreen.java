@@ -123,7 +123,7 @@ public class RulesScreen {
         }
     }
 
-    // Από το Class Diagram: deleteChanges()
+
     public void deleteChanges() {
         if (rulesTextArea != null) {
             rulesTextArea.clear();
@@ -131,7 +131,7 @@ public class RulesScreen {
         System.out.println("[UI] Οι μη αποθηκευμένες αλλαγές διαγράφηκαν επιτυχώς.");
     }
 
-    // Εσωτερικό popup επιτυχίας
+
     private void showSuccessPopup() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
@@ -142,21 +142,21 @@ public class RulesScreen {
             stage.setScene(new Scene(root));
             stage.showAndWait();
 
-            // Μόλις πατηθεί το OK, επιστρέφει στη Main οθόνη
+
             returnToMainScreen();
         } catch (IOException e) {
             System.err.println("Σφάλμα φόρτωσης SuccessScreen: " + e.getMessage());
         }
     }
 
-    // Επαναφέρει την ProfessorMainScreen στο προσκήνιο
+
     private void returnToMainScreen() {
         try {
-            // 1. Φορτώνουμε το FXML της αρχικής οθόνης του καθηγητή
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
             Parent root = loader.load();
 
-            // 2. Βρίσκουμε το τρέχον ενεργό παράθυρο (Stage)
+
             Stage mainStage = (Stage) javafx.stage.Window.getWindows().stream()
                     .filter(javafx.stage.Window::isShowing)
                     .filter(w -> w instanceof Stage)
@@ -164,7 +164,7 @@ public class RulesScreen {
                     .findFirst()
                     .orElse(null);
 
-            // 3. Αντικαθιστούμε το περιεχόμενο της τρέχουσας σκηνής με την αρχική οθόνη
+
             if (mainStage != null && mainStage.getScene() != null) {
                 mainStage.getScene().setRoot(root);
                 mainStage.toFront();
@@ -176,7 +176,7 @@ public class RulesScreen {
         }
     }
 
-    // Μέθοδος που επιτρέπει στον Controller να αποκτά πρόσβαση στο Scene αν χρειαστεί
+
     public javafx.scene.Scene getScene() {
         if (rulesTextArea != null) {
             return rulesTextArea.getScene();

@@ -69,13 +69,13 @@ public class CourseDetailScreen {
             String currentTitle = (titleField != null) ? titleField.getText() : "";
             String currentDesc = (descriptionArea != null) ? descriptionArea.getText() : "";
 
-            // 1. Έλεγχος εγκυρότητας στον Controller
+
             boolean fieldsValid = manageProfCourseEdit.checkFields(currentTitle, currentDesc);
 
             if (fieldsValid) {
-                editCourseFields(); // Ενημερώνουμε το αντικείμενο Course τοπικά
+                editCourseFields();
 
-                // Ανοίγουμε τη RulesScreen περνώντας τον controller και το μάθημα
+
                 RulesScreen rulesScreen = new RulesScreen(manageProfCourseEdit, course);
                 rulesScreen.display();
             }

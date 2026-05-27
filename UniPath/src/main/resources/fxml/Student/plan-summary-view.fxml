@@ -6,9 +6,9 @@
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.unipath.ui.UC1.PlanSummaryScreen"
-      alignment="CENTER" spacing="20" prefWidth="650" prefHeight="550" styleClass="root-pane">
+      alignment="CENTER" spacing="20" prefWidth="950" prefHeight="700" styleClass="root-pane">
 
-    <VBox styleClass="login-card" maxWidth="500" alignment="TOP_CENTER">
+    <VBox styleClass="login-card" maxWidth="880" alignment="TOP_CENTER">
         <VBox styleClass="card-top" alignment="CENTER" spacing="5">
             <Label text="Σύνοψη Προγράμματος Σπουδών" styleClass="app-name"/>
             <Label text="Βήμα 3: Τελικός Έλεγχος &amp; Υποβολή" styleClass="uni-name"/>
@@ -22,15 +22,48 @@
             </HBox>
 
             <VBox styleClass="info-box" spacing="5">
-                <Label fx:id="scenarioLabel" styleClass="info-text"/>
+                <Label fx:id="scenarioTitleLabel" styleClass="info-text" style="-fx-font-weight: bold;"/>
             </VBox>
 
-            <Label text="Επιλεγμένα Μαθήματα προς Εγγραφή:" styleClass="field-label"/>
-            <ListView fx:id="summaryListView" prefHeight="150"/>
-            <HBox spacing="10" alignment="CENTER">
+            <Label text="Προεπισκόπηση Επιλεγμένων Μαθημάτων ανά Κατηγορία:" styleClass="field-label" alignment="CENTER"/>
 
-            <Button text="Οριστική Υποβολή" styleClass="btn-primary" maxWidth="Infinity" onAction="#handleConfirm"/>
-            <Button text="Καθαρισμός" styleClass="btn-secondary" maxWidth="Infinity" onAction="#handleClear"/>
+            <GridPane hgap="20" vgap="15" alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0"/>
+                </columnConstraints>
+
+                <children>
+                    <VBox fx:id="boxMainA" spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label fx:id="ectsALabel" styleClass="field-label" style="-fx-text-fill: #1565c0; -fx-font-weight: bold;"/>
+                        <ListView fx:id="summaryGroupAListView" prefHeight="160"/>
+                    </VBox>
+
+                    <VBox fx:id="boxMainB" spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label fx:id="ectsBLabel" styleClass="field-label" style="-fx-text-fill: #2e7d32; -fx-font-weight: bold;"/>
+                        <ListView fx:id="summaryGroupBListView" prefHeight="160"/>
+                    </VBox>
+
+                    <VBox fx:id="boxOtherA" spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label fx:id="lblOtherDirectionsTitle" styleClass="field-label" style="-fx-text-fill: #e65100; -fx-font-weight: bold;"/>
+                        <ListView fx:id="otherDirectionsListView" prefHeight="160"/>
+                    </VBox>
+
+                    <VBox fx:id="boxElectives" spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="lblElectivesTitle" styleClass="field-label" style="-fx-text-fill: #455a64; -fx-font-weight: bold;"/>
+                        <ListView fx:id="electivesListView" prefHeight="160"/>
+                    </VBox>
+                </children>
+            </GridPane>
+
+            <HBox alignment="CENTER" style="-fx-padding: 8px; -fx-background-color: #f5f5f5; -fx-background-radius: 5px;">
+                <Label fx:id="totalEctsLabel" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #37474f;"/>
+            </HBox>
+
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="Οριστική Υποβολή" styleClass="btn-primary" prefWidth="200" onAction="#handleConfirm"/>
+                <Button text="Ακύρωση / Πίσω" styleClass="btn-secondary" style="-fx-background-color: #757575; -fx-text-fill: white;" prefWidth="180" onAction="#handleCancel"/>
+                <Button text="Διαγραφή Πλάνου" styleClass="btn-secondary" style="-fx-background-color: #d32f2f; -fx-text-fill: white;" prefWidth="180" onAction="#handleClear"/>
             </HBox>
         </VBox>
     </VBox>

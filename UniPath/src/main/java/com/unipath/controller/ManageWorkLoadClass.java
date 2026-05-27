@@ -34,11 +34,13 @@ public class ManageWorkLoadClass {
     private final List<CourseWorkload> sortedCourses = new ArrayList<>();
 
     public void startAnalysis(Stage currentStage) {
-        int studentId = com.unipath.login.UserSession.getInstance().getUserId();
+        int studentId = UserSession.getInstance().getUserId();
         System.out.println("✓ Έναρξη ανάλυσης για τον φοιτητή με ID: " + studentId);
 
         studyPlanCourses.clear();
 
+        // 🌟 ΔΙΑΒΑΣΜΑ ΑΠΟ ΤΗ ΜΝΗΜΗ ΤΟΥ SESSION (Ασφαλές & Δυναμικό)
+        // Παίρνουμε τα πραγματικά μαθήματα που επέλεξε ο χρήστης στο προηγούμενο βήμα (UC1)
         if (ManageStudyPlan.sessionSavedCourseTitles != null && !ManageStudyPlan.sessionSavedCourseTitles.isEmpty()) {
             studyPlanCourses.addAll(ManageStudyPlan.sessionSavedCourseTitles);
             System.out.println("✓ Ανάκτηση " + studyPlanCourses.size() + " μαθημάτων από το session.");
@@ -88,16 +90,21 @@ public class ManageWorkLoadClass {
             }
         }
 
+        // ΕΛΕΓΧΟΣ ΕΝΑΛΛΑΚΤΙΚΗΣ ΡΟΗΣ 1: [empty or no study plan] ──
         if (studyPlanCourses.isEmpty()) {
             System.out.println("⚠ Δεν βρέθηκε οριστικοποιημένο πλάνο. Εμφάνιση Error Popup.");
             openErrorScreen(currentStage);
             return;
         }
 
+        // 2. [Βασική Ροή]: Υπολογισμός και ταξινόμηση
         calculateWorkload();
         Collections.sort(sortedCourses);
+
+        // Άνοιγμα της οθόνης αποτελεσμάτων
         openResultScreen(currentStage);
     }
+
 
     private void calculateWorkload() {
         totalWorkloadIndex = 0.0;
@@ -118,7 +125,8 @@ public class ManageWorkLoadClass {
     public List<CourseWorkload> getSortedCourses() { return sortedCourses; }
 
     public boolean confirmAndSave() {
-        System.out.println("✓ DBManager: saveWorkloadIndex() -> Δείκτης αποθηκεύτηκε: " + totalWorkloadIndex);
+        System.out.println("✓ DBManager: saveWorkloadIndex() -> Επιτυχής αποθήκευση δείκτη: " + totalWorkloadIndex);
+        System.out.println("✓ Student Profile: addWorkLoadToProfile() -> Ενημερώθηκε.");
         return true;
     }
 
@@ -143,22 +151,31 @@ public class ManageWorkLoadClass {
     private void openErrorScreen(Stage stage) {
         try {
             URL fxmlUrl = getClass().getResource("/fxml/common/error-window-view.fxml");
-            if (fxmlUrl == null) fxmlUrl = getClass().getClassLoader().getResource("fxml/common/error-window-view.fxml");
 
-            FXMLLoader loader = new FXMLLoader(fxmlUrl);
-            Parent root = loader.load();
+            if (fxmlUrl == null) {
+                fxmlUrl = getClass().getClassLoader().getResource("fxml/common/error-window-view.fxml");
+            }
 
-            com.unipath.ui.common.ErrorScreen errorController = loader.getController();
-            errorController.setErrorMessage("Δεν βρέθηκε ενεργό ή οριστικοποιημένο Πλάνο Σπουδών! Παρακαλώ δημιουργήστε πρώτα ένα πλάνο (UC1).");
+            if (fxmlUrl != null) {
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(fxmlUrl);
+                Parent root = loader.load();
 
-            Stage popupStage = new Stage();
-            popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.initOwner(stage);
-            popupStage.setScene(new Scene(root, 500, 300));
-            popupStage.setTitle("UniPath - Σφάλμα");
-            popupStage.showAndWait();
+                com.unipath.ui.common.ErrorScreen errorController = loader.getController();
+                errorController.setErrorMessage("Δεν έχετε αποθηκευμένο πλάνο μαθημάτων!");
+
+                stage.setScene(new Scene(root));
+                stage.setTitle("UniPath - Προσοχή");
+                stage.show();
+                System.out.println("[UI] Εμφανίστηκε το κοινό Error Screen επιτυχώς.");
+            } else {
+                System.err.println("Κρίσιμο Σφάλμα: Δεν βρέθηκε πουθενά το αρχείο fxml/common/error-window-view.fxml");
+            }
         } catch (Exception e) {
+            System.err.println("Απέτυχε η φόρτωση της κοινής οθόνης σφάλματος: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+
 }
+

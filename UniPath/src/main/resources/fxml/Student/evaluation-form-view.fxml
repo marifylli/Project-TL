@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.unipath.ui.UC2.EvaluationFormScreen"
+      spacing="20" prefWidth="500" prefHeight="450"
+      stylesheets="@../../css/styles.css"
+      style="-fx-background-color: #f7fafc;">
+
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+
+    <VBox spacing="5" style="-fx-background-color: #2b6cb0; -fx-background-radius: 5;">
+        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+        <Label text="📝 Φόρμα Αξιολόγησης" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Label fx:id="courseLabel" text="Μάθημα: " style="-fx-text-fill: #e2e8f0; -fx-font-size: 14px;"/>
+    </VBox>
+
+    <VBox spacing="8">
+        <Label text="Βαθμολογία Μαθήματος (1 έως 5):" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+        <TextField fx:id="ratingField" promptText="Δώστε έναν βαθμό από 1 έως 5..."
+                   style="-fx-padding: 10; -fx-background-radius: 5;"/>
+    </VBox>
+
+    <VBox spacing="8" VBox.vgrow="ALWAYS">
+        <Label text="Σχόλια / Παρατηρήσεις:" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+        <TextArea fx:id="commentsArea" promptText="Γράψτε τα σχόλιά σας για το μάθημα..."
+                  wrapText="true" style="-fx-background-radius: 5;"/>
+    </VBox>
+
+    <VBox spacing="10" alignment="CENTER">
+        <Label fx:id="statusLabel" text="" style="-fx-text-fill: #e53e3e; -fx-font-weight: bold;"/>
+        <HBox spacing="15" alignment="CENTER">
+            <Button text="Ακύρωση" onAction="#onCancel" styleClass="prof-action-btn-secondary" prefWidth="120"/>
+            <Button text="Υποβολή" onAction="#onSubmit" styleClass="prof-action-btn-primary" prefWidth="120"
+                    style="-fx-background-color: #319795; -fx-text-fill: white;"/>
+        </HBox>
+    </VBox>
+</VBox>

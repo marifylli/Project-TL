@@ -4,7 +4,6 @@ import com.unipath.model.Course;
 import com.unipath.model.CourseEvaluation;
 import com.unipath.repository.EvaluationRepository;
 import com.unipath.login.UserSession;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,29 +14,27 @@ public class ManageEvaluation {
     private final EvaluationRepository evaluationRepository = new EvaluationRepository();
 
     // 1. Επιστρέφει τη λίστα με τα ονόματα των μαθημάτων για το UI
-    public List<String> queryCoursesAttended(int studentId) {
-        List<String> courseNames = new ArrayList<>();
-
-        // Κλήση της πραγματικής μεθόδου του Repository της ομάδας!
-        List<Course> attendedCourses = evaluationRepository.getAttendedCourses(studentId);
-
-        if (attendedCourses != null) {
-            for (Course c : attendedCourses) {
-                // Κρατάμε το όνομα (ή συνδυασμό ID και ονόματος) για να εμφανιστεί στο ListView
-                courseNames.add(c.getTitle());
-            }
-        }
-        return courseNames;
+    // Επιστρέφει List<Course> για να συμβαδίζει με τις αλλαγές που κάναμε στο UI
+    public List<Course> queryCoursesAttended(int studentId) {
+        // Κλήση της πραγματικής μεθόδου του Repository της ομάδας
+        return evaluationRepository.getAttendedCourses(studentId);
     }
 
     // 2. Ελέγχει αν ο φοιτητής έχει δικαίωμα αξιολόγησης (Βήμα 4 - sd2)
     public boolean checkEvaluationRight(String courseName) {
         int studentId = UserSession.getInstance().getUserId();
-        int courseId = convertCourseNameToId(courseName);
+        String courseId = convertCourseNameToId(courseName);
 
-        // Κλήση της πραγματικής μεθόδου hasAlreadySubmitted της ομάδας!
-        // Αν έχει ΉΔΗ υποβάλει (true), τότε ΔΕΝ έχει δικαίωμα (επιστρέφει false)
-        return !evaluationRepository.hasAlreadySubmitted(studentId, courseId);
+        // Μετατροπή του String courseId σε int προσωρινά
+        int courseIdInt = 0;
+        try {
+            // Αν το ID περιέχει μόνο αριθμούς, το μετατρέπουμε. Αν είναι σαν το CEID_24Y332, παίρνουμε ένα fallback νούμερο.
+            courseIdInt = Integer.parseInt(courseId.replaceAll("[^0-9]", ""));
+        } catch (NumberFormatException e) {
+            courseIdInt = 101;
+        }
+
+        return !evaluationRepository.hasAlreadySubmitted(studentId, courseIdInt);
     }
 
     // 3. Ελέγχει την εγκυρότητα των πεδίων της φόρμας
@@ -65,8 +62,8 @@ public class ManageEvaluation {
         evaluation.setSubmissionDate(new Date());
         evaluation.setSubmitted(true);
 
-        // Μετατροπή του ονόματος σε ID για τη βάση δεδομένων
-        int courseId = convertCourseNameToId(courseName);
+        // Τώρα περνάμε String ID ("CEID_...") όπως ακριβώς το περιμένει το Model!
+        String courseId = convertCourseNameToId(courseName);
         evaluation.setCourseId(courseId);
 
         // Κλήση της πραγματικής μεθόδου saveEvaluation του Repository της ομάδας!
@@ -77,18 +74,18 @@ public class ManageEvaluation {
 
     // 5. Ενημέρωση στατιστικών μαθήματος (Βήμα 11 - sd2)
     public void updateCourseStats(String courseName) {
-        int courseId = convertCourseNameToId(courseName);
+        String courseId = convertCourseNameToId(courseName);
         System.out.println("Ενημέρωση μέσου όρου στη ΒΔ για το μάθημα με ID: " + courseId);
-        // Εδώ στο μέλλον η ομάδα μπορεί να καλέσει την getEvaluationsByCourse(String.valueOf(courseId))
-        // του Repository για να υπολογίσει τον νέο Μέσο Όρο στατιστικών (UC4).
     }
 
-    // Βοηθητική μέθοδος για την προσομοίωση εύρεσης του ID από το όνομα του μαθήματος
-    private int convertCourseNameToId(String courseName) {
-        if (courseName == null) return 0;
-        if (courseName.contains("Λογισμικού")) return 101;
-        if (courseName.contains("Δεδομένων")) return 102;
-        return 103; // Default ID για άλλα μαθήματα
+    // Η μέθοδος επιστρέφει  String και χρησιμοποιεί τα πραγματικά IDs της βάσης
+    private String convertCourseNameToId(String courseName) {
+        if (courseName == null) return "UNKNOWN";
+        if (courseName.contains("Λογισμικού")) return "CEID_24Y332";
+        if (courseName.contains("Δεδομένων")) return "CEID_24Y334";
+        if (courseName.contains("Δίκτυα")) return "CEID_24Y387";
+        return "CEID_22Y103"; // Default fallback ID
     }
+
+
 }
-

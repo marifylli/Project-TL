@@ -38,6 +38,9 @@ public class ProfessorMainScreen implements Initializable {
         int currentProfessorId = UserSession.getInstance().getUserId();
 
 
+        if (professorNameLabel != null) {
+            professorNameLabel.setText("UniPath - Dashboard Καθηγητή");
+        }
         loadNotifications(currentProfessorId);
         loadCourses();
     }

@@ -13,10 +13,10 @@
     <children>
         <Label text="Δημιουργία Νέας Αγγελίας Διπλωματικής" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2B3A42;"/>
 
-        <Label text="Τίτλος Θέματος:"/>
+        <Label text="Τίτλος Θέματος: *"/>
         <TextField fx:id="titleField" promptText="Εισάγετε τίτλο..."/>
 
-        <Label text="Περιγραφή:"/>
+        <Label text="Περιγραφή: *"/>
         <TextArea fx:id="descriptionArea" prefHeight="80.0" promptText="Εισάγετε περιγραφή..."/>
 
         <Label text="Προαπαιτούμενα Μαθήματα:"/>
@@ -26,13 +26,13 @@
             <children>
                 <VBox HBox.hgrow="ALWAYS">
                     <children>
-                        <Label text="Απαιτούμενα ECTS:"/>
+                        <Label text="Απαιτούμενα ECTS: *"/>
                         <TextField fx:id="ectsField" promptText="e.g. 10"/>
                     </children>
                 </VBox>
                 <VBox HBox.hgrow="ALWAYS">
                     <children>
-                        <Label text="Μέγιστος Αριθμός Υποψηφίων:"/>
+                        <Label text="Μέγιστος Αριθμός Υποψηφίων: *"/>
                         <TextField fx:id="maxCandidatesField" promptText="e.g. 3"/>
                     </children>
                 </VBox>

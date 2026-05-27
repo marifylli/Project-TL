@@ -151,15 +151,28 @@ public class RulesScreen {
 
     // Επαναφέρει την ProfessorMainScreen στο προσκήνιο
     private void returnToMainScreen() {
-        Stage mainStage = (Stage) javafx.stage.Window.getWindows().stream()
-                .filter(javafx.stage.Window::isShowing)
-                .filter(w -> w instanceof Stage)
-                .map(w -> (Stage) w)
-                .findFirst()
-                .orElse(null);
-        if (mainStage != null) {
-            mainStage.toFront();
-            mainStage.requestFocus();
+        try {
+            // 1. Φορτώνουμε το FXML της αρχικής οθόνης του καθηγητή
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Professor/professor-main-view.fxml"));
+            Parent root = loader.load();
+
+            // 2. Βρίσκουμε το τρέχον ενεργό παράθυρο (Stage)
+            Stage mainStage = (Stage) javafx.stage.Window.getWindows().stream()
+                    .filter(javafx.stage.Window::isShowing)
+                    .filter(w -> w instanceof Stage)
+                    .map(w -> (Stage) w)
+                    .findFirst()
+                    .orElse(null);
+
+            // 3. Αντικαθιστούμε το περιεχόμενο της τρέχουσας σκηνής με την αρχική οθόνη
+            if (mainStage != null && mainStage.getScene() != null) {
+                mainStage.getScene().setRoot(root);
+                mainStage.toFront();
+                mainStage.requestFocus();
+            }
+        } catch (IOException e) {
+            System.err.println("Σφάλμα κατά την επιστροφή στην αρχική οθόνη καθηγητή: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

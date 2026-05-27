@@ -14,9 +14,12 @@ import java.net.URL;
 
 public class WorkLoadResultScreen {
 
-    @FXML private ListView<String> sortedCoursesListView;
-    @FXML private Label workloadIndexLabel;
-    @FXML private Button btnConfirm;
+    @FXML
+    private ListView<String> sortedCoursesListView;
+    @FXML
+    private Label workloadIndexLabel;
+    @FXML
+    private Button btnConfirm;
 
     private ManageWorkLoadClass logicController;
 

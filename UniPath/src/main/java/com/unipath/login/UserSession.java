@@ -17,7 +17,7 @@ public class UserSession {
         return instance;
     }
 
-    // Συμβατό με τα 4 ορίσματα που καλεί ο LoginController
+
     public void startSession(int userId, String email, String displayName, String role) {
         this.userId = userId;
         this.email = email;
@@ -34,7 +34,7 @@ public class UserSession {
     }
 
     public int getUserId() { return userId; }
-    public String getEmail() { return email; } // Απαραίτητο για το CourseRepository!
+    public String getEmail() { return email; }
     public String getDisplayName() { return displayName; }
     public String getRole() { return role; }
 }

@@ -46,7 +46,7 @@ public class StudyPlan {
             return false;
         }
 
-        //  status of plan (p.χ. "FINALIZED")
+
         if (filters.getStatus() != null
                 && !filters.getStatus().isBlank()
                 && !this.status.equals(filters.getStatus())) {
@@ -65,7 +65,7 @@ public class StudyPlan {
         return true;
     }
 
-    // getters and setters for uc4 marifylli
+    // getters and setters
 
     public int getPlanId()
     { return planId; }

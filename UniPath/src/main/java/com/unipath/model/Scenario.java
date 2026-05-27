@@ -14,7 +14,7 @@ public class Scenario {
 
     public Scenario() {
     }
-    //full consructor
+
     public Scenario(int scenarioId, String title, String description, int groupARequiredECTS, int groupBRequiredECTS) {
         this.scenarioId = scenarioId;
         this.title = title;

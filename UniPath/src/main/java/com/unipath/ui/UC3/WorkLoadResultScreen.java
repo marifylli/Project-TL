@@ -27,7 +27,7 @@ public class WorkLoadResultScreen {
         this.logicController = controller;
         workloadIndexLabel.setText(String.format("%.1f", controller.getTotalWorkloadIndex()));
 
-        // Εμφάνιση ταξινομημένων μαθημάτων
+
         sortedCoursesListView.getItems().clear();
         for (ManageWorkLoadClass.CourseWorkload cw : controller.getSortedCourses()) {
             sortedCoursesListView.getItems().add(cw.name + "  [Δείκτης: " + cw.workload + "]");
@@ -36,10 +36,10 @@ public class WorkLoadResultScreen {
 
     @FXML
     private void onConfirmAnalysis() {
-        // Κλήση της λογικής για αποθήκευση
+
         boolean saved = logicController.confirmAndSave();
         if (saved) {
-            // Άνοιγμα του επίσημου Success Screen της ομάδας
+
             showSuccessWindow();
         }
     }
@@ -55,15 +55,15 @@ public class WorkLoadResultScreen {
                 javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(fxmlUrl);
                 Parent root = loader.load();
 
-                // Σύνδεση με τον Controller της ομάδας και πέρασμα του custom μηνύματος
+
                 com.unipath.ui.common.SuccessScreen successController = loader.getController();
                 successController.setSuccessMessage("Η προσομοίωση ολοκληρώθηκε και ο δείκτης φόρτου αποθηκεύτηκε με επιτυχία!");
 
-                // Κλείνουμε το τρέχον μεγάλο παράθυρο αποτελεσμάτων
+
                 Stage currentStage = (Stage) btnConfirm.getScene().getWindow();
                 currentStage.close();
 
-                // Ανοίγουμε το κοινό Success Screen ως αυτόνομο Pop-up Stage
+
                 Stage popUpStage = new Stage();
                 popUpStage.setTitle("UniPath - Επιτυχής Ολοκλήρωση");
                 popUpStage.setScene(new Scene(root));
@@ -75,7 +75,7 @@ public class WorkLoadResultScreen {
                 System.err.println("Σφάλμα: Δεν βρέθηκε το αρχείο /fxml/common/success-window.fxml");
             }
         } catch (Exception e) {
-            System.err.println("❌ Απέτυχε η φόρτωση της οθόνης επιτυχίας:");
+            System.err.println("Απέτυχε η φόρτωση της οθόνης επιτυχίας:");
             e.printStackTrace();
         }
     }
@@ -85,7 +85,7 @@ public class WorkLoadResultScreen {
     private void onCancelAnalysis() {
         System.out.println("Ακύρωση ανάλυσης. Επιστροφή στο Κεντρικό Μενού.");
         try {
-            // Φορτώνουμε την αρχική οθόνη του φοιτητή
+
             URL fxmlUrl = getClass().getResource("/fxml/Student/student-main-screen.fxml");
             if (fxmlUrl == null) {
                 fxmlUrl = getClass().getClassLoader().getResource("fxml/Student/student-main-screen.fxml");
@@ -93,7 +93,7 @@ public class WorkLoadResultScreen {
 
             Parent root = FXMLLoader.load(fxmlUrl);
 
-            // Παίρνουμε το τρέχον stage από το κουμπί επιβεβαίωσης
+
             Stage stage = (Stage) btnConfirm.getScene().getWindow();
             stage.setScene(new Scene(root, 1000, 650));
             stage.setTitle("UniPath - Κεντρικό Μενού");

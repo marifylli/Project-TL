@@ -53,7 +53,7 @@ public class ManageStatAnalysis {
                 return false;
             }
 
-            // Βήμα 7: computeStatistics
+            //  computeStatistics
             computedStatistics = computeStatistics(filteredPlans);
             return true;
 
@@ -70,7 +70,7 @@ public class ManageStatAnalysis {
         // total plans
         stats.put("totalPlans", plans.size());
 
-        // Κατανομή ανά κατεύθυνση
+
         Map<String, Long> perDirection = plans.stream()
                 .collect(Collectors.groupingBy(
                         p -> p.getDirectionName() != null ? p.getDirectionName() : "Άγνωστη",

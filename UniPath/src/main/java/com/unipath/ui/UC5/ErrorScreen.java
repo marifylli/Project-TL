@@ -49,7 +49,7 @@ public class ErrorScreen {
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
-            // Χρησιμοποιούμε το fully qualified name για να αποφύγουμε σύγκρουση
+
             com.unipath.ui.common.ErrorScreen controller = loader.getController();
             controller.setErrorMessage(message);
 

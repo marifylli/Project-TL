@@ -35,15 +35,14 @@ public class ManageWorkLoadClass {
 
     public void startAnalysis(Stage currentStage) {
         int studentId = UserSession.getInstance().getUserId();
-        System.out.println("✓ Έναρξη ανάλυσης για τον φοιτητή με ID: " + studentId);
+        System.out.println(" Έναρξη ανάλυσης για τον φοιτητή με ID: " + studentId);
 
         studyPlanCourses.clear();
 
-        // 🌟 ΔΙΑΒΑΣΜΑ ΑΠΟ ΤΗ ΜΝΗΜΗ ΤΟΥ SESSION (Ασφαλές & Δυναμικό)
-        // Παίρνουμε τα πραγματικά μαθήματα που επέλεξε ο χρήστης στο προηγούμενο βήμα (UC1)
+
         if (ManageStudyPlan.sessionSavedCourseTitles != null && !ManageStudyPlan.sessionSavedCourseTitles.isEmpty()) {
             studyPlanCourses.addAll(ManageStudyPlan.sessionSavedCourseTitles);
-            System.out.println("✓ Ανάκτηση " + studyPlanCourses.size() + " μαθημάτων από το session.");
+            System.out.println("Ανάκτηση " + studyPlanCourses.size() + " μαθημάτων από το session.");
         }
         else {
             String fetchPlanSql = "SELECT courses FROM StudyPlan WHERE studentId = ? AND (status = 'Finalized' OR isFinalized = 1) ORDER BY planId DESC LIMIT 1";
@@ -71,7 +70,7 @@ public class ManageWorkLoadClass {
                                     }
                                 }
 
-                                // Fallback με LIKE για απόλυτη ασφάλεια ανάκτησης τίτλων
+
                                 String fallbackSql = "SELECT title FROM Course WHERE courseId LIKE ?";
                                 try (java.sql.PreparedStatement fPstmt = conn.prepareStatement(fallbackSql)) {
                                     fPstmt.setString(1, "%" + cleanId.replace("CEID_", "") + "%");
@@ -86,13 +85,13 @@ public class ManageWorkLoadClass {
                     }
                 }
             } catch (Exception e) {
-                System.err.println("❌ Σφάλμα κατά την ανάκτηση από την SQLite: " + e.getMessage());
+                System.err.println("Σφάλμα κατά την ανάκτηση από την SQLite: " + e.getMessage());
             }
         }
 
         // ΕΛΕΓΧΟΣ ΕΝΑΛΛΑΚΤΙΚΗΣ ΡΟΗΣ 1: [empty or no study plan] ──
         if (studyPlanCourses.isEmpty()) {
-            System.out.println("⚠ Δεν βρέθηκε οριστικοποιημένο πλάνο. Εμφάνιση Error Popup.");
+            System.out.println(" Δεν βρέθηκε οριστικοποιημένο πλάνο. Εμφάνιση Error Popup.");
             openErrorScreen(currentStage);
             return;
         }

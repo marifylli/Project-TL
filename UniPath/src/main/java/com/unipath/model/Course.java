@@ -80,7 +80,7 @@ public class Course {
     public int getProfessorId() { return professorId; }
     public void setProfessorId(int professorId) { this.professorId = professorId; }
 
-    // 🌟 Έξυπνες μέθοδοι ανάγνωσης κατεύθυνσης και ομάδας από το String της SQLite
+
     public boolean belongsToDirection(String directionCode) {
         if (this.directions == null || this.directions.isEmpty() || directionCode == null) {
             return false;

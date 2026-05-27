@@ -68,11 +68,11 @@ public class PlanSummaryScreen {
             scenarioTitleLabel.setText("Επιλεγμένο Σενάριο: " + scenario.getTitle());
         }
 
-        // Δυναμική ανάκτηση ενεργών κατευθύνσεων από το controller
+
         String k1 = "K1";
         String k2 = "K2";
 
-        // Προσπάθεια ανάκτησης των πραγματικών επιλεγμένων ComboBox τιμών μέσω Reflection
+
         if (controller != null) {
             try {
                 java.lang.reflect.Field f1 = controller.getClass().getDeclaredField("activeDirection1");
@@ -87,7 +87,7 @@ public class PlanSummaryScreen {
 
         int totalEcts = 0;
 
-        // ── ΣΕΝΑΡΙΟ 1: 1 ΚΥΡΙΑ ΚΑΤΕΥΘΥΝΣΗ ──
+
         if (scenarioId == 1) {
             boxMainA.setVisible(true);
             boxMainA.setManaged(true);
@@ -124,7 +124,7 @@ public class PlanSummaryScreen {
                 }
             }
         }
-        // ── ΣΕΝΑΡΙΟ 2: ΔΥΟ ΚΥΡΙΕΣ ΚΑΤΕΥΘΥΝΣΕΙΣ (ΔΙΟΡΘΩΜΕΝΟ) ──
+
         else if (scenarioId == 2) {
             boxMainA.setVisible(true);
             boxMainA.setManaged(true);
@@ -151,21 +151,21 @@ public class PlanSummaryScreen {
                     if (isExternal) {
                         electivesListView.getItems().add(displayString);
                     } else if (c.belongsToDirection(k1)) {
-                        // Αν ανήκει στην K1, μπαίνει αυστηρά στις λίστες της K1
+
                         if (c.isGroupAForDirection(k1)) summaryGroupAListView.getItems().add(displayString);
                         else summaryGroupBListView.getItems().add(displayString);
                     } else if (c.belongsToDirection(k2)) {
-                        // Αν ανήκει στην K2, μπαίνει αυστηρά στις λίστες της K2
+
                         if (c.isGroupAForDirection(k2)) otherDirectionsListView.getItems().add(displayString);
                         else electivesListView.getItems().add(displayString);
                     } else {
-                        // Όλα τα υπόλοιπα μαθήματα πάνε στα Ελεύθερα
+
                         electivesListView.getItems().add(displayString);
                     }
                 }
             }
         }
-        // ── ΣΕΝΑΡΙΟ 3: ΓΕΝΙΚΗ ΚΑΤΕΥΘΥΝΣΗ (ΔΙΟΡΘΩΜΕΝΟ) ──
+
         else if (scenarioId == 3) {
             boxMainA.setVisible(true);
             boxMainA.setManaged(true);
@@ -214,7 +214,7 @@ public class PlanSummaryScreen {
             manageStudyPlan.onConfirmPlan(scenario, selectedCourses);
 
             try {
-                // Κλείνουμε το popup. Η κεντρική οθόνη θα ανανεωθεί αυτόματα!
+
                 Stage stage = (Stage) totalEctsLabel.getScene().getWindow();
                 stage.close();
                 System.out.println("✓ [UI Flow]: Το πλάνο υποβλήθηκε και το παράθυρο έκλεισε.");

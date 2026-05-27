@@ -21,7 +21,7 @@ import java.util.Map;
 public class ReportRepository {
 
     public void saveReport(Report report, int secretaryId) throws Exception {
-        // Εξασφαλίζουμε ότι το παράθυρο διαλόγου θα ανοίξει στο σωστό Thread της JavaFX
+
         Platform.runLater(() -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Αποθήκευση Αναφοράς στον Υπολογιστή");

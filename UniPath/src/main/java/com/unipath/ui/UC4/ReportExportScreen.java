@@ -60,7 +60,7 @@ public class ReportExportScreen {
                 fxmlUrl = getClass().getClassLoader().getResource("fxml/Secretary/report-export-view.fxml");
             }
             if (fxmlUrl == null) {
-                System.err.println("❌ Δεν βρέθηκε το report-export-view.fxml!");
+                System.err.println(" Δεν βρέθηκε το report-export-view.fxml!");
                 return;
             }
 
@@ -73,7 +73,7 @@ public class ReportExportScreen {
             stage.show();
 
         } catch (Exception e) {
-            System.err.println("❌ Απέτυχε η φόρτωση της οθόνης εξαγωγής:");
+            System.err.println(" Απέτυχε η φόρτωση της οθόνης εξαγωγής:");
             e.printStackTrace();
         }
     }

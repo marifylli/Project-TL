@@ -11,7 +11,7 @@ public class ManageProfCourseEdit {
     public ManageProfCourseEdit() {
     }
 
-    // Η ΜΟΝΑΔΙΚΗ μέθοδος του Controller βάσει του Class Diagram σου
+
     public boolean checkFields(String title, String description) {
         if (title == null || title.trim().isEmpty() || description == null || description.trim().isEmpty()) {
             try {

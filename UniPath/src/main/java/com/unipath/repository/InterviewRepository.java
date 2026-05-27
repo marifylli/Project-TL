@@ -15,7 +15,7 @@ public class InterviewRepository {
         return DBManager.getInstance().connect();
     }
 
-    // ── Έλεγχος Προϋποθέσεων Φοιτητή ───────────────────────────────
+
     public boolean checkStudentEligibility(int studentId, int thesisId) {
         String sql = """
             SELECT t.requiredECTS, s.completedECTS
@@ -37,7 +37,7 @@ public class InterviewRepository {
         return false;
     }
 
-    // ── Ανάκτηση Διαθέσιμων Slots ───────────────────────────────────
+
     public List<AvailabilitySlot> getAvailableSlots(int professorId) {
         String sql = """
             SELECT * FROM AvailabilitySlot 
@@ -63,7 +63,7 @@ public class InterviewRepository {
         return slots;
     }
 
-    // ── Αποθήκευση Ραντεβού ─────────────────────────────────────────
+
     public boolean saveInterviewMeeting(int studentId, int professorId,
                                         int slotId, int thesisId) {
         String sql = """
@@ -82,7 +82,7 @@ public class InterviewRepository {
             pstmt.setInt(5, slotId);
             pstmt.executeUpdate();
 
-            // Ενημέρωσε το slot ως μη διαθέσιμο
+
             updateSlotAvailability(slotId);
             System.out.println("Ραντεβού καταχωρήθηκε!");
             return true;
@@ -92,7 +92,7 @@ public class InterviewRepository {
         }
     }
 
-    // ── Ενημέρωση Διαθεσιμότητας Slot ───────────────────────────────
+
     private void updateSlotAvailability(int slotId) {
         String sql = "UPDATE AvailabilitySlot SET isAvailable = 0 WHERE slotId = ?";
         try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
@@ -103,7 +103,7 @@ public class InterviewRepository {
         }
     }
 
-    // ── Ανάκτηση Ραντεβού Φοιτητή ───────────────────────────────────
+
     public List<InterviewMeeting> getStudentMeetings(int studentId) {
         String sql = "SELECT * FROM InterviewMeeting WHERE studentId = ?";
         List<InterviewMeeting> meetings = new ArrayList<>();

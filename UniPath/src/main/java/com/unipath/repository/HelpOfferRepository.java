@@ -12,7 +12,7 @@ import java.util.List;
 
 public class HelpOfferRepository {
 
-    // Αποθήκευση προσφοράς στη βάση δεδομένων (UC7 - SD7)
+
     public boolean saveOffer(HelpOffer offer) {
         String sql = """
             INSERT INTO HelpOffer (mentorId, courseId, helpType, fileUrl, meetingUrl, isActive)
@@ -38,7 +38,7 @@ public class HelpOfferRepository {
         }
     }
 
-    // Ανάκτηση ενεργών προσφορών για ένα συγκεκριμένο μάθημα (UC8 - SD8)
+
     public List<HelpOffer> getActiveOffers(String courseId) {
         List<HelpOffer> offers = new ArrayList<>();
         String sql = """

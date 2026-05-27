@@ -21,16 +21,16 @@ public class CoursesToEvaluateScreen {
     @FXML private ListView<String> coursesListView;
     @FXML private Label errorLabel;
 
-    // Σύνδεση με τον controller (όπως ορίζει το sd2)
+
     private final ManageEvaluation controller = new ManageEvaluation();
     private final ObservableList<String> courseList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        // 1. Πρώτα φορτώνουμε τα δεδομένα στην ObservableList
+
         loadAttendedCourses();
 
-        // 2. Μετά συνδέουμε τη λίστα με το ListView για να σιγουρέψουμε ότι θα τα σχεδιάσει
+
         if (coursesListView != null) {
             coursesListView.setItems(courseList);
             System.out.println("✓ [UI] Η ObservableList συνδέθηκε επιτυχώς με το coursesListView. Μέγεθος: " + courseList.size());
@@ -42,8 +42,7 @@ public class CoursesToEvaluateScreen {
     private void loadAttendedCourses() {
         courseList.clear();
 
-        // Αντί για το δυναμικό ID του session, βάζουμε καρφωτά το 41
-        // για να τραβήξει τις εγγραφές που βάλαμε στο InsertTestData
+
         int studentId = 41;
         System.out.println("🔍 [UC2] Ανάκτηση μαθημάτων από τη βάση για τον test φοιτητή: " + studentId);
 
@@ -73,14 +72,14 @@ public class CoursesToEvaluateScreen {
             return;
         }
 
-        // Βήμα 4 (sd2): checkEvaluationRight
+
         boolean hasRight = controller.checkEvaluationRight(selectedCourse);
 
         if (hasRight) {
-            // Βήμα 5 (sd2): Άνοιγμα του EvaluationFormScreen
+
             openEvaluationForm(selectedCourse);
         } else {
-            // Εναλλακτική Ροή 1 (sd2): Ήδη υποβληθεί
+
             errorLabel.setText("Έχετε ήδη υποβάλει αξιολόγηση για αυτό το μάθημα!");
         }
     }
@@ -88,7 +87,7 @@ public class CoursesToEvaluateScreen {
     private void openEvaluationForm(String courseId) {
         try {
             URL fxmlUrl = getClass().getResource("/fxml/Student/evaluation-form-view.fxml");
-            // Backup path για το Maven target environment
+
             if (fxmlUrl == null) {
                 fxmlUrl = getClass().getClassLoader().getResource("fxml/Student/courses-evaluate-view.fxml");
             }
@@ -101,7 +100,7 @@ public class CoursesToEvaluateScreen {
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
-            // Ανάκτηση του controller της φόρμας
+
             EvaluationFormScreen formScreen = loader.getController();
 
             Stage currentStage = (Stage) coursesListView.getScene().getWindow();

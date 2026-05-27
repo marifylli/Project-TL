@@ -28,17 +28,13 @@ public class ManageMentorProfile {
     public ManageMentorProfile() {
     }
 
-    /**
-     * ΕΚΚΙΝΗΣΗ ΡΟΗΣ UC7: Καλείται όταν ο χρήστης πατάει "Add New Offer" στη StudentMainScreen
-     */
+
     public void startMentorFlow(Stage stage) {
         this.mainStage = stage;
         navigateToNewOfferForm();
     }
 
-    /**
-     * Μετάβαση στην πρώτη φόρμα επιλογής μαθήματος (NewOfferFormScreen)
-     */
+
     public void navigateToNewOfferForm() {
         try {
             java.net.URL fxmlLocation = getClass().getResource("/fxml/Student/new-offer-form-view.fxml");
@@ -49,7 +45,7 @@ public class ManageMentorProfile {
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
 
-            // ✨ ΔΙΑΣΩΣΗ: Αν το mainStage είναι null, "κλέβουμε" το τρέχον ανοιχτό παράθυρο
+
             if (this.mainStage == null) {
                 this.mainStage = (Stage) Stage.getWindows().filtered(window -> window.isShowing()).get(0);
             }
@@ -58,22 +54,20 @@ public class ManageMentorProfile {
             mainStage.setTitle("UniPath - Επιλογή Μαθήματος & Τύπου Βοήθειας");
             mainStage.show();
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά τη φόρτωση του new-offer-form-view.fxml:");
+            System.err.println(" Σφάλμα κατά τη φόρτωση του new-offer-form-view.fxml:");
             e.printStackTrace();
             showErrorPopup("Αδυναμία φόρτωσης της οθόνης φόρμας.");
         }
     }
 
-    /**
-     * Μετάβαση στη δεύτερη φόρμα υποβολής αρχείων (OfferSubmissionFormScreen)
-     */
+
     public void navigateToOfferSubmission(String selectedCourse, String assistanceType) {
         try {
-            // Καταγράφουμε τις επιλογές από το 1ο βήμα για να μην χαθούν
+
             selectCourse(selectedCourse);
             selectHelp(assistanceType);
 
-            // Κρατάμε το Path με το σωστό, κεφαλαίο Student
+
             java.net.URL fxmlLocation = getClass().getResource("/fxml/Student/offer-submission-view.fxml");
             if (fxmlLocation == null) {
                 fxmlLocation = getClass().getClassLoader().getResource("fxml/Student/offer-submission-view.fxml");
@@ -82,7 +76,7 @@ public class ManageMentorProfile {
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
 
-            // ✨ ΔΙΑΣΩΣΗ: Αν το mainStage είναι null, "κλέβουμε" το τρέχον ανοιχτό παράθυρο
+
             if (this.mainStage == null) {
                 this.mainStage = (Stage) Stage.getWindows().filtered(window -> window.isShowing()).get(0);
             }
@@ -91,15 +85,13 @@ public class ManageMentorProfile {
             mainStage.setTitle("UniPath - Συμπλήρωση Στοιχείων Προσφοράς");
 
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά το φόρτωμα του offer-submission-view.fxml:");
+            System.err.println(" Σφάλμα κατά το φόρτωμα του offer-submission-view.fxml:");
             e.printStackTrace();
             showErrorPopup("Αδυναμία φόρτωσης της οθόνης υποβολής.");
         }
     }
 
-    /**
-     * Εμφάνιση του Κοινού SuccessScreen ως Αναδυόμενο Παράθυρο (Popup)
-     */
+
     public void showSuccessPopup(String message) {
         try {
             java.net.URL fxmlLocation = getClass().getResource("/fxml/common/success-window-view.fxml");
@@ -121,13 +113,11 @@ public class ManageMentorProfile {
 
             returnToMainMenu();
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την εμφάνιση του SuccessScreen: " + e.getMessage());
+            System.err.println(" Σφάλμα κατά την εμφάνιση του SuccessScreen: " + e.getMessage());
         }
     }
 
-    /**
-     * Εμφάνιση του Κοινού ErrorScreen ως Αναδυόμενο Παράθυρο (Popup)
-     */
+
     public void showErrorPopup(String message) {
         try {
             java.net.URL fxmlLocation = getClass().getResource("/fxml/common/error-window-view.fxml");
@@ -147,16 +137,14 @@ public class ManageMentorProfile {
             popupStage.setScene(new Scene(root));
             popupStage.showAndWait();
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την εμφάνιση του ErrorScreen: " + e.getMessage());
+            System.err.println("Σφάλμα κατά την εμφάνιση του ErrorScreen: " + e.getMessage());
         }
     }
 
-    /**
-     * Επιστροφή στην Κεντρική Οθόνη Φοιτητή μετά από επιτυχία ή ακύρωση
-     */
+
     public void returnToMainMenu() {
         try {
-            // Διορθώθηκε σε Κεφαλαίο Student και προστέθηκε ασφαλής έλεγχος τοποθεσίας
+
             java.net.URL fxmlLocation = getClass().getResource("/fxml/Student/student-main-screen.fxml");
             if (fxmlLocation == null) {
                 fxmlLocation = getClass().getClassLoader().getResource("fxml/Student/student-main-screen.fxml");
@@ -171,13 +159,11 @@ public class ManageMentorProfile {
             mainStage.setScene(new Scene(root, 1000, 650));
             mainStage.setTitle("UniPath - Κεντρικό Μενού");
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την επιστροφή στο κεντρικό μενού: " + e.getMessage());
+            System.err.println(" Σφάλμα κατά την επιστροφή στο κεντρικό μενού: " + e.getMessage());
         }
     }
 
-    /**
-     * Βήμα 2 Λεκτικού: Το Σύστημα ανακτά όλα τα διαθέσιμα μαθήματα (queryCourses())
-     */
+
     public List<Course> queryCourses() {
         System.out.println("[Controller] Ανάκτηση μαθημάτων από την κλάση Course.");
         List<Course> coursesList = new ArrayList<>();
@@ -196,12 +182,12 @@ public class ManageMentorProfile {
                 coursesList.add(course);
             }
         } catch (java.sql.SQLException e) {
-            System.err.println("❌ Σφάλμα στην queryCourses: " + e.getMessage());
+            System.err.println(" Σφάλμα στην queryCourses: " + e.getMessage());
         }
         return coursesList;
     }
 
-    // Καταγραφή επιλογών από το UI (Βήματα 3, 4, 6 λεκτικού)
+    // Καταγραφή επιλογών από το UI
     public void selectCourse(String courseId) { this.currentCourseId = courseId; }
     public void selectHelp(String helpType) { this.currentHelpType = helpType; }
     public void offerDataType(String notesFile, String meetingUrl) {
@@ -209,13 +195,11 @@ public class ManageMentorProfile {
         this.currentMeetingUrl = meetingUrl;
     }
 
-    /**
-     * Βήμα 7 Λεκτικού: Ο Φοιτητής επιλέγει «Δημοσίευση Προσφοράς»
-     */
+
     public boolean postOffer(StudentProfile profile) {
         System.out.println("[Controller] Έναρξη postOffer().");
 
-        // 1. Βήμα 8 Λεκτικού: Το Σύστημα ελέγχει τη συμπλήρωση των πεδίων (checkFields)
+
         if (!checkFields()) {
             System.out.println("[Controller] [Alternative Path] Σφάλμα: Τα πεδία δεν συμπληρώθηκαν σωστά.");
             showErrorPopup("Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία (Μάθημα, Τύπος Βοήθειας και τουλάχιστον ένα Αρχείο ή Σύνδεσμο).");
@@ -223,7 +207,7 @@ public class ManageMentorProfile {
         }
         System.out.println("[Controller] Ο έλεγχος πεδίων πέτυχε.");
 
-        // 2. Βήμα 9 Λεκτικού: Δημιουργία της Ενεργής Προσφοράς στην Java (create)
+
         HelpOffer newOffer = HelpOffer.create(
                 profile.getStudentId(),
                 this.currentCourseId,
@@ -233,7 +217,7 @@ public class ManageMentorProfile {
         );
         System.out.println("[Controller] Δημιουργήθηκε το αντικείμενο HelpOffer.");
 
-        // 3. Βήμα 8 Λεκτικού (Δεύτερο σκέλος): Αποθήκευση στην ΒΔ μέσω DBManager (saveOffer)
+
         HelpOfferRepository repo = new HelpOfferRepository();
         boolean isSaved = repo.saveOffer(newOffer);
         System.out.println("[Controller] Αποθήκευση στη ΒΔ μέσω DBManager. Κατάσταση: " + isSaved);
@@ -250,9 +234,7 @@ public class ManageMentorProfile {
         return false;
     }
 
-    /**
-     * Η αναδρομική μέθοδος checkFields() του Controller
-     */
+
     public boolean checkFields() {
         if (this.currentCourseId == null || this.currentCourseId.isBlank()) return false;
         if (this.currentHelpType == null || this.currentHelpType.isBlank()) return false;

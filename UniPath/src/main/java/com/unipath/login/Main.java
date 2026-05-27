@@ -1,7 +1,7 @@
 package com.unipath.login;
 
 
-//Ανοιγει το παραθυρο τισ εφαρμογησ και φορτωνει το πρωτο FXML.Ρεχει μονο μια φορα στην αρχη
+
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

@@ -9,7 +9,7 @@ import javafx.scene.control.Label;
 import java.util.List;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.Parent; // 🌟 ΔΙΟΡΘΩΣΗ: Προσθήκη του import για να σβήσει το Cannot resolve symbol 'Parent'
+import javafx.scene.Parent;
 import javafx.fxml.FXMLLoader;
 
 public class ScenarioSelectionScreen {
@@ -43,11 +43,11 @@ public class ScenarioSelectionScreen {
         System.out.println("DEBUG UI: Έναρξη της displayScenarios()...");
 
         if (scenarioListView == null) {
-            System.out.println("❌ ΣΦΑΛΜΑ: Το scenarioListView είναι NULL! Ελέγξτε το fx:id στο FXML.");
+            System.out.println(" ΣΦΑΛΜΑ: Το scenarioListView είναι NULL! Ελέγξτε το fx:id στο FXML.");
             return;
         }
         if (manageStudyPlan == null) {
-            System.out.println("❌ ΣΦΑΛΜΑ: Το manageStudyPlan είναι NULL.");
+            System.out.println("ΣΦΑΛΜΑ: Το manageStudyPlan είναι NULL.");
             return;
         }
 
@@ -123,7 +123,7 @@ public class ScenarioSelectionScreen {
             System.out.println("DEBUG UI: Το ListView ενημερώθηκε επιτυχώς με τις κατευθύνσεις!");
 
         } catch (Exception e) {
-            System.err.println("❌ ΣΦΑΛΜΑ κατά τη φόρτωση στο UI:");
+            System.err.println("ΣΦΑΛΜΑ κατά τη φόρτωση στο UI:");
             e.printStackTrace();
         }
     }
@@ -161,7 +161,7 @@ public class ScenarioSelectionScreen {
             Stage stage = (Stage) scenarioListView.getScene().getWindow();
             stage.close(); // Κλείνει το popup, η πίσω οθόνη εμφανίζεται αμέσως!
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά το κλείσιμο: " + e.getMessage());
+            System.err.println(" Σφάλμα κατά το κλείσιμο: " + e.getMessage());
         }
     }
 }

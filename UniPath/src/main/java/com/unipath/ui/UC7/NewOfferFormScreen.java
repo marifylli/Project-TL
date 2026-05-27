@@ -43,7 +43,7 @@ public class NewOfferFormScreen {
 
     @FXML
     private void handleNextStep() {
-        // Καθαρή ανάκτηση (αφού είναι ComboBox<String>, επιστρέφουν απευθείας String)
+
         String selectedCourseTitle = courseComboBox.getValue();
         String assistanceType = helpTypeComboBox.getValue();
 
@@ -52,10 +52,10 @@ public class NewOfferFormScreen {
             return;
         }
 
-        // Ανάκτηση του ID χρησιμοποιώντας τον τίτλο που είναι πλέον εγγυημένα non-null
+
         String selectedCourseId = courseTitleToIdMap.get(selectedCourseTitle);
 
-        // Πλοήγηση στη δεύτερη φόρμα
+
         controller.navigateToOfferSubmission(selectedCourseId, assistanceType);
     }
 

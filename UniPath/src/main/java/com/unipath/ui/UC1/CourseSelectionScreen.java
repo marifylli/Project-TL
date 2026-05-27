@@ -234,8 +234,7 @@ public class CourseSelectionScreen {
                     electivesListView.getItems().add(displayString);
                 } else if (course.getDirections() != null) {
                     String dirs = course.getDirections().toUpperCase();
-                    // 🌟 ΔΙΟΡΘΩΣΗ: Αν ένα μάθημα έχει δικαίωμα να πάει στην Ομάδα Α, το βάζουμε ΜΟΝΟ εκεί
-                    // ώστε να μην εμφανίζεται διπλότυπο και στις δύο λίστες και χαλάει η καταμέτρηση!
+
                     if (dirs.contains(":A")) {
                         generalGroupAListView.getItems().add(displayString);
                     } else if (dirs.contains(":B")) {
@@ -276,7 +275,7 @@ public class CourseSelectionScreen {
         trackSelection(generalGroupAListView, maxGenA);
         trackSelection(generalGroupBListView, maxGenB);
 
-        // 🌟 ΕΞΥΠΝΟΣ ΕΛΕΓΧΟΣ ΑΜΟΙΒΑΙΟΥ ΑΠΟΚΛΕΙΣΜΟΥ (MUTUAL EXCLUSION) ΓΙΑ ΤΟ 3ο TAB
+
         if (electivesListView != null) {
             electivesListView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<String>) change -> {
                 if (isUpdatingSelection) return;
@@ -295,7 +294,7 @@ public class CourseSelectionScreen {
                     }
                 }
 
-                // Έλεγχος των κανόνων αμοιβαίου αποκλεισμού (Mutual Exclusion Rule) σε πραγματικό χρόνο
+
                 if (scenarioId == 1) {
                     int otherDirectionsBSelected = 0;
                     int externalDepartmentsSelected = 0;
@@ -315,7 +314,7 @@ public class CourseSelectionScreen {
                         }
                     }
 
-                    // 🔒 Real-time Validation: Αν ο χρήστης παραβιάσει τον αμοιβαίο αποκλεισμό ή το όριο των 2 μαθημάτων
+
                     if ((otherDirectionsBSelected > 0 && externalDepartmentsSelected > 0) ||
                             (otherDirectionsBSelected > 0 && erasmusSelected > 0) ||
                             (externalDepartmentsSelected > 0 && erasmusSelected > 0)) {
@@ -385,7 +384,7 @@ public class CourseSelectionScreen {
         int scenarioId = (scenario != null) ? scenario.getScenarioId() : 1;
         int maxMain1B = (scenarioId == 2) ? 2 : 5;
 
-        // 1. Κανονική καταμέτρηση για τα Σενάρια 1 και 2
+
         int m1A = main1GroupAListView.getSelectionModel().getSelectedItems().size();
         int m1B = main1GroupBListView.getSelectionModel().getSelectedItems().size();
         int m2A = main2GroupAListView.getSelectionModel().getSelectedItems().size();
@@ -396,22 +395,20 @@ public class CourseSelectionScreen {
         int gB = generalGroupBListView.getSelectionModel().getSelectedItems().size();
         int el = electivesListView.getSelectionModel().getSelectedItems().size();
 
-        // 2. 🌟 ΕΙΔΙΚΗ ΔΙΟΡΘΩΣΗ ΓΙΑ ΤΟ ΣΕΝΑΡΙΟ 3 🌟
-        // Στο Σενάριο 3, επειδή τα μαθήματα εμφανίζονται διπλά, οι μετρητές gA και gB
-        // πρέπει να δείχνουν ΑΚΡΙΒΩΣ πόσα κλικ έκανε ο φοιτητής στην οθόνη!
+
         if (scenarioId == 3) {
             gA = generalGroupAListView.getSelectionModel().getSelectedItems().size();
             gB = generalGroupBListView.getSelectionModel().getSelectedItems().size();
 
-            // Προσθέτουμε στο gB και τα εξωτερικά/Erasmus αν ο χρήστης διάλεξε κάτι από το διπλανό Tab
+
             int extCount = electivesListView.getSelectionModel().getSelectedItems().size();
             gB += extCount;
         }
 
-        // Το πραγματικό, καθαρό σύνολο μοναδικών μαθημάτων στη μνήμη
+
         int totalSelected = globallySelectedCourses.size();
 
-        // Ενημέρωση των κειμένων στην οθόνη
+
         if (lblMain1A != null) lblMain1A.setText("Μαθήματα Ομάδας Α (Επιλεγμένα: " + m1A + " / 5)");
         if (lblMain1B != null) lblMain1B.setText("Μαθήματα Ομάδας Β (Επιλεγμένα: " + m1B + " / " + maxMain1B + ")");
         if (lblMain2A != null) lblMain2A.setText("Μαθήματα Ομάδας Α (Επιλεγμένα: " + m2A + " / 5)");
@@ -439,7 +436,7 @@ public class CourseSelectionScreen {
         if (errorLabel == null) return;
 
         if (finalizedList.size() != 17) {
-            errorLabel.setText("❌ ΣΦΑΛΜΑ: Το πρόγραμμα σπουδών πρέπει να περιλαμβάνει συνολικά ακριβώς 17 μαθήματα! (Έχετε επιλέξει: " + finalizedList.size() + ")");
+            errorLabel.setText(" ΣΦΑΛΜΑ: Το πρόγραμμα σπουδών πρέπει να περιλαμβάνει συνολικά ακριβώς 17 μαθήματα! (Έχετε επιλέξει: " + finalizedList.size() + ")");
             errorLabel.setVisible(true);
             return;
         }
@@ -451,12 +448,12 @@ public class CourseSelectionScreen {
             int el = electivesListView.getSelectionModel().getSelectedItems().size();
 
             if (m1A != 5 || m1B != 5) {
-                errorLabel.setText("❌ ΣΦΑΛΜΑ: Για το Σενάριο 1 απαιτούνται ακριβώς 5 μαθήματα Ομάδας Α και 5 Ομάδας Β της κύριας κατεύθυνσης!");
+                errorLabel.setText(" ΣΦΑΛΜΑ: Για το Σενάριο 1 απαιτούνται ακριβώς 5 μαθήματα Ομάδας Α και 5 Ομάδας Β της κύριας κατεύθυνσης!");
                 errorLabel.setVisible(true);
                 return;
             }
             if (el != 2) {
-                errorLabel.setText("❌ ΣΦΑΛΜΑ: Πρέπει να επιλέξετε ακριβώς 2 μαθήματα στο 3ο Tab!");
+                errorLabel.setText("ΣΦΑΛΜΑ: Πρέπει να επιλέξετε ακριβώς 2 μαθήματα στο 3ο Tab!");
                 errorLabel.setVisible(true);
                 return;
             }
@@ -467,7 +464,7 @@ public class CourseSelectionScreen {
             int m2B = main2GroupBListView.getSelectionModel().getSelectedItems().size();
 
             if (m1A != 5 || m1B != 2 || m2A != 5 || m2B != 2) {
-                errorLabel.setText("❌ ΣΦΑΛΜΑ: Για το Σενάριο 2 απαιτούνται 5Α+2Β από την 1η κύρια κατεύθυνση και 5Α+2Β από τη 2η κύρια κατεύθυνση!");
+                errorLabel.setText("ΣΦΑΛΜΑ: Για το Σενάριο 2 απαιτούνται 5Α+2Β από την 1η κύρια κατεύθυνση και 5Α+2Β από τη 2η κύρια κατεύθυνση!");
                 errorLabel.setVisible(true);
                 return;
             }
@@ -497,7 +494,7 @@ public class CourseSelectionScreen {
             stage.setTitle("Επιλογή Σεναρίου - UniPath");
             stage.show();
         } catch (Exception e) {
-            System.err.println("❌ Απέτυχε η επιστροφή στην επιλογή σεναρίου: " + e.getMessage());
+            System.err.println("Απέτυχε η επιστροφή στην επιλογή σεναρίου: " + e.getMessage());
             e.printStackTrace();
         }
     }

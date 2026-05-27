@@ -29,7 +29,7 @@ public class Calendar {
     public void setAvailabilitySlots(List<AvailabilitySlot> slots) { this.availabilitySlots = slots; }
     public void addSlot(AvailabilitySlot slot) { this.availabilitySlots.add(slot); }
 
-    // [UC10]: requestCalendar (Μένει ως έχει για το δικό σου UC)
+
     public static Calendar requestCalendar(int professorId) {
         com.unipath.repository.ThesisRepository repo = new com.unipath.repository.ThesisRepository();
         return repo.requestCalendar(professorId);

@@ -5,16 +5,16 @@ import java.util.List;
 
 public class Professor {
 
-    // Βασικά στοιχεία ταυτοποίησης (πρέπει να ταυτίζονται με το User ID)
+
     private int professorId;
     private String fullName;
     private String email;
     private String office;
 
-    // Στοιχεία που απαιτούνται από το UC10 και τη διαχείριση διπλωματικών
+
     private List<String> thesisTopics; // Λίστα με τα θέματα που έχει αναρτήσει
 
-    // Σταθερές και Business Logic
+
     private static final int MAX_TEACHING_LOAD = 3;
     private int currentTeachingLoad;
 
@@ -22,7 +22,7 @@ public class Professor {
         this.thesisTopics = new ArrayList<>();
     }
 
-    // Constructor για εύκολη δημιουργία
+    // Constructor
     public Professor(int professorId, String fullName, String email, String office) {
         this.professorId = professorId;
         this.fullName = fullName;

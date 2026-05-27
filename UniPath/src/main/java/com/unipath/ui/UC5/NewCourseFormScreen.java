@@ -42,7 +42,7 @@ public class NewCourseFormScreen {
                 fxmlUrl = getClass().getClassLoader().getResource("fxml/Secretary/new-course-form-view.fxml");
             }
             if (fxmlUrl == null) {
-                System.err.println("❌ Σφάλμα: Δεν βρέθηκε το new-course-form-view.fxml!");
+                System.err.println(" Σφάλμα: Δεν βρέθηκε το new-course-form-view.fxml!");
                 return;
             }
 
@@ -56,7 +56,7 @@ public class NewCourseFormScreen {
             stage.show();
 
         } catch (Exception e) {
-            System.err.println("❌ Απέτυχε η φόρτωση της φόρμας νέου μαθήματος:");
+            System.err.println("Απέτυχε η φόρτωση της φόρμας νέου μαθήματος:");
             e.printStackTrace();
         }
     }
@@ -71,7 +71,7 @@ public class NewCourseFormScreen {
 
         // Βασικός έλεγχος κενών πεδίων στο UI
         if (courseId.isEmpty() || title.isEmpty() || ectsText.isEmpty() || semesterText.isEmpty()) {
-            errorLabel.setText("⚠ Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία.");
+            errorLabel.setText(" Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία.");
             errorLabel.setVisible(true);
             return;
         }
@@ -81,14 +81,14 @@ public class NewCourseFormScreen {
             ects = Integer.parseInt(ectsText);
             semester = Integer.parseInt(semesterText);
         } catch (NumberFormatException e) {
-            errorLabel.setText("⚠ Τα ECTS και το Εξάμηνο πρέπει να είναι αριθμοί.");
+            errorLabel.setText("Τα ECTS και το Εξάμηνο πρέπει να είναι αριθμοί.");
             errorLabel.setVisible(true);
             return;
         }
 
         errorLabel.setVisible(false);
 
-        // Κλήση βήματος 3 & 4 του controller
+
         controller.submitCourseDetails(courseId, title, description, ects, semester);
     }
 }

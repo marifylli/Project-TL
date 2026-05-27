@@ -25,7 +25,7 @@ public class ThesisBoardScreen {
 
         thesisListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                System.out.println("[UC11] Επιλέχθηκε η διπλωματική: " + newSelection.getTitle());
+                System.out.println(" Επιλέχθηκε η διπλωματική: " + newSelection.getTitle());
                 openThesisDetails(newSelection);
             }
         });
@@ -55,10 +55,10 @@ public class ThesisBoardScreen {
 
             Stage stage = (Stage) thesisListView.getScene().getWindow();
             stage.getScene().setRoot(root);
-            System.out.println("[UC11] Επιτυχής μετάβαση στην Οθόνη Details.");
+            System.out.println(" Επιτυχής μετάβαση στην Οθόνη Details.");
 
         } catch (Exception e) {
-            System.err.println("❌ Κρίσιμο Σφάλμα κατά τη μετάβαση στα Details: " + e.getMessage());
+            System.err.println("Σφάλμα κατά τη μετάβαση στα Details: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -55,7 +55,7 @@ public class MeetingCalendarScreen implements Initializable {
 
     @FXML
     private void publishThesis() {
-        // Επαναφορά του στυλ της λίστας στο κανονικό σε κάθε πάτημα
+
         if (slotListView != null) {
             slotListView.setStyle("");
         }
@@ -90,7 +90,7 @@ public class MeetingCalendarScreen implements Initializable {
             }
         }
         else {
-            // 1. Κοκκίνισμα του πλαισίου της λίστας αφού δεν υπάρχουν slots
+
             if (slotListView != null) {
                 slotListView.setStyle("-fx-border-color: red; -fx-border-width: 1.5px; -fx-border-radius: 4;");
             }
@@ -99,7 +99,7 @@ public class MeetingCalendarScreen implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
                 Parent root = loader.load();
 
-                // 2. Δυναμική αλλαγή του κειμένου μέσα στο ήδη υπάρχον pop-up παράθυρο
+
                 for (javafx.scene.Node node : root.lookupAll("Label")) {
                     if (node instanceof Label && ((Label) node).getText().contains("Μήνυμα Σφάλματος")) {
                         ((Label) node).setText("Δεν έχουν προστεθεί διαθέσιμες ώρες (Slots)\nστο ημερολόγιο συναντήσεων.");

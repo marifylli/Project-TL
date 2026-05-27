@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Notification {
-    // Πεδία δεδομένων
+
     private String recipientId;
     private String senderId;
     private String message;
@@ -14,7 +14,7 @@ public class Notification {
     private int isRead;
     private String notificationType;
 
-    // Constructor για το Repository (για το Batch Insert)
+
     public Notification(String recipientId, String senderId, String message, String dateSent, int isRead, String notificationType) {
         this.recipientId = recipientId;
         this.senderId = senderId;
@@ -24,7 +24,7 @@ public class Notification {
         this.notificationType = notificationType;
     }
 
-    // Getters για να μπορεί το Repository να διαβάσει τα δεδομένα
+    // Getters
     public String getRecipientId() { return recipientId; }
     public String getSenderId() { return senderId; }
     public String getMessage() { return message; }
@@ -32,7 +32,7 @@ public class Notification {
     public int getIsRead() { return isRead; }
     public String getNotificationType() { return notificationType; }
 
-    // Στατική μέθοδος για μεμονωμένη αποστολή (UC11)
+
     public static void sendNotification(int studentId, int professorId, int diplomaticId) {
         String messageText = "Ο φοιτητής με ID " + studentId + " έκλεισε ραντεβού για τη διπλωματική σας (ID: " + diplomaticId + ").";
         String sql = "INSERT INTO Notification (recipientId, senderId, message, notificationType, dateSent) " +

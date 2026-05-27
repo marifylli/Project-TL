@@ -4,6 +4,7 @@ import com.unipath.login.UserSession;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,28 +34,66 @@ public class ManageWorkLoadClass {
     private final List<CourseWorkload> sortedCourses = new ArrayList<>();
 
     public void startAnalysis(Stage currentStage) {
-        int studentId = UserSession.getInstance().getUserId();
+        int studentId = com.unipath.login.UserSession.getInstance().getUserId();
         System.out.println("✓ Έναρξη ανάλυσης για τον φοιτητή με ID: " + studentId);
 
         studyPlanCourses.clear();
 
-        // 🌟 ΔΙΑΒΑΣΜΑ ΑΠΟ ΤΗ ΜΝΗΜΗ ΤΟΥ SESSION (Ασφαλές & Δυναμικό)
-        // Παίρνουμε τα πραγματικά μαθήματα που επέλεξε ο χρήστης στο προηγούμενο βήμα (UC1)
         if (ManageStudyPlan.sessionSavedCourseTitles != null && !ManageStudyPlan.sessionSavedCourseTitles.isEmpty()) {
             studyPlanCourses.addAll(ManageStudyPlan.sessionSavedCourseTitles);
-            System.out.println("✓ [Session Read] Ανάκτηση " + studyPlanCourses.size() + " μαθημάτων από το τρέχον πλάνο του UC1.");
+            System.out.println("✓ Ανάκτηση " + studyPlanCourses.size() + " μαθημάτων από το session.");
+        }
+        else {
+            String fetchPlanSql = "SELECT courses FROM StudyPlan WHERE studentId = ? AND (status = 'Finalized' OR isFinalized = 1) ORDER BY planId DESC LIMIT 1";
+
+            try (java.sql.Connection conn = com.unipath.dataBase.DBManager.getInstance().connect();
+                 java.sql.PreparedStatement pstmt = conn.prepareStatement(fetchPlanSql)) {
+
+                pstmt.setInt(1, studentId);
+                try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        String rawCourses = rs.getString("courses");
+                        if (rawCourses != null && !rawCourses.isEmpty()) {
+                            String[] ids = rawCourses.split(",");
+                            for (String id : ids) {
+                                String cleanId = id.trim();
+
+                                String courseSql = "SELECT title FROM Course WHERE courseId = ?";
+                                try (java.sql.PreparedStatement cPstmt = conn.prepareStatement(courseSql)) {
+                                    cPstmt.setString(1, cleanId);
+                                    try (java.sql.ResultSet cRs = cPstmt.executeQuery()) {
+                                        if (cRs.next()) {
+                                            studyPlanCourses.add(cRs.getString("title"));
+                                            continue;
+                                        }
+                                    }
+                                }
+
+                                // Fallback με LIKE για απόλυτη ασφάλεια ανάκτησης τίτλων
+                                String fallbackSql = "SELECT title FROM Course WHERE courseId LIKE ?";
+                                try (java.sql.PreparedStatement fPstmt = conn.prepareStatement(fallbackSql)) {
+                                    fPstmt.setString(1, "%" + cleanId.replace("CEID_", "") + "%");
+                                    try (java.sql.ResultSet fRs = fPstmt.executeQuery()) {
+                                        if (fRs.next()) {
+                                            studyPlanCourses.add(fRs.getString("title"));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("❌ Σφάλμα κατά την ανάκτηση από την SQLite: " + e.getMessage());
+            }
         }
 
-        // Backup Path: Αν ο χρήστης μπει κατευθείαν στο UC3 χωρίς να φτιάξει πλάνο στο UC1
         if (studyPlanCourses.isEmpty()) {
-            System.out.println("💡 [Backup Mode] Το πλάνο στη μνήμη είναι κενό. Φόρτωση προσομοιωμένων μαθημάτων.");
-            studyPlanCourses.add("Τεχνολογία Λογισμικού");
-            studyPlanCourses.add("Βάσεις Δεδομένων");
-            studyPlanCourses.add("Δομές Δεδομένων");
-            studyPlanCourses.add("Αντικειμενοστραφής Προγραμματισμός");
+            System.out.println("⚠ Δεν βρέθηκε οριστικοποιημένο πλάνο. Εμφάνιση Error Popup.");
+            openErrorScreen(currentStage);
+            return;
         }
 
-        // Υπολογισμός και ταξινόμηση πάνω στα μαθήματα που επιλέχθηκαν
         calculateWorkload();
         Collections.sort(sortedCourses);
         openResultScreen(currentStage);
@@ -79,8 +118,7 @@ public class ManageWorkLoadClass {
     public List<CourseWorkload> getSortedCourses() { return sortedCourses; }
 
     public boolean confirmAndSave() {
-        System.out.println("✓ DBManager: saveWorkloadIndex() -> Επιτυχής αποθήκευση δείκτη: " + totalWorkloadIndex);
-        System.out.println("✓ Student Profile: addWorkLoadToProfile() -> Ενημερώθηκε.");
+        System.out.println("✓ DBManager: saveWorkloadIndex() -> Δείκτης αποθηκεύτηκε: " + totalWorkloadIndex);
         return true;
     }
 
@@ -92,12 +130,11 @@ public class ManageWorkLoadClass {
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
-            // ✅ ΔΙΟΡΘΩΣΗ: WorkloadResultScreen (πεζό 'l') αντί για WorkLoadResultScreen
             com.unipath.ui.UC3.WorkLoadResultScreen view = loader.getController();
             view.setContext(this);
 
             stage.setScene(new Scene(root, 1000, 650));
-            stage.setTitle("UniPath - Αποτελέσματα Φόρτου Εργασίας");
+            stage.setTitle("UniPath - Αποτελέσματα Φόρτου");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,11 +148,17 @@ public class ManageWorkLoadClass {
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
-            stage.setScene(new Scene(root));
-            stage.setTitle("Σφάλμα");
+            com.unipath.ui.common.ErrorScreen errorController = loader.getController();
+            errorController.setErrorMessage("Δεν βρέθηκε ενεργό ή οριστικοποιημένο Πλάνο Σπουδών! Παρακαλώ δημιουργήστε πρώτα ένα πλάνο (UC1).");
+
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.initOwner(stage);
+            popupStage.setScene(new Scene(root, 500, 300));
+            popupStage.setTitle("UniPath - Σφάλμα");
+            popupStage.showAndWait();
         } catch (Exception e) {
-            System.err.println("Δεν ήταν δυνατή η φόρτωση της οθόνης σφάλματος.");
+            e.printStackTrace();
         }
     }
 }
-

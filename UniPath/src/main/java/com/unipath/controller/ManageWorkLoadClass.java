@@ -4,6 +4,7 @@ import com.unipath.login.UserSession;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,17 +39,62 @@ public class ManageWorkLoadClass {
 
         studyPlanCourses.clear();
 
-        // 1. Ανάκτηση των μαθημάτων από τη μνήμη του Session (UC1)
+        // 🌟 ΔΙΑΒΑΣΜΑ ΑΠΟ ΤΗ ΜΝΗΜΗ ΤΟΥ SESSION (Ασφαλές & Δυναμικό)
+        // Παίρνουμε τα πραγματικά μαθήματα που επέλεξε ο χρήστης στο προηγούμενο βήμα (UC1)
         if (ManageStudyPlan.sessionSavedCourseTitles != null && !ManageStudyPlan.sessionSavedCourseTitles.isEmpty()) {
             studyPlanCourses.addAll(ManageStudyPlan.sessionSavedCourseTitles);
-            System.out.println("✓ [Session Read] Ανάκτηση " + studyPlanCourses.size() + " μαθημάτων από το τρέχον πλάνο του UC1.");
+            System.out.println("✓ Ανάκτηση " + studyPlanCourses.size() + " μαθημάτων από το session.");
+        }
+        else {
+            String fetchPlanSql = "SELECT courses FROM StudyPlan WHERE studentId = ? AND (status = 'Finalized' OR isFinalized = 1) ORDER BY planId DESC LIMIT 1";
+
+            try (java.sql.Connection conn = com.unipath.dataBase.DBManager.getInstance().connect();
+                 java.sql.PreparedStatement pstmt = conn.prepareStatement(fetchPlanSql)) {
+
+                pstmt.setInt(1, studentId);
+                try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        String rawCourses = rs.getString("courses");
+                        if (rawCourses != null && !rawCourses.isEmpty()) {
+                            String[] ids = rawCourses.split(",");
+                            for (String id : ids) {
+                                String cleanId = id.trim();
+
+                                String courseSql = "SELECT title FROM Course WHERE courseId = ?";
+                                try (java.sql.PreparedStatement cPstmt = conn.prepareStatement(courseSql)) {
+                                    cPstmt.setString(1, cleanId);
+                                    try (java.sql.ResultSet cRs = cPstmt.executeQuery()) {
+                                        if (cRs.next()) {
+                                            studyPlanCourses.add(cRs.getString("title"));
+                                            continue;
+                                        }
+                                    }
+                                }
+
+                                // Fallback με LIKE για απόλυτη ασφάλεια ανάκτησης τίτλων
+                                String fallbackSql = "SELECT title FROM Course WHERE courseId LIKE ?";
+                                try (java.sql.PreparedStatement fPstmt = conn.prepareStatement(fallbackSql)) {
+                                    fPstmt.setString(1, "%" + cleanId.replace("CEID_", "") + "%");
+                                    try (java.sql.ResultSet fRs = fPstmt.executeQuery()) {
+                                        if (fRs.next()) {
+                                            studyPlanCourses.add(fRs.getString("title"));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("❌ Σφάλμα κατά την ανάκτηση από την SQLite: " + e.getMessage());
+            }
         }
 
         // ΕΛΕΓΧΟΣ ΕΝΑΛΛΑΚΤΙΚΗΣ ΡΟΗΣ 1: [empty or no study plan] ──
         if (studyPlanCourses.isEmpty()) {
-            System.out.println("⚠️ [Alternative Flow 1] Το πλάνο είναι κενό. Ενεργοποίηση ErrorScreen.");
+            System.out.println("⚠ Δεν βρέθηκε οριστικοποιημένο πλάνο. Εμφάνιση Error Popup.");
             openErrorScreen(currentStage);
-            return; // Τερματισμός περίπτωσης χρήσης
+            return;
         }
 
         // 2. [Βασική Ροή]: Υπολογισμός και ταξινόμηση
@@ -96,7 +142,7 @@ public class ManageWorkLoadClass {
             view.setContext(this);
 
             stage.setScene(new Scene(root, 1000, 650));
-            stage.setTitle("UniPath - Αποτελέσματα Φόρτου Εργασίας");
+            stage.setTitle("UniPath - Αποτελέσματα Φόρτου");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,7 +150,6 @@ public class ManageWorkLoadClass {
 
     private void openErrorScreen(Stage stage) {
         try {
-            // Στοχεύουμε στο ακριβές όνομα αρχείου της ομάδας
             URL fxmlUrl = getClass().getResource("/fxml/common/error-window-view.fxml");
 
             if (fxmlUrl == null) {

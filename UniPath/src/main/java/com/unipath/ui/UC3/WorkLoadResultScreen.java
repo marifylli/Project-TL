@@ -8,21 +8,23 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.net.URL;
 
 public class WorkLoadResultScreen {
 
-    @FXML private ListView<String> sortedCoursesListView;
-    @FXML private Label workloadIndexLabel;
-    @FXML private Button btnConfirm;
+    @FXML
+    private ListView<String> sortedCoursesListView;
+    @FXML
+    private Label workloadIndexLabel;
+    @FXML
+    private Button btnConfirm;
 
     private ManageWorkLoadClass logicController;
 
     public void setContext(ManageWorkLoadClass controller) {
         this.logicController = controller;
-
-        // Εμφάνιση συνολικού δείκτη
         workloadIndexLabel.setText(String.format("%.1f", controller.getTotalWorkloadIndex()));
 
         // Εμφάνιση ταξινομημένων μαθημάτων
@@ -36,7 +38,6 @@ public class WorkLoadResultScreen {
     private void onConfirmAnalysis() {
         // Κλήση της λογικής για αποθήκευση
         boolean saved = logicController.confirmAndSave();
-
         if (saved) {
             // Άνοιγμα του επίσημου Success Screen της ομάδας
             showSuccessWindow();
@@ -45,7 +46,10 @@ public class WorkLoadResultScreen {
 
     private void showSuccessWindow() {
         try {
-            URL fxmlUrl = getClass().getResource("/fxml/common/success-window.fxml");
+            URL fxmlUrl = getClass().getResource("/fxml/common/success-window-view.fxml");
+            if (fxmlUrl == null) {
+                fxmlUrl = getClass().getClassLoader().getResource("fxml/common/success-window-view.fxml");
+            }
 
             if (fxmlUrl != null) {
                 javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(fxmlUrl);
@@ -71,7 +75,7 @@ public class WorkLoadResultScreen {
                 System.err.println("Σφάλμα: Δεν βρέθηκε το αρχείο /fxml/common/success-window.fxml");
             }
         } catch (Exception e) {
-            System.err.println("Απέτυχε η φόρτωση της οθόνης επιτυχίας: " + e.getMessage());
+            System.err.println("❌ Απέτυχε η φόρτωση της οθόνης επιτυχίας:");
             e.printStackTrace();
         }
     }
@@ -99,8 +103,4 @@ public class WorkLoadResultScreen {
             e.printStackTrace();
         }
     }
-
-
-
 }
-

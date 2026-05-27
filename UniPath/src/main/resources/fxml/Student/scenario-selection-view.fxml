@@ -6,9 +6,9 @@
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.unipath.ui.UC1.ScenarioSelectionScreen"
-      alignment="CENTER" spacing="20" prefWidth="600" prefHeight="500" styleClass="root-pane">
+      alignment="CENTER" spacing="20" prefWidth="650" prefHeight="500" styleClass="root-pane">
 
-    <VBox styleClass="login-card" maxWidth="450" alignment="TOP_CENTER">
+    <VBox styleClass="login-card" maxWidth="550" alignment="TOP_CENTER">
         <VBox styleClass="card-top" alignment="CENTER" spacing="5">
             <Label text="UniPath - Δημιουργία Προγράμματος" styleClass="app-name"/>
             <Label text="Βήμα 1: Επιλογή Σεναρίου / Κατεύθυνσης" styleClass="uni-name"/>
@@ -25,7 +25,11 @@
             <ListView fx:id="scenarioListView" prefHeight="150"/>
 
             <Label fx:id="errorLabel" styleClass="error-label" visible="false"/>
-            <Button text="Επόμενο Βήμα" styleClass="btn-primary" maxWidth="Infinity" onAction="#handleNextStep"/>
+
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="Επόμενο Βήμα" styleClass="btn-primary" prefWidth="180" onAction="#handleNextStep"/>
+                <Button text="Ακύρωση / Μενού" styleClass="btn-secondary" style="-fx-background-color: #757575; -fx-text-fill: white;" prefWidth="180" onAction="#handleBackToMain"/>
+            </HBox>
         </VBox>
     </VBox>
 </VBox>

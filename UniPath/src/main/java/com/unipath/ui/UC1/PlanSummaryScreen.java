@@ -1,92 +1,251 @@
 package com.unipath.ui.UC1;
 
 import com.unipath.controller.ManageStudyPlan;
-import com.unipath.model.Scenario;
 import com.unipath.model.Course;
+import com.unipath.model.Scenario;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import java.net.URL;
 import java.util.List;
 
-
 public class PlanSummaryScreen {
+
     private ManageStudyPlan manageStudyPlan;
     private Scenario scenario;
-    private List<Course> courses;
+    private List<Course> selectedCourses;
 
     @FXML
     private Label scenarioTitleLabel;
-
-    @FXML
-    private ListView<Course> summaryListView;
-
     @FXML
     private Label totalEctsLabel;
 
-    public PlanSummaryScreen() {
-    }
+    @FXML
+    private VBox boxMainA;
+    @FXML
+    private VBox boxMainB;
+    @FXML
+    private VBox boxOtherA;
+    @FXML
+    private VBox boxElectives;
 
+    @FXML
+    private Label ectsALabel;
+    @FXML
+    private Label ectsBLabel;
+    @FXML
+    private Label lblOtherDirectionsTitle;
+    @FXML
+    private Label lblElectivesTitle;
 
-    public PlanSummaryScreen(ManageStudyPlan manageStudyPlan, Scenario scenario, List<Course> courses) {
-        this.manageStudyPlan = manageStudyPlan;
+    @FXML
+    private ListView<String> summaryGroupAListView;
+    @FXML
+    private ListView<String> summaryGroupBListView;
+    @FXML
+    private ListView<String> otherDirectionsListView;
+    @FXML
+    private ListView<String> electivesListView;
+
+    public void setSummaryData(ManageStudyPlan controller, Scenario scenario, List<Course> courses) {
+        this.manageStudyPlan = controller;
         this.scenario = scenario;
-        this.courses = courses;
-    }
+        this.selectedCourses = courses;
 
-    public void setSummaryData(ManageStudyPlan manageStudyPlan, Scenario scenario, List<Course> courses) {
-        this.manageStudyPlan = manageStudyPlan;
-        this.scenario = scenario;
-        this.courses = courses;
+        summaryGroupAListView.getItems().clear();
+        summaryGroupBListView.getItems().clear();
+        otherDirectionsListView.getItems().clear();
+        electivesListView.getItems().clear();
 
-        // 1. Εμφάνιση του τίτλου του ακαδημαϊκού σεναρίου
+        int scenarioId = (scenario != null) ? scenario.getScenarioId() : 1;
+
         if (scenarioTitleLabel != null && scenario != null) {
-            scenarioTitleLabel.setText("Σενάριο: " + scenario.getTitle());
+            scenarioTitleLabel.setText("Επιλεγμένο Σενάριο: " + scenario.getTitle());
         }
 
-        // 2. Γέμισμα του ListView με τα εγκεκριμένα μαθήματα
-        if (summaryListView != null && courses != null) {
-            summaryListView.getItems().setAll(courses);
+        // Δυναμική ανάκτηση ενεργών κατευθύνσεων από το controller
+        String k1 = "K1";
+        String k2 = "K2";
 
-            // Προαιρετικά: Μπορείς να βάλεις CellFactory και εδώ αν θες συγκεκριμένο φορμάτ εμφάνισης
-            summaryListView.setCellFactory(param -> new javafx.scene.control.ListCell<Course>() {
-                @Override
-                protected void updateItem(Course item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
+        // Προσπάθεια ανάκτησης των πραγματικών επιλεγμένων ComboBox τιμών μέσω Reflection
+        if (controller != null) {
+            try {
+                java.lang.reflect.Field f1 = controller.getClass().getDeclaredField("activeDirection1");
+                java.lang.reflect.Field f2 = controller.getClass().getDeclaredField("activeDirection2");
+                f1.setAccessible(true);
+                f2.setAccessible(true);
+                k1 = (String) f1.get(controller);
+                k2 = (String) f2.get(controller);
+            } catch (Exception ignored) {
+            }
+        }
+
+        int totalEcts = 0;
+
+        // ── ΣΕΝΑΡΙΟ 1: 1 ΚΥΡΙΑ ΚΑΤΕΥΘΥΝΣΗ ──
+        if (scenarioId == 1) {
+            boxMainA.setVisible(true);
+            boxMainA.setManaged(true);
+            boxMainB.setVisible(true);
+            boxMainB.setManaged(true);
+            boxOtherA.setVisible(true);
+            boxOtherA.setManaged(true);
+            boxElectives.setVisible(true);
+            boxElectives.setManaged(true);
+
+            ectsALabel.setText("1η Κύρια Κατεύθυνση (" + k1 + ") - Ομάδα Α:");
+            ectsBLabel.setText("1η Κύρια Κατεύθυνση (" + k1 + ") - Ομάδα Β:");
+            lblOtherDirectionsTitle.setText("Λοιπές Κατευθύνσεις - Ομάδα Α:");
+            lblElectivesTitle.setText("Ελεύθερα / Άλλα Τμήματα / Erasmus:");
+
+            if (courses != null) {
+                for (Course c : courses) {
+                    String id = c.getCourseID().toUpperCase();
+                    String displayString = c.getTitle() + " (" + c.getECTS() + " ECTS)";
+                    String dirs = (c.getDirections() != null) ? c.getDirections().toUpperCase() : "";
+                    totalEcts += c.getECTS();
+
+                    boolean isExternal = id.contains("_ΓΠ") || id.contains("_ERA") || id.equals("CEID_E90E") || id.equals("CEID_AE2") || id.equals("CEID_ΔΕΖ");
+
+                    if (isExternal) {
+                        electivesListView.getItems().add(displayString);
+                    } else if (c.belongsToDirection(k1)) {
+                        if (c.isGroupAForDirection(k1)) summaryGroupAListView.getItems().add(displayString);
+                        else summaryGroupBListView.getItems().add(displayString);
                     } else {
-                        setText(item.getCourseID() + " - " + item.getTitle() + " (" + item.getECTS() + " ECTS)");
+                        if (dirs.contains(":A")) otherDirectionsListView.getItems().add(displayString);
+                        else if (dirs.contains(":B")) electivesListView.getItems().add(displayString);
                     }
                 }
-            });
+            }
+        }
+        // ── ΣΕΝΑΡΙΟ 2: ΔΥΟ ΚΥΡΙΕΣ ΚΑΤΕΥΘΥΝΣΕΙΣ (ΔΙΟΡΘΩΜΕΝΟ) ──
+        else if (scenarioId == 2) {
+            boxMainA.setVisible(true);
+            boxMainA.setManaged(true);
+            boxMainB.setVisible(true);
+            boxMainB.setManaged(true);
+            boxOtherA.setVisible(true);
+            boxOtherA.setManaged(true);
+            boxElectives.setVisible(true);
+            boxElectives.setManaged(true);
+
+            ectsALabel.setText("1η Κύρια Κατεύθυνση (" + k1 + ") - Ομάδα Α:");
+            ectsBLabel.setText("1η Κύρια Κατεύθυνση (" + k1 + ") - Ομάδα Β:");
+            lblOtherDirectionsTitle.setText("2η Κύρια Κατεύθυνση (" + k2 + ") - Ομάδα Α:");
+            lblElectivesTitle.setText("2η Κύρια Κατεύθυνση (" + k2 + ") - Ομάδα Β + Λοιπά Ελεύθερα:");
+
+            if (courses != null) {
+                for (Course c : courses) {
+                    String id = c.getCourseID().toUpperCase();
+                    String displayString = c.getTitle() + " (" + c.getECTS() + " ECTS)";
+                    totalEcts += c.getECTS();
+
+                    boolean isExternal = id.contains("_ΓΠ") || id.contains("_ERA") || id.equals("CEID_E90E") || id.equals("CEID_AE2") || id.equals("CEID_ΔΕΖ");
+
+                    if (isExternal) {
+                        electivesListView.getItems().add(displayString);
+                    } else if (c.belongsToDirection(k1)) {
+                        // Αν ανήκει στην K1, μπαίνει αυστηρά στις λίστες της K1
+                        if (c.isGroupAForDirection(k1)) summaryGroupAListView.getItems().add(displayString);
+                        else summaryGroupBListView.getItems().add(displayString);
+                    } else if (c.belongsToDirection(k2)) {
+                        // Αν ανήκει στην K2, μπαίνει αυστηρά στις λίστες της K2
+                        if (c.isGroupAForDirection(k2)) otherDirectionsListView.getItems().add(displayString);
+                        else electivesListView.getItems().add(displayString);
+                    } else {
+                        // Όλα τα υπόλοιπα μαθήματα πάνε στα Ελεύθερα
+                        electivesListView.getItems().add(displayString);
+                    }
+                }
+            }
+        }
+        // ── ΣΕΝΑΡΙΟ 3: ΓΕΝΙΚΗ ΚΑΤΕΥΘΥΝΣΗ (ΔΙΟΡΘΩΜΕΝΟ) ──
+        else if (scenarioId == 3) {
+            boxMainA.setVisible(true);
+            boxMainA.setManaged(true);
+            boxMainB.setVisible(true);
+            boxMainB.setManaged(true);
+            boxOtherA.setVisible(false);
+            boxOtherA.setManaged(false);
+            boxElectives.setVisible(false);
+            boxElectives.setManaged(false);
+
+            ectsALabel.setText("Γενικό Πλάνο - Μαθήματα Ομάδας Α:");
+            ectsBLabel.setText("Γενικό Πλάνο - Μαθήματα Ομάδας Β & Εξωτερικά:");
+
+            if (courses != null) {
+                for (Course c : courses) {
+                    String id = c.getCourseID().toUpperCase();
+                    String displayString = c.getTitle() + " (" + c.getECTS() + " ECTS)";
+                    String dirs = (c.getDirections() != null) ? c.getDirections().toUpperCase() : "";
+                    totalEcts += c.getECTS();
+
+                    boolean isExternal = id.contains("_ΓΠ") || id.contains("_ERA") || id.equals("CEID_E90E") || id.equals("CEID_AE2") || id.equals("CEID_ΔΕΖ");
+
+                    if (isExternal) {
+                        summaryGroupBListView.getItems().add(displayString);
+                    } else if (dirs.contains(":A")) {
+                        // Προτεραιότητα στην Ομάδα Α για να μην διπλοεμφανίζεται
+                        summaryGroupAListView.getItems().add(displayString);
+                    } else if (dirs.contains(":B")) {
+                        summaryGroupBListView.getItems().add(displayString);
+                    } else {
+                        summaryGroupBListView.getItems().add(displayString);
+                    }
+                }
+            }
         }
 
-        // 3. Υπολογισμός και εμφάνιση συνολικών ECTS
         if (totalEctsLabel != null && courses != null) {
-            int totalEcts = courses.stream().mapToInt(Course::getECTS).sum();
-            totalEctsLabel.setText("Συνολικά ECTS: " + totalEcts);
-        }
-    }
-
-
-    public void confirmSave() {
-        if (manageStudyPlan != null) {
-            manageStudyPlan.onConfirmPlan(scenario, courses);
+            totalEctsLabel.setText("Συνολικά ECTS Πλάνου Επιλογής: " + totalEcts + " / 85 ECTS  (Μαθήματα: " + courses.size() + " / 17)");
         }
     }
 
     @FXML
     private void handleConfirm() {
-        confirmSave();
+        if (manageStudyPlan != null) {
+            System.out.println("✓ [UI Action]: Οριστική υποβολή πλάνου στην SQLite.");
+            manageStudyPlan.onConfirmPlan(scenario, selectedCourses);
+
+            try {
+                // Κλείνουμε το popup. Η κεντρική οθόνη θα ανανεωθεί αυτόματα!
+                Stage stage = (Stage) totalEctsLabel.getScene().getWindow();
+                stage.close();
+                System.out.println("✓ [UI Flow]: Το πλάνο υποβλήθηκε και το παράθυρο έκλεισε.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-
+    @FXML
+    private void handleCancel() {
+        System.out.println("✓ [UI Action]: Ακύρωση και επιστροφή στην Κεντρική Οθόνη.");
+        try {
+            Stage stage = (Stage) totalEctsLabel.getScene().getWindow();
+            stage.close(); // Απλό κλείσιμο
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     private void handleClear() {
         if (manageStudyPlan != null) {
-            // Καλεί τη μέθοδο του controller για να καθαρίσει τα δεδομένα και να γυρίσει πίσω
+            System.out.println("✓ [UI Action]: Διαγραφή πλάνου.");
             manageStudyPlan.removeCourses();
+            try {
+                Stage stage = (Stage) totalEctsLabel.getScene().getWindow();
+                stage.close(); // Απλό κλείσιμο
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

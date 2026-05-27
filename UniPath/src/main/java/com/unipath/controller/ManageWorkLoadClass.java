@@ -36,62 +36,10 @@ public class ManageWorkLoadClass {
         int studentId = UserSession.getInstance().getUserId();
         System.out.println("✓ Έναρξη ανάλυσης για τον φοιτητή με ID: " + studentId);
 
-        studyPlanCourses.clear();
+        calculateWorkload();
 
-        // 🌟 ΔΙΑΒΑΣΜΑ ΑΠΟ ΤΗ ΜΝΗΜΗ ΤΟΥ SESSION (Ασφαλές & Δυναμικό)
-        // Παίρνουμε τα πραγματικά μαθήματα που επέλεξε ο χρήστης στο προηγούμενο βήμα (UC1)
-        if (ManageStudyPlan.sessionSavedCourseTitles != null && !ManageStudyPlan.sessionSavedCourseTitles.isEmpty()) {
-            studyPlanCourses.addAll(ManageStudyPlan.sessionSavedCourseTitles);
-            System.out.println("✓ Ανάκτηση " + studyPlanCourses.size() + " μαθημάτων από το session.");
-        }
-        else {
-            String fetchPlanSql = "SELECT courses FROM StudyPlan WHERE studentId = ? AND (status = 'Finalized' OR isFinalized = 1) ORDER BY planId DESC LIMIT 1";
-
-            try (java.sql.Connection conn = com.unipath.dataBase.DBManager.getInstance().connect();
-                 java.sql.PreparedStatement pstmt = conn.prepareStatement(fetchPlanSql)) {
-
-                pstmt.setInt(1, studentId);
-                try (java.sql.ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        String rawCourses = rs.getString("courses");
-                        if (rawCourses != null && !rawCourses.isEmpty()) {
-                            String[] ids = rawCourses.split(",");
-                            for (String id : ids) {
-                                String cleanId = id.trim();
-
-                                String courseSql = "SELECT title FROM Course WHERE courseId = ?";
-                                try (java.sql.PreparedStatement cPstmt = conn.prepareStatement(courseSql)) {
-                                    cPstmt.setString(1, cleanId);
-                                    try (java.sql.ResultSet cRs = cPstmt.executeQuery()) {
-                                        if (cRs.next()) {
-                                            studyPlanCourses.add(cRs.getString("title"));
-                                            continue;
-                                        }
-                                    }
-                                }
-
-                                // Fallback με LIKE για απόλυτη ασφάλεια ανάκτησης τίτλων
-                                String fallbackSql = "SELECT title FROM Course WHERE courseId LIKE ?";
-                                try (java.sql.PreparedStatement fPstmt = conn.prepareStatement(fallbackSql)) {
-                                    fPstmt.setString(1, "%" + cleanId.replace("CEID_", "") + "%");
-                                    try (java.sql.ResultSet fRs = fPstmt.executeQuery()) {
-                                        if (fRs.next()) {
-                                            studyPlanCourses.add(fRs.getString("title"));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                System.err.println("❌ Σφάλμα κατά την ανάκτηση από την SQLite: " + e.getMessage());
-            }
-        }
-
-        // ΕΛΕΓΧΟΣ ΕΝΑΛΛΑΚΤΙΚΗΣ ΡΟΗΣ 1: [empty or no study plan] ──
-        if (studyPlanCourses.isEmpty()) {
-            System.out.println("⚠ Δεν βρέθηκε οριστικοποιημένο πλάνο. Εμφάνιση Error Popup.");
+        if (sortedCourses.isEmpty()) {
+            System.out.println("Δεν βρέθηκε οριστικοποιημένο πλάνο. Εμφάνιση Error Popup.");
             openErrorScreen(currentStage);
             return;
         }
@@ -125,7 +73,6 @@ public class ManageWorkLoadClass {
             System.err.println("Σφάλμα κατά τον υπολογισμό workload: " + e.getMessage());
         }
     }
-
 
     public double getTotalWorkloadIndex() { return totalWorkloadIndex; }
     public List<CourseWorkload> getSortedCourses() { return sortedCourses; }
@@ -186,8 +133,7 @@ public class ManageWorkLoadClass {
             e.printStackTrace();
         }
     }
-
-
-
 }
+
+
 

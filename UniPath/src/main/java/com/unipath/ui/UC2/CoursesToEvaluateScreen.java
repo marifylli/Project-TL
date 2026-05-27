@@ -44,7 +44,7 @@ public class CoursesToEvaluateScreen {
 
         // Αντί για το δυναμικό ID του session, βάζουμε καρφωτά το 41
         // για να τραβήξει τις εγγραφές που βάλαμε στο InsertTestData
-        int studentId = 41;
+        int studentId = UserSession.getInstance().getUserId();
         System.out.println("🔍 [UC2] Ανάκτηση μαθημάτων από τη βάση για τον test φοιτητή: " + studentId);
 
         List<com.unipath.model.Course> attendedCourses = controller.queryCoursesAttended(studentId);
@@ -59,7 +59,6 @@ public class CoursesToEvaluateScreen {
             System.out.println("⚠️ [UI Warning] Το query επέστρεψε κενή λίστα από τη βάση.");
         }
     }
-
 
 
 

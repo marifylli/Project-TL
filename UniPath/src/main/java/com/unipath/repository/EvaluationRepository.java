@@ -35,11 +35,12 @@ public class EvaluationRepository {
     public List<Course> getAttendedCourses(int studentId) {
         List<Course> courses = new ArrayList<>();
         String sql = """
-            SELECT c.courseId, c.title, c.ects, c.semester
-            FROM Course c
-            JOIN StudentCourse sc ON c.courseId = sc.courseId
-            WHERE sc.studentId = ?
-        """;
+        SELECT c.courseId, c.title, c.ects, c.semester
+        FROM Course c
+        INNER JOIN StudyPlan sp ON (',' || sp.courses || ',') LIKE ('%,' || c.courseId || ',%')
+        WHERE sp.studentId = ? AND sp.isFinalized = 1
+        ORDER BY sp.planId DESC
+    """;
 
         try (Connection conn = DBManager.getInstance().connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -62,6 +63,7 @@ public class EvaluationRepository {
 
         return courses;
     }
+
 
     // UC2 βήμα 9: αποθήκευσε αξιολόγηση
     public void saveEvaluation(CourseEvaluation evaluation) {

@@ -22,14 +22,13 @@ public class Course {
     private String rules;
     private String prerequisites;
 
-
     private int professorId;
 
     // Constructor
     public Course() {
     }
 
-    //GETTERS & SETTERS
+    // GETTERS & SETTERS
     public String getCourseID() { return courseID; }
     public void setCourseID(String courseID) { this.courseID = courseID; }
 
@@ -78,12 +77,63 @@ public class Course {
     public String getPrerequisites() { return prerequisites; }
     public void setPrerequisites(String prerequisites) { this.prerequisites = prerequisites; }
 
-    // --- ΠΡΟΣΘΗΚΗ GETTER/SETTER ΓΙΑ ΤΟΝ ΚΑΘΗΓΗΤΗ ---
     public int getProfessorId() { return professorId; }
     public void setProfessorId(int professorId) { this.professorId = professorId; }
+
+    // 🌟 Έξυπνες μέθοδοι ανάγνωσης κατεύθυνσης και ομάδας από το String της SQLite
+    public boolean belongsToDirection(String directionCode) {
+        if (this.directions == null || this.directions.isEmpty() || directionCode == null) {
+            return false;
+        }
+        String[] parts = this.directions.split(",");
+        for (String part : parts) {
+            String trimmedPart = part.trim();
+            String currentDirCode = trimmedPart.split(":")[0].trim().toUpperCase();
+
+            currentDirCode = currentDirCode.replace('Κ', 'K');
+            String searchCode = directionCode.trim().toUpperCase().replace('Κ', 'K');
+
+            if (currentDirCode.equals(searchCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isGroupAForDirection(String directionCode) {
+        if (this.directions == null || this.directions.isEmpty() || directionCode == null) {
+            return false;
+        }
+        String[] parts = this.directions.split(",");
+        for (String part : parts) {
+            String trimmedPart = part.trim().toUpperCase().replace('Κ', 'K');
+            String searchCode = directionCode.trim().toUpperCase().replace('Κ', 'K');
+
+            if (trimmedPart.startsWith(searchCode) && trimmedPart.contains(":A")) {
+                return true;
+            }
+        }
+        return this.groupA;
+    }
+
+    public boolean isGroupBForDirection(String directionCode) {
+        if (this.directions == null || this.directions.isEmpty() || directionCode == null) {
+            return false;
+        }
+        String[] parts = this.directions.split(",");
+        for (String part : parts) {
+            String trimmedPart = part.trim().toUpperCase().replace('Κ', 'K');
+            String searchCode = directionCode.trim().toUpperCase().replace('Κ', 'K');
+
+            if (trimmedPart.startsWith(searchCode) && trimmedPart.contains(":B")) {
+                return true;
+            }
+        }
+        return this.groupB;
+    }
+
     @Override
     public String toString() {
-        // 💡 Επιστρέφει μια όμορφη μορφή για να τη διαβάζει το ListView
         return this.getCourseID() + " - " + this.getTitle() + " (" + this.getECTS() + " ECTS)";
     }
-}
+} // Εδώ κλείνει σωστά η κλάση Course

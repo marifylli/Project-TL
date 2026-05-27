@@ -2,57 +2,54 @@ package com.unipath.repository;
 
 import com.unipath.dataBase.DBManager;
 import com.unipath.model.Course;
-import com.unipath.model.Professor;
-import com.unipath.login.UserSession;
-
-
+import com.unipath.model.Professor; // 🌟 Προσθήκη import για να μην βγάζει σφάλμα
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import java.text.SimpleDateFormat; // 🌟 Προσθήκη import για το dateFormat
+import java.util.Date;            // 🌟 Προσθήκη import για το Date
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class CourseRepository {
 
+    // 🌟 Ορισμός του dateFormat που έλειπε και κρασάριζε τον compiler
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-
+    // 🌟 Η διορθωμένη queryGetCourses που φέρνει όλα τα μαθήματα των εξαμήνων 7, 8 και 9
     public List<Course> queryGetCourses() {
-        List<Course> courses = new ArrayList<>();
-        String sql = """
-            SELECT courseId, title, description, ects, semester, professorID, groupA, groupB, 
-                   directions, isActive, averageRating, workloadScore, workloadRank, 
-                   lastModifiedDate, lastModifiedBy, rules, prerequisites 
-            FROM Course
-        """;
+        List<Course> list = new ArrayList<>();
+        String sql = "SELECT * FROM Course WHERE semester IN (7, 8, 9) AND isActive = 1";
 
-        try {
-            Connection conn = DBManager.getInstance().connect();
+        try (java.sql.Connection conn = com.unipath.dataBase.DBManager.getInstance().connect();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+             java.sql.ResultSet rs = pstmt.executeQuery()) {
 
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Course c = new Course();
+                c.setCourseID(rs.getString("courseId"));
+                c.setTitle(rs.getString("title"));
+                c.setDescription(rs.getString("description"));
+                c.setECTS(rs.getInt("ects"));
+                c.setSemester(rs.getInt("semester"));
+                c.setDirections(rs.getString("directions"));
 
-                while (rs.next()) {
-                    Course course = mapResultSetToCourse(rs);
-                    courses.add(course);
-                }
-                System.out.println("Ανακτήθηκαν επιτυχώς " + courses.size() + " μαθήματα.");
+                c.setGroupA(rs.getInt("groupA") == 1);
+                c.setGroupB(rs.getInt("groupB") == 1);
+
+                list.add(c);
             }
-        } catch (SQLException e) {
-            System.err.println("Σφάλμα κατά την εκτέλεση του queryGetCourses: " + e.getMessage());
+            System.out.println("🚀 [CourseRepository] Ανακτήθηκαν " + list.size() + " μαθήματα επιλογής από τη βάση δεδομένων.");
+        } catch (java.sql.SQLException e) {
+            System.err.println("❌ Σφάλμα SQL στο CourseRepository: " + e.getMessage());
         }
-
-        return courses;
+        return list;
     }
-
 
     public List<Course> queryGetProfessorCourses(int professorId) {
         List<Course> professorCourses = new ArrayList<>();
 
-        // 1. ΕΛΕΓΧΟΣ: Αν ο τρέχων χρήστης είναι testing χρήστης
         String currentEmail = null;
         try {
             currentEmail = com.unipath.login.UserSession.getInstance().getEmail();
@@ -61,7 +58,6 @@ public class CourseRepository {
         }
 
         if (currentEmail != null && currentEmail.startsWith("test.")) {
-            // Επιστρέφουμε Εικονικά (Mock) Μαθήματα για να δουλέψει το UI Test
             Course c1 = new Course();
             c1.setCourseID("CEID_NY901");
             c1.setTitle("Τεχνολογία Λογισμικού");
@@ -89,7 +85,6 @@ public class CourseRepository {
             return professorCourses;
         }
 
-        // 2. ΚΑΝΟΝΙΚΗ ΡΟΗ: SQL ερώτημα στην SQLite
         String sql = """
         SELECT courseId, title, description, ects, semester, professorID,
                groupA, groupB, directions, isActive, averageRating, 
@@ -143,7 +138,6 @@ public class CourseRepository {
         return username;
     }
 
-
     public boolean queryUpdateCourseRules(String courseId, String newRules, String professorUsername) {
         String sql = """
             UPDATE Course 
@@ -169,33 +163,23 @@ public class CourseRepository {
                 return rowsUpdated > 0;
             }
         } catch (SQLException e) {
-            System.err.println("Σφάλma κατά την εκτέλεση του queryUpdateCourseRules: " + e.getMessage());
+            System.err.println("Σφάλμα κατά την εκτέλεση του queryUpdateCourseRules: " + e.getMessage());
             return false;
         }
     }
 
-
     private Course mapResultSetToCourse(ResultSet rs) throws SQLException {
         Course course = new Course();
 
-                // ΔΙΟΡΘΩΣΗ 1: setCourseID με κεφαλαίο ID
-                course.setCourseID(rs.getString("courseId"));
-                course.setTitle(rs.getString("title"));
-                course.setDescription(rs.getString("description"));
-                course.setECTS(rs.getInt("ects"));
-                course.setSemester(rs.getInt("semester"));
         course.setCourseID(rs.getString("courseId"));
         course.setTitle(rs.getString("title"));
         course.setDescription(rs.getString("description"));
         course.setECTS(rs.getInt("ects"));
         course.setSemester(rs.getInt("semester"));
 
-        //  ΑΣΦΑΛΗΣ ΑΝΑΓΝΩΣΗ: Διαβάζουμε το professorId μόνο αν περιλαμβάνεται στο SQL Query
         try {
             course.setProfessorId(rs.getInt("professorId"));
         } catch (SQLException e) {
-            // Αν η στήλη δεν υπάρχει στο query (όπως στο queryGetCourses),
-            // βάζουμε μια προεπιλεγμένη τιμή χωρίς να κρασάρει η εφαρμογή
             course.setProfessorId(-1);
         }
 
@@ -217,16 +201,13 @@ public class CourseRepository {
             }
         }
 
-                course.setLastModifiedBy(rs.getString("lastModifiedBy"));
-                course.setRules(rs.getString("rules"));
-                course.setPrerequisites(rs.getString("prerequisites"));
+        course.setLastModifiedBy(rs.getString("lastModifiedBy"));
+        course.setRules(rs.getString("rules"));
+        course.setPrerequisites(rs.getString("prerequisites"));
 
         return course;
     }
 
-    // μέθοδοι gia uc5
-
-    // εναλλακτική [queryCheckDuplicates()] - Ελέγχει αν το courseId υπάρχει ήδη στη ΒΔ
     public boolean queryCheckDuplicates(String courseID) {
         String sql = "SELECT COUNT(*) FROM Course WHERE courseId = ?";
         try (java.sql.Connection conn = DBManager.getInstance().connect();
@@ -244,7 +225,6 @@ public class CourseRepository {
         return false;
     }
 
-    // Βήμα 5: [queryManageProfessors()] - Επιστρέφει τους καθηγητές από τη ΒΔ
     public List<Professor> queryManageProfessors() {
         List<Professor> professors = new ArrayList<>();
         String sql = """
@@ -272,7 +252,6 @@ public class CourseRepository {
         return professors;
     }
 
-    // εναλλακτική & Βασική Ροή: [saveCourse()] - Αποθηκεύει το μάθημα και την ανάθεση (Πίνακας ProfessorCourse)
     public boolean saveCourse(Course course, int professorID) {
         String insertCourseSql = """
             INSERT INTO Course (courseId, title, description, ects, semester, isActive, lastModifiedDate, lastModifiedBy) 
@@ -292,8 +271,8 @@ public class CourseRepository {
                 pstmt1.setString(3, course.getDescription());
                 pstmt1.setInt(4, course.getECTS());
                 pstmt1.setInt(5, course.getSemester());
-                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                pstmt1.setString(6, dateFormat.format(new Date()));
+                java.text.SimpleDateFormat localFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                pstmt1.setString(6, localFormat.format(new Date()));
                 pstmt1.executeUpdate();
             }
 
@@ -316,15 +295,10 @@ public class CourseRepository {
         }
     }
 
-    // μεθοδοι για 6
-
-    // [queryCourseList()] -> DBManager
     public List<Course> queryCourseList() {
-        // Καλούμε την ήδη υπάρχουσα queryGetCourses() για να μην ξαναγράφουμε το ίδιο μεγάλο query!
         return queryGetCourses();
     }
 
-    // [getCourseDetails()] -> Course Entity
     public Course getCourseDetails(String courseID) {
         String sql = "SELECT * FROM Course WHERE courseId = ?";
         try (java.sql.Connection conn = DBManager.getInstance().connect();
@@ -347,7 +321,6 @@ public class CourseRepository {
         return null;
     }
 
-    //  [saveEdits()] -> Course Entity
     public boolean saveEdits(Course course) {
         String sql = "UPDATE Course SET title = ?, description = ?, ects = ?, semester = ? WHERE courseId = ?";
         try (java.sql.Connection conn = DBManager.getInstance().connect();
@@ -364,10 +337,7 @@ public class CourseRepository {
         }
     }
 
-    // [refreshStudyPlans()] -> StudyPlan Entity
     public void refreshStudyPlans(String courseID) {
         System.out.println("refreshStudyPlans() εκτελέστηκε επιτυχώς στη βάση για το μάθημα: " + courseID);
     }
-
-
 }

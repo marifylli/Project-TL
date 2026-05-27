@@ -75,14 +75,15 @@ public class DBManager {
                 FOREIGN KEY (userId) REFERENCES User(userId)
             )
         """);
-     //Πινακασ Professor
+        // Πίνακας Professor - ΔΙΟΡΘΩΘΗΚΕ: Προστέθηκε το Foreign Key constraint που έλειπε
         stmt.execute("""
             CREATE TABLE IF NOT EXISTS Professor (
                 professorId INTEGER PRIMARY KEY,
                 userId TEXT NOT NULL UNIQUE,
                 office TEXT,
                 maxTeachingLoad INTEGER DEFAULT 6,
-                currentTeachingLoad INTEGER DEFAULT 0
+                currentTeachingLoad INTEGER DEFAULT 0,
+                FOREIGN KEY (userId) REFERENCES User(userId)
             )
         """);
 

@@ -78,7 +78,7 @@
                                     <children>
                                         <Label text="Επιθυμητές Δεξιότητες / Τεχνολογίες" textFill="#64748b" />
                                         <Label fx:id="skillsLabel" text="Φορτώνει δεξιότητες..." wrapText="true">
-                                            <font>
+                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
@@ -87,8 +87,14 @@
                             </children>
                         </HBox>
 
-                        <HBox alignment="CENTER_RIGHT" style="-fx-padding: 20 0 0 0;">
+                        <HBox alignment="CENTER_RIGHT" spacing="15.0" style="-fx-padding: 20 0 0 0;">
                             <children>
+                                <Button mnemonicParsing="false" onAction="#handleBackToMain" prefHeight="50.0" prefWidth="240.0" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="⬅ Επιστροφή στην Αρχική">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                </Button>
+
                                 <Button mnemonicParsing="false" onAction="#selectExpressInterest" prefHeight="50.0" prefWidth="260.0" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="📝 Εκδήλωση Ενδιαφέροντος">
                                     <font>
                                         <Font size="16.0" />

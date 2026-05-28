@@ -54,7 +54,7 @@ public class HelpServicesScreen {
     private void handleFinalize() {
         System.out.println("[UI-UC8] Ολοκλήρωση συνεδρίας.");
 
-        // Καλούμε με ασφάλεια την executeAction για την καταγραφή αντί για το finalizeHelpSession που ήθελε StudentProfile
+
         System.out.println("[UI-UC8] Το ιστορικό του φοιτητή ενημερώθηκε επιτυχώς.");
 
         returnToMain();
@@ -78,7 +78,7 @@ public class HelpServicesScreen {
             stage.setScene(new Scene(root, 1000, 650));
             stage.setTitle("UniPath - Διαθέσιμες Προσφορές");
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την επιστροφή: " + e.getMessage());
+            System.err.println(" Σφάλμα κατά την επιστροφή: " + e.getMessage());
         }
     }
 
@@ -93,7 +93,7 @@ public class HelpServicesScreen {
             stage.setScene(new Scene(root, 1000, 650));
             stage.setTitle("UniPath - Κεντρικό Μενού");
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την επιστροφή στο κύριο μενού: " + e.getMessage());
+            System.err.println(" Σφάλμα κατά την επιστροφή στο κύριο μενού: " + e.getMessage());
         }
     }
 }

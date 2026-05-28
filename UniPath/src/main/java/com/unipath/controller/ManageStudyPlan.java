@@ -121,7 +121,7 @@ public class ManageStudyPlan {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("❌ ΑΠΟΤΥΧΙΑ: Το πρόγραμμα σπουδών δεν πληροί τις προϋποθέσεις του σεναρίου!");
+            System.out.println(" ΑΠΟΤΥΧΙΑ: Το πρόγραμμα σπουδών δεν πληροί τις προϋποθέσεις του σεναρίου!");
         }
     }
 
@@ -172,10 +172,10 @@ public class ManageStudyPlan {
             }
 
             conn.commit();
-            System.out.println("✓ [SQLite Success] Το πλάνο σπουδών οριστικοποιήθηκε και αποθηκεύτηκε επιτυχώς για το UC4!");
+            System.out.println("[SQLite Success] Το πλάνο σπουδών οριστικοποιήθηκε και αποθηκεύτηκε επιτυχώς για το UC4!");
 
         } catch (java.sql.SQLException e) {
-            System.err.println("❌ Σφάλμα κατά την εγγραφή του StudyPlan στη ΒΔ: " + e.getMessage());
+            System.err.println("Σφάλμα κατά την εγγραφή του StudyPlan στη ΒΔ: " + e.getMessage());
         }
 
         try {
@@ -218,13 +218,13 @@ public class ManageStudyPlan {
     }
 
     public boolean validateRules() {
-        // 🌟 ΑΛΕΞΙΣΦΑΙΡΟΣ ΕΛΕΓΧΟΣ: Αν ο φοιτητής διάλεξε ακριβώς 17 μαθήματα, το πλάνο είναι έγκυρο!
+
         if (selectedCourses != null && selectedCourses.size() == 17) {
             System.out.println("✓ [Validation Success]: Επιλέχθηκαν ακριβώς 17 μαθήματα. Το πλάνο εγκρίνεται για αποθήκευση!");
             return true;
         }
 
-        // Αν δεν είναι 17, εκτελείται η παλιά λογική
+
         if (selectedCourses == null || selectedCourses.size() != 17) return false;
 
         int scenarioId = (selectedScenario != null) ? selectedScenario.getScenarioId() : 1;
@@ -239,7 +239,7 @@ public class ManageStudyPlan {
         return false;
     }
 
-    // ── ΔΙΟΡΘΩΜΕΝΟΙ VALIDATION ΕΛΕΓΧΟΙ ΜΕ ΑΜΟΙΒΑΙΟ ΑΠΟΚΛΕΙΣΜΟ (MUTUAL EXCLUSION) ──
+
 
     private boolean validateScenario1() {
         if (selectedCourses.size() != 17) return false;
@@ -247,7 +247,7 @@ public class ManageStudyPlan {
         int mainA = 0, mainB = 0;
         int otherA = 0;
 
-        // Μετρητές για τον αμοιβαίο αποκλεισμό (Mutual Exclusion) στο 3ο Tab
+
         int otherDirectionsBCount = 0;
         int externalDepartmentCount = 0;
         int erasmusCount = 0;
@@ -258,7 +258,7 @@ public class ManageStudyPlan {
             String id = c.getCourseID().toUpperCase();
             String dirs = (c.getDirections() != null) ? c.getDirections().toUpperCase() : "";
 
-            // 1. Κατηγοριοποίηση εξωτερικών μαθημάτων βάσει κωδικών PDF
+
             if (id.contains("_ΓΠ") || id.equals("CEID_E90E") || id.equals("CEID_AE2") || id.equals("CEID_ΔΕΖ")) {
                 externalDepartmentCount++;
                 continue;
@@ -268,12 +268,12 @@ public class ManageStudyPlan {
                 continue;
             }
 
-            // 2. Έλεγχος Κύριας Κατεύθυνσης
+
             if (c.belongsToDirection(activeDirection1)) {
                 if (c.isGroupAForDirection(activeDirection1)) mainA++;
                 if (c.isGroupBForDirection(activeDirection1)) mainB++;
             }
-            // 3. Έλεγχος Λοιπών Κατευθύνσεων
+
             else {
                 if (dirs.contains(":A")) {
                     otherA++;
@@ -285,15 +285,14 @@ public class ManageStudyPlan {
                         }
                     }
                 }
-                // Αν ανήκει στο 3ο Tab ως μάθημα άλλης κατεύθυνσης (Ομάδα Β)
+
                 else if (dirs.contains(":B")) {
                     otherDirectionsBCount++;
                 }
             }
         }
 
-        // 🌟 ΕΛΕΓΧΟΣ ΑΜΟΙΒΑΙΟΥ ΑΠΟΚΛΕΙΣΜΟΥ (Mutual ExclusionRule):
-        // Ο φοιτητής πρέπει να επιλέξει ΜΟΝΟ 2 από μία κατηγορία στο 3ο Tab (ή Άλλες Β, ή Άλλα Τμήματα, ή Erasmus)
+
         boolean validMutualExclusion = false;
         if (otherDirectionsBCount == 2 && externalDepartmentCount == 0 && erasmusCount == 0) validMutualExclusion = true;
         if (otherDirectionsBCount == 0 && externalDepartmentCount == 2 && erasmusCount == 0) validMutualExclusion = true;
@@ -302,7 +301,7 @@ public class ManageStudyPlan {
         System.out.println("DEBUG [Scenario 1]: MainA=" + mainA + "/5, MainB=" + mainB + "/5, OtherDirectionsA=" + otherA + "/5 (Dirs: " + otherDirectionsSet.size() + ")");
         System.out.println("DEBUG [3ο Tab]: Άλλες_Β=" + otherDirectionsBCount + ", ΓΠ_Άλλα_Τμήματα=" + externalDepartmentCount + ", Erasmus=" + erasmusCount + " -> Έγκυρο Group 3: " + validMutualExclusion);
 
-        // Κανόνας: 5Α + 5Β κύρια, 5Α από το πολύ 3 άλλες κατευθύνσεις ΚΑΙ έγκυρος αμοιβαίος αποκλεισμός στο 3ο Tab
+
         return mainA == 5 && mainB == 5 && otherA == 5 && otherDirectionsSet.size() <= 3 && validMutualExclusion;
     }
 
@@ -318,7 +317,7 @@ public class ManageStudyPlan {
             String id = c.getCourseID().toUpperCase();
             String dirs = (c.getDirections() != null) ? c.getDirections().toUpperCase() : "";
 
-            // Ανίχνευση εξωτερικών μαθημάτων από το PDF
+
             boolean isExternal = id.contains("_ΓΠ") || id.equals("CEID_E90E") || id.equals("CEID_AE2") || id.equals("CEID_ΔΕΖ") || id.contains("_ERA");
 
             if (isExternal) {
@@ -437,7 +436,7 @@ public class ManageStudyPlan {
                 }
             }
         } catch (java.sql.SQLException e) {
-            System.err.println("❌ Σφάλμα στο queryGetFinalizedScenarioIds: " + e.getMessage());
+            System.err.println("Σφάλμα στο queryGetFinalizedScenarioIds: " + e.getMessage());
         }
         return completedIds;
     }

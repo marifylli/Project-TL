@@ -28,8 +28,7 @@ public class EnrolledCoursesScreen {
         controller = new ManageGetHelp();
         System.out.println("[UI-UC8] Αρχικοποίηση EnrolledCoursesScreen και φόρτωση μαθημάτων.");
 
-        // 🌟 Ασφαλής ανάκτηση μαθημάτων απευθείας από τον Controller για να μην κολλάει στο πακέτο security
-        // Χρησιμοποιούμε τη μέθοδο queryCourses() που επιστρέφει τη λίστα με τα ενεργά μαθήματα
+
         com.unipath.controller.ManageMentorProfile mentorController = new com.unipath.controller.ManageMentorProfile();
         List<Course> availableCourses = mentorController.queryCourses();
 
@@ -43,7 +42,7 @@ public class EnrolledCoursesScreen {
             }
         }
 
-        // Διόρθωση για το setPromptText: Στη ListView βάζουμε placeholder αν είναι άδεια
+
         if (coursesListView.getItems().isEmpty()) {
             coursesListView.setPlaceholder(new Label("Δεν βρέθηκαν διαθέσιμα μαθήματα."));
         }
@@ -77,7 +76,7 @@ public class EnrolledCoursesScreen {
             stage.setScene(new Scene(root, 1000, 650));
             stage.setTitle("UniPath - Διαθέσιμες Προσφορές");
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά τη μετάβαση στο AvailableOffersScreen:");
+            System.err.println(" Σφάλμα κατά τη μετάβαση στο AvailableOffersScreen:");
             e.printStackTrace();
         }
     }
@@ -94,7 +93,7 @@ public class EnrolledCoursesScreen {
             stage.setScene(new Scene(root, 1000, 650));
             stage.setTitle("UniPath - Κεντρικό Μενού");
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την επιστροφή: " + e.getMessage());
+            System.err.println(" Σφάλμα κατά την επιστροφή: " + e.getMessage());
         }
     }
 }

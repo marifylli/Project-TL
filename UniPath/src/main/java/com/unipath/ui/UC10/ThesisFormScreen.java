@@ -28,7 +28,7 @@ public class ThesisFormScreen {
 
     @FXML
     private void selectCalendar() {
-        // 1. Καθαρισμός προηγούμενων στυλ (επαναφορά στο κανονικό)
+
         titleField.setStyle("");
         descriptionArea.setStyle("");
         ectsField.setStyle("");
@@ -36,7 +36,7 @@ public class ThesisFormScreen {
 
         List<String> missingFields = new ArrayList<>();
 
-        // 2. Έλεγχος κάθε υποχρεωτικού πεδίου ξεχωριστά και κοκκίνισμα αν είναι άδειο
+
         if (titleField.getText().trim().isEmpty()) {
             titleField.setStyle("-fx-border-color: red; -fx-border-width: 1.5px; -fx-border-radius: 4;");
             missingFields.add("Τίτλος Θέματος");
@@ -54,24 +54,22 @@ public class ThesisFormScreen {
             missingFields.add("Μέγιστος Αριθμός Υποψηφίων");
         }
 
-        // 3. Αν βρέθηκαν άδεια πεδία, άνοιξε το Error Window με το σωστό μήνυμα
+
         if (!missingFields.isEmpty()) {
-            System.out.println("[UC10] ❌ Εντοπίστηκαν ελλιπή πεδία. Ενεργοποίηση Εναλλακτικής Ροής [not all Fields].");
+            System.out.println("Εντοπίστηκαν ελλιπή πεδία. Ενεργοποίηση Εναλλακτικής Ροής [not all Fields].");
 
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
                 Parent root = loader.load();
 
-                // Φτιάχνουμε το δυναμικό μήνυμα σφάλματος ανάλογα με το τι λείπει
                 String errorMessage = "Λείπουν τα υποχρεωτικά πεδία:\n" + String.join(", ", missingFields);
 
-                // Αναζητάμε το Label μέσα στο error window για να του αλλάξουμε το κείμενο δυναμικά
-                // (Υποθέτοντας ότι το label σου στο error-window-view έχει fx:id="errorLabel" ή παρόμοιο)
+
                 Label label = (Label) root.lookup("#errorLabel");
                 if (label != null) {
                     label.setText(errorMessage);
                 } else {
-                    // Αν δεν έχει fx:id, ψάχνουμε οποιοδήποτε Label περιέχει το default κείμενο "Μήνυμα Σφάλματος"
+
                     for (javafx.scene.Node node : root.lookupAll("Label")) {
                         if (node instanceof Label && ((Label) node).getText().contains("Μήνυμα Σφάλματος")) {
                             ((Label) node).setText(errorMessage);
@@ -86,15 +84,15 @@ public class ThesisFormScreen {
 
                 stage.showAndWait();
 
-                System.out.println("[UC10] Η ροή επιστρέφει στο βήμα 3 της φόρμας.");
+                System.out.println(" Η ροή επιστρέφει στο βήμα 3 της φόρμας.");
             } catch (IOException e) {
-                System.err.println("❌ Σφάλμα κατά τη φόρτωση του error-window-view.fxml: " + e.getMessage());
+                System.err.println(" Σφάλμα κατά τη φόρτωση του error-window-view.fxml: " + e.getMessage());
                 e.printStackTrace();
             }
             return;
         }
 
-        System.out.println("[UC10] ✅ Όλα τα πεδία είναι συμπληρωμένα. Αποστολή requestCalendar() στον Controller.");
+        System.out.println(" Όλα τα πεδία είναι συμπληρωμένα. Αποστολή requestCalendar() στον Controller.");
         manager.requestCalendar();
     }
 }

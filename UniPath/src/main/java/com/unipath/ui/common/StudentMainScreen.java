@@ -66,7 +66,7 @@ public class StudentMainScreen {
                 }
             }
         } catch (java.sql.SQLException e) {
-            System.err.println("❌ Σφάλμα κατά τη φόρτωση των πλάνων: " + e.getMessage());
+            System.err.println("Σφάλμα κατά τη φόρτωση των πλάνων: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -84,7 +84,7 @@ public class StudentMainScreen {
     @FXML
     public void clickCreatePlan() {
         try {
-            System.out.println("=== Έναρξη UC1: Δημιουργία Πλάνου (Ασφαλές Popup Mode) ===");
+            System.out.println("===  Δημιουργία Πλάνου (Ασφαλές Popup Mode) ===");
 
             com.unipath.controller.ManageStudyPlan studyPlanController = new com.unipath.controller.ManageStudyPlan();
 
@@ -112,14 +112,14 @@ public class StudentMainScreen {
 
             // 🌟 ΜΟΛΙΣ ΚΛΕΙΣΕΙ ΤΟ POPUP (Είτε από υποβολή είτε από ακύρωση), ΑΝΑΝΕΩΝΟΥΜΕ ΤΟ ΜΕΝΟΥ!
             popupStage.setOnHiding(event -> {
-                System.out.println("✓ Το Popup έκλεισε. Ανανέωση δεδομένων Κεντρικής Οθόνης...");
+                System.out.println("Το Popup έκλεισε. Ανανέωση δεδομένων Κεντρικής Οθόνης...");
                 loadSubmittedStudyPlans();
             });
 
             popupStage.showAndWait(); // Εμφάνιση και αναμονή
 
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την εκκίνηση του πλάνου: " + e.getMessage());
+            System.err.println("Σφάλμα κατά την εκκίνηση του πλάνου: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -127,13 +127,13 @@ public class StudentMainScreen {
     @FXML
     public void clickfortosioannas() {
         try {
-            System.out.println("=== Έναρξη UC3: Ανάλυση Φόρτου Εργασίας ===");
+            System.out.println("=== Ανάλυση Φόρτου Εργασίας ===");
             com.unipath.controller.ManageWorkLoadClass workloadController = new com.unipath.controller.ManageWorkLoadClass();
 
             Stage stage = (Stage) studyPlanButton.getScene().getWindow();
             workloadController.startAnalysis(stage);
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα στο UC3: " + e.getMessage());
+            System.err.println("Σφάλμα  " + e.getMessage());
         }
     }
 
@@ -144,13 +144,19 @@ public class StudentMainScreen {
             if (fxmlUrl == null) fxmlUrl = getClass().getClassLoader().getResource("fxml/Student/courses-evaluate-view.fxml");
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
-            Stage stage = (Stage) evaluateButton.getScene().getWindow();
-            stage.setScene(new Scene(root, 1000, 650));
-            stage.setTitle("UniPath - Λίστα Μαθημάτων προς Αξιολόγηση");
+
+            Stage popupStage = new Stage();
+            popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            popupStage.initOwner((Stage) evaluateButton.getScene().getWindow());
+            popupStage.setScene(new Scene(root, 1000, 650));
+            popupStage.setTitle("UniPath - Λίστα Μαθημάτων προς Αξιολόγηση");
+            popupStage.showAndWait();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     @FXML
     public void clickAddNewOffer() {

@@ -14,10 +14,10 @@ import java.util.List;
 
 public class CourseRepository {
 
-    // 🌟 Ορισμός του dateFormat που έλειπε και κρασάριζε τον compiler
+
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    // 🌟 Η διορθωμένη queryGetCourses που φέρνει όλα τα μαθήματα των εξαμήνων 7, 8 και 9
+
     public List<Course> queryGetCourses() {
         List<Course> list = new ArrayList<>();
         String sql = "SELECT * FROM Course WHERE semester IN (7, 8, 9) AND isActive = 1";
@@ -40,9 +40,9 @@ public class CourseRepository {
 
                 list.add(c);
             }
-            System.out.println("🚀 [CourseRepository] Ανακτήθηκαν " + list.size() + " μαθήματα επιλογής από τη βάση δεδομένων.");
+            System.out.println(" [CourseRepository] Ανακτήθηκαν " + list.size() + " μαθήματα επιλογής από τη βάση δεδομένων.");
         } catch (java.sql.SQLException e) {
-            System.err.println("❌ Σφάλμα SQL στο CourseRepository: " + e.getMessage());
+            System.err.println(" Σφάλμα SQL στο CourseRepository: " + e.getMessage());
         }
         return list;
     }

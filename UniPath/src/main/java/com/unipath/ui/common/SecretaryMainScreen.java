@@ -25,7 +25,7 @@ public class SecretaryMainScreen {
             System.out.println("=== Έναρξη UC6: Επεξεργασία Μαθήματος ===");
             new ManageSecCourEditClass();
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC6:");
+            System.err.println(" Σφάλμα κατά την εκκίνηση του UC6:");
             e.printStackTrace();
         }
     }
@@ -34,10 +34,10 @@ public class SecretaryMainScreen {
     @FXML
     public void clickAddCourse() {
         try {
-            System.out.println("=== Έναρξη UC5: Προσθήκη Μαθήματος ===");
+            System.out.println("===  Προσθήκη Μαθήματος ===");
             new ManageCourseAddition();
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC5:");
+            System.err.println(" Σφάλμα κατά την εκκίνηση του UC5:");
             e.printStackTrace();
         }
     }
@@ -45,12 +45,12 @@ public class SecretaryMainScreen {
     @FXML
     public void clickStats() {
         try {
-            System.out.println("=== Έναρξη UC4: Στατιστικά & Αναφορές ===");
+            System.out.println(" Στατιστικά & Αναφορές ===");
             ManageStatAnalysis controller = new ManageStatAnalysis();
             AnalysisFilterScreen filterScreen = new AnalysisFilterScreen(controller);
             filterScreen.displayFilterForm();
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την εκκίνηση του UC4:");
+            System.err.println(" Σφάλμα κατά την εκκίνηση του UC4:");
             e.printStackTrace();
         }
     }

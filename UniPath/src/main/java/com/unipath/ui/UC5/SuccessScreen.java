@@ -24,7 +24,7 @@ public class SuccessScreen {
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
 
-            // Χρησιμοποιούμε το fully qualified name για να αποφύγουμε σύγκρουση
+
             com.unipath.ui.common.SuccessScreen controller = loader.getController();
             controller.setSuccessMessage("Το μάθημα προστέθηκε επιτυχώς στο Πρόγραμμα Σπουδών!");
 

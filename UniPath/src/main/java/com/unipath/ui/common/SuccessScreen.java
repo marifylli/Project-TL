@@ -8,7 +8,7 @@ public class SuccessScreen {
 
     @FXML private Label successMessageLabel;
 
-    // Μέθοδος για να αλλάζεις το μήνυμα ανάλογα με το Use Case (π.χ. "Η διπλωματική δημοσιεύτηκε!")
+
     public void setSuccessMessage(String message) {
         if (successMessageLabel != null) {
             successMessageLabel.setText(message);

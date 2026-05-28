@@ -17,7 +17,7 @@ public class ScenarioRepository {
         List<Scenario> scenarios = new ArrayList<>();
         String sql = "SELECT scenarioId, title, description, groupARequiredECTS, groupBRequiredECTS FROM Scenario";
 
-        // 💡 Χρήση try-with-resources για να κλείνει ΠΑΝΤΑ η σύνδεση και να μην κλειδώνει η SQLite
+
         try (Connection conn = DBManager.getInstance().connect()) {
             System.out.println("DEBUG REPO: Η σύνδεση με τη βάση πέτυχε. Εκτέλεση Query...");
 
@@ -38,10 +38,10 @@ public class ScenarioRepository {
             System.out.println("DEBUG REPO: Ανακτήθηκαν επιτυχώς " + scenarios.size() + " σενάρια από τη βάση.");
 
         } catch (SQLException e) {
-            System.err.println("❌ ΣΦΑΛΜΑ SQL ΣΤΟ REPOSITORY:");
+            System.err.println(" ΣΦΑΛΜΑ SQL ΣΤΟ REPOSITORY:");
             e.printStackTrace(); // Θα τυπώσει το ακριβές σφάλμα αν π.χ. δεν υπάρχει ο πίνακας
         } catch (Exception e) {
-            System.err.println("❌ ΓΕΝΙΚΟ ΣΦΑΛΜΑ ΣΤΟ REPOSITORY:");
+            System.err.println(" ΓΕΝΙΚΟ ΣΦΑΛΜΑ ΣΤΟ REPOSITORY:");
             e.printStackTrace();
         }
 

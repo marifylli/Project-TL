@@ -5,7 +5,7 @@ import com.unipath.model.Professor;
 import com.unipath.repository.CourseRepository;
 import com.unipath.ui.UC5.NewCourseFormScreen;
 import com.unipath.ui.UC5.AvailableProfessorsScreen;
-import com.unipath.ui.UC5.SuccessScreen;
+import com.unipath.ui.common.SuccessScreen;
 import com.unipath.ui.common.ErrorScreen; // Σωστό Import
 
 import java.util.List;
@@ -31,7 +31,6 @@ public class ManageCourseAddition {
                 || title.trim().isEmpty();
 
         if (isDuplicateOrEmpty) {
-            // 🌟 ΔΙΟΡΘΩΣΗ: Αλλαγή σε DUPLICATE_OR_EMPTY_COURSE για να ταιριάζει με το Enum σου!
             ErrorScreen.show(null, ErrorScreen.ErrorType.DUPLICATE_OR_EMPTY_COURSE);
             return;
         }
@@ -68,8 +67,8 @@ public class ManageCourseAddition {
         boolean saved = dbManager.saveCourse(course, selectedProfessor.getProfessorId());
 
         if (saved) {
-            SuccessScreen successScreen = new SuccessScreen();
-            successScreen.display();
+            // Χρησιμοποιούμε full package path για να μην υπάρχει καμία αμφιβολία στα imports
+            com.unipath.ui.common.SuccessScreen.show(null, com.unipath.ui.common.SuccessScreen.SuccessType.COURSE_ADDED_SUCCESSFULLY);
 
             // Ειδοποίηση φοιτητών
             notifyAllStudents(title);

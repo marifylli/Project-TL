@@ -5,6 +5,12 @@ import com.unipath.model.StudyPlan;
 import com.unipath.repository.CourseRepository;
 import com.unipath.repository.NotificationRepository;
 import com.unipath.ui.UC6.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
 import java.util.List;
 
 public class ManageSecCourEditClass {
@@ -19,8 +25,8 @@ public class ManageSecCourEditClass {
         List<Course> courseList = courseRepository.queryCourseList();
 
         if (courseList == null || courseList.isEmpty()) {
-            ErrorScreen errorScreen = new ErrorScreen();
-            errorScreen.display();
+            // Αντικατάσταση του τοπικού ErrorScreen
+            showCommonError("Παρουσιάστηκε σφάλμα. Παρακαλώ ελέγξτε τα στοιχεία σας.");
             return;
         }
 
@@ -42,8 +48,8 @@ public class ManageSecCourEditClass {
         boolean hasErrors = checkForChanges(modifiedCourse);
 
         if (hasErrors) {
-            ErrorScreen errorScreen = new ErrorScreen();
-            errorScreen.display();
+            // Αντικατάσταση του τοπικού ErrorScreen
+            showCommonError("Παρουσιάστηκε σφάλμα. Παρακαλώ ελέγξτε τα στοιχεία σας.");
 
             CourseEditScreen courseEditScreen = new CourseEditScreen(this, modifiedCourse);
             courseEditScreen.display();
@@ -65,11 +71,48 @@ public class ManageSecCourEditClass {
     }
 
     public void confirmNotification() {
-        SuccessScreen successScreen = new SuccessScreen();
-        successScreen.display();
+        // Αντικατάσταση του τοπικού SuccessScreen
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/success-window-view.fxml"));
+            Parent root = loader.load();
+
+            com.unipath.ui.common.SuccessScreen controller = loader.getController();
+            controller.setSuccessMessage("Οι αλλαγές αποθηκεύτηκαν επιτυχώς και οι φοιτητές ειδοποιήθηκαν.");
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.setTitle("Επιτυχία");
+            stage.showAndWait();
+        } catch (Exception e) {
+            System.err.println("Απέτυχε η φόρτωση της κοινής οθόνης επιτυχίας στο UC6:");
+            e.printStackTrace();
+        }
     }
 
     private boolean checkForChanges(Course course) {
         return course.getTitle() == null || course.getTitle().trim().isEmpty() || course.getECTS() <= 0;
+    }
+
+    /**
+     * Βοηθητική μέθοδος εντός του controller για την αποφυγή διπλότυπου κώδικα FXML φόρτωσης σφάλματος
+     */
+    private void showCommonError(String message) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/common/error-window-view.fxml"));
+            Parent root = loader.load();
+
+            com.unipath.ui.common.ErrorScreen controller = loader.getController();
+            controller.setErrorMessage(message);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.setTitle("Σφάλμα");
+            stage.showAndWait();
+        } catch (Exception e) {
+            System.err.println("Απέτυχε η φόρτωση της κοινής οθόνης σφάλματος στο UC6:");
+            e.printStackTrace();
+        }
     }
 }

@@ -67,11 +67,14 @@ public class ManageCourseAddition {
         boolean saved = dbManager.saveCourse(course, selectedProfessor.getProfessorId());
 
         if (saved) {
-            // Χρησιμοποιούμε full package path για να μην υπάρχει καμία αμφιβολία στα imports
-            com.unipath.ui.common.SuccessScreen.show(null, com.unipath.ui.common.SuccessScreen.SuccessType.COURSE_ADDED_SUCCESSFULLY);
-
-            // Ειδοποίηση φοιτητών
+            // 1. Εκτέλεση των SQL Inserts στον πίνακα Notification για όλους τους φοιτητές
             notifyAllStudents(title);
+
+            // 🌟 2. Κλήση της SuccessScreen με το νέο ανανεωμένο Enum
+            com.unipath.ui.common.SuccessScreen.show(
+                    null,
+                    com.unipath.ui.common.SuccessScreen.SuccessType.COURSE_ADDED_AND_STUDENTS_NOTIFIED
+            );
         }
     }
 

@@ -18,6 +18,9 @@ public class SuccessScreen {
         // UC5 - Προσθήκη / Ανάθεση Μαθήματος
         COURSE_ADDED_SUCCESSFULLY,
 
+
+        COURSE_ADDED_AND_STUDENTS_NOTIFIED,
+
         // UC6 - Επεξεργασία Μαθήματος
         COURSE_UPDATED_SUCCESSFULLY
     }
@@ -43,8 +46,13 @@ public class SuccessScreen {
         return switch (type) {
             case COURSE_ADDED_SUCCESSFULLY ->
                     "Το μάθημα προστέθηκε επιτυχώς στο Πρόγραμμα Σπουδών!";
+
             case COURSE_UPDATED_SUCCESSFULLY ->
                     "Οι αλλαγές στο μάθημα αποθηκεύτηκαν με επιτυχία!";
+
+            // 🌟 ΠΡΟΣΘΗΚΗ: Καλύπτουμε το νέο enum value για να σταματήσει το compile error
+            case COURSE_ADDED_AND_STUDENTS_NOTIFIED ->
+                    "Το μάθημα προστέθηκε επιτυχώς στο Πρόγραμμα Σπουδών!\nΑποστάλθηκε αυτόματα ειδοποίηση σε όλους τους φοιτητές.";
         };
     }
 

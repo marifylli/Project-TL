@@ -26,6 +26,12 @@ public class ValidateChangesScreen {
         this.course = course;
     }
 
+    // --
+    @FXML
+    public void initialize() {
+        populateLabels();
+    }
+
     public void setContext(ManageSecCourEditClass controller, Course course) {
         this.controller = controller;
         this.course = course;
@@ -33,11 +39,15 @@ public class ValidateChangesScreen {
     }
 
     private void populateLabels() {
-        if (course == null) return;
+        // Έλεγχος ότι και το μάθημα υπάρχει, αλλά και ότι τα Labels έχουν προλάβει να φορτώσουν
+        if (course == null || titleLabel == null) return;
+
         titleLabel.setText(course.getTitle());
         ectsLabel.setText(String.valueOf(course.getECTS()));
         semesterLabel.setText(String.valueOf(course.getSemester()));
-        descriptionLabel.setText(course.getDescription() != null ? course.getDescription() : "-");
+        descriptionLabel.setText(course.getDescription() != null && !course.getDescription().trim().isEmpty()
+                ? course.getDescription()
+                : "-");
     }
 
     @FXML
@@ -67,5 +77,3 @@ public class ValidateChangesScreen {
         }
     }
 }
-
-

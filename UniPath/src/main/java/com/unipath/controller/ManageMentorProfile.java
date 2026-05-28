@@ -144,7 +144,7 @@ public class ManageMentorProfile {
 
     public void returnToMainMenu() {
         try {
-            // 1. Δοκιμάζουμε όλες τις πιθανές διαδρομές που μπορεί να έχει το FXML της ομάδας σου
+
             java.net.URL fxmlLocation = getClass().getResource("/fxml/Student/student-main-view.fxml");
 
             if (fxmlLocation == null) {
@@ -157,9 +157,9 @@ public class ManageMentorProfile {
                 fxmlLocation = getClass().getClassLoader().getResource("fxml/Student/student-main-screen.fxml");
             }
 
-            // Αν παρόλα αυτά δεν βρεθεί τίποτα, πετάμε ελεγχόμενο σφάλμα για να μην κρασάρει η JavaFX
+
             if (fxmlLocation == null) {
-                System.err.println("❌ ΚΡΙΣΙΜΟ ΣΦΑΛΜΑ: Δεν βρέθηκε πουθενά το αρχείο FXML της Κεντρικής Οθόνης!");
+                System.err.println("  ΣΦΑΛΜΑ: Δεν βρέθηκε πουθενά το αρχείο FXML της Κεντρικής Οθόνης!");
                 showErrorPopup("Αδυναμία επιστροφής στο κεντρικό μενού. Ελέγξτε τα FXML Paths.");
                 return;
             }
@@ -170,9 +170,9 @@ public class ManageMentorProfile {
 
             com.unipath.ui.common.StudentMainScreen mainController = loader.getController();
             if (mainController != null) {
-                // Ανανέωση Πλάνων (UC1)
+
                 mainController.loadSubmittedStudyPlans();
-                // Ανανέωση Προσφορών Μέντορα (UC7)
+
                 mainController.loadActiveHelpOffers();
             }
 
@@ -185,7 +185,7 @@ public class ManageMentorProfile {
             mainStage.show();
 
         } catch (Exception e) {
-            System.err.println("❌ Σφάλμα κατά την επιστροφή στο κεντρικό μενού: " + e.getMessage());
+            System.err.println(" Σφάλμα κατά την επιστροφή στο κεντρικό μενού: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -202,7 +202,7 @@ public class ManageMentorProfile {
 
             while (rs.next()) {
                 Course course = new Course();
-                course.setCourseID(rs.getString("courseId")); // Προσοχή στο Case της SQLite
+                course.setCourseID(rs.getString("courseId"));
                 course.setTitle(rs.getString("title"));
                 course.setSemester(rs.getInt("semester"));
                 course.setECTS(rs.getInt("ects"));
@@ -214,7 +214,7 @@ public class ManageMentorProfile {
         return coursesList;
     }
 
-    // Καταγραφή επιλογών από το UI
+
     public void selectCourse(String courseId) { this.currentCourseId = courseId; }
     public void selectHelp(String helpType) { this.currentHelpType = helpType; }
     public void offerDataType(String notesFile, String meetingUrl) {
@@ -263,17 +263,17 @@ public class ManageMentorProfile {
 
 
     public boolean checkFields() {
-        // 1. Εκτυπώνουμε ακριβώς τι βλέπει η Java για να ξέρουμε τι συμβαίνει
+
         System.out.println("DEBUG [CheckFields] CourseID: " + this.currentCourseId);
         System.out.println("DEBUG [CheckFields] HelpType: " + this.currentHelpType);
         System.out.println("DEBUG [CheckFields] NotesFile: '" + this.currentNotesFile + "'");
         System.out.println("DEBUG [CheckFields] MeetingUrl: '" + this.currentMeetingUrl + "'");
 
-        // 2. Βασικοί έλεγχοι για τα πρώτα πεδία
+
         if (this.currentCourseId == null || this.currentCourseId.trim().isEmpty()) return false;
         if (this.currentHelpType == null || this.currentHelpType.trim().isEmpty()) return false;
 
-        // 3. Έλεγχος αν υπάρχει έγκυρο αρχείο (αν έχει χαρακτήρες και δεν είναι άδειο)
+
         boolean hasFile = false;
         if (this.currentNotesFile != null) {
             String cleanFile = this.currentNotesFile.trim();
@@ -282,7 +282,7 @@ public class ManageMentorProfile {
             }
         }
 
-        // 4. Έλεγχος αν υπάρχει σύνδεσμος
+
         boolean hasMeeting = false;
         if (this.currentMeetingUrl != null) {
             String cleanUrl = this.currentMeetingUrl.trim();
@@ -293,7 +293,7 @@ public class ManageMentorProfile {
 
         System.out.println("DEBUG [CheckFields] Τελικό αποτέλεσμα -> Έχει Αρχείο: " + hasFile + " | Έχει Σύνδεσμο: " + hasMeeting);
 
-        // Επιστρέφει true αν έχουμε έστω ένα από τα δύο!
+
         return hasFile || hasMeeting;
     }
 }

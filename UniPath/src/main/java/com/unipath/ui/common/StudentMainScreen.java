@@ -81,7 +81,7 @@ public class StudentMainScreen {
         }
     }
 
-    // 🌟 ΝΕΑ ΜΕΘΟΔΟΣ ΓΙΑ ΤΟ UC7 (Θα προστεθεί στο SD στο τέλος!)
+
     public void loadActiveHelpOffers() {
         if (coursesContainer == null) return;
 
@@ -135,20 +135,20 @@ public class StudentMainScreen {
             com.unipath.ui.UC1.ScenarioSelectionScreen scenarioScreen = loader.getController();
             scenarioScreen.setManageStudyPlan(studyPlanController);
 
-            // 🌟 ΔΗΜΙΟΥΡΓΙΑ ΝΕΟΥ ΑΥΤΟΝΟΜΟΥ ΠΑΡΑΘΥΡΟΥ (STAGE)
+
             Stage popupStage = new Stage();
             popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL); // Κλειδώνει το πίσω παράθυρο για ασφάλεια
             popupStage.setScene(new Scene(root, 650, 500));
             popupStage.setTitle("Επιλογή Σεναρίου - UniPath");
 
-            // Αποθηκεύουμε αυτό το νέο παράθυρο στον controller της ομάδας σου
+
             try {
                 java.lang.reflect.Field stageField = studyPlanController.getClass().getDeclaredField("mainStage");
                 stageField.setAccessible(true);
                 stageField.set(studyPlanController, popupStage);
             } catch (Exception ignored) {}
 
-            // 🌟 ΜΟΛΙΣ ΚΛΕΙΣΕΙ ΤΟ POPUP (Είτε από υποβολή είτε από ακύρωση), ΑΝΑΝΕΩΝΟΥΜΕ ΤΟ ΜΕΝΟΥ!
+
             popupStage.setOnHiding(event -> {
                 System.out.println("Το Popup έκλεισε. Ανανέωση δεδομένων Κεντρικής Οθόνης...");
                 loadSubmittedStudyPlans();

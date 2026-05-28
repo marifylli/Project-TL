@@ -11,16 +11,15 @@ import java.io.File;
 
 public class OfferSubmissionFormScreen {
 
-    @FXML private TextField fileRootTextField; // Αντιστοιχεί στο offerDataType()
-    @FXML private Button submitOfferButton; // Αντιστοιχεί στο postOffer()
+    @FXML private TextField fileRootTextField;
+    @FXML private Button submitOfferButton;
     @FXML private TextField meetingUrlTextField;
 
     private ManageMentorProfile controller;
 
     @FXML
     public void initialize() {
-        // Αν ο controller δεν έχει περαστεί ακόμα, φτιάχνουμε έναν για να υπάρχει,
-        // αλλά οι static τιμές (CourseID, HelpType) θα διαβαστούν κανονικά!
+
         if (controller == null) {
             controller = new ManageMentorProfile();
         }
@@ -47,11 +46,11 @@ public class OfferSubmissionFormScreen {
     private void handleSubmit() {
         if (controller == null) return;
 
-        // Παίρνουμε τα κείμενα απευθείας από τα textfields της οθόνης
+
         String notesFile = fileRootTextField.getText() != null ? fileRootTextField.getText().trim() : "";
         String meetingUrl = meetingUrlTextField.getText() != null ? meetingUrlTextField.getText().trim() : "";
 
-        // Τα στέλνουμε ρητά στον mentor controller
+
         controller.offerDataType(notesFile, meetingUrl);
 
         int loggedInStudentId = com.unipath.login.UserSession.getInstance().getUserId();
@@ -59,7 +58,7 @@ public class OfferSubmissionFormScreen {
         com.unipath.model.StudentProfile realProfile = new com.unipath.model.StudentProfile();
         realProfile.setStudentId(loggedInStudentId);
 
-        // Εκτέλεση δημοσίευσης
+
         controller.postOffer(realProfile);
     }
 

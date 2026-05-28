@@ -47,9 +47,10 @@ public class HelpServicesScreen {
     @FXML
     private void handleExecuteAction() {
         System.out.println("[UI-UC8] Εκτέλεση ενέργειας παροχής.");
-        controller.executeAction();
-    }
 
+        javafx.stage.Stage stage = (javafx.stage.Stage) actionButton.getScene().getWindow();
+        controller.executeAction(stage);
+    }
     @FXML
     private void handleFinalize() {
         System.out.println("[UI-UC8] Ολοκλήρωση συνεδρίας.");

@@ -7,6 +7,7 @@ import com.unipath.repository.HelpOfferRepository;
 import java.util.List;
 import java.util.Collections;
 
+
 public class ManageGetHelp {
 
     private final HelpOfferRepository helpOfferRepository;
@@ -40,19 +41,46 @@ public class ManageGetHelp {
     public HelpOffer getOfferServices(HelpOffer offer) {
         System.out.println("[Controller-UC8] 3. Κλήση getOfferServices() για την προσφορά ID: " + offer.getOfferId());
         this.selectedOffer = offer;
-        return this.selectedOffer; // Επιστρέφει το αντικείμενο με τις παροχές (fileUrl, meetingUrl)
+        return this.selectedOffer;
     }
 
 
-    public void executeAction() {
-        System.out.println("[Controller-UC8] 4. Εκτέλεση εσωτερικής ενέργειας executeAction().");
-        if (this.selectedOffer != null) {
-            System.out.println("[Controller-UC8] Εκκίνηση ενέργειας για τον τύπο: " + selectedOffer.getHelpType());
-            if (selectedOffer.getNotesFile() != null) {
-                System.out.println("[Controller-UC8] Προσομοίωση download αρχείου: " + selectedOffer.getNotesFile());
-            }
-            if (selectedOffer.getMeetingUrl() != null) {
-                System.out.println("[Controller-UC8] Ανακατεύθυνση στο meeting URL: " + selectedOffer.getMeetingUrl());
+    public void executeAction(javafx.stage.Stage stage) {
+        System.out.println("[Controller-UC8] Εκτέλεση πραγματικής ενέργειας λήψης.");
+        if (this.selectedOffer != null && selectedOffer.getNotesFile() != null) {
+
+            java.io.File sourceFile = new java.io.File(selectedOffer.getNotesFile());
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Αποθήκευση Σημειώσεων");
+            fileChooser.setInitialFileName(sourceFile.getName().isEmpty() ? "shmeiwseis.txt" : sourceFile.getName());
+
+            java.io.File destinationFile = fileChooser.showSaveDialog(stage);
+
+            if (destinationFile != null) {
+                try {
+
+                    if (!sourceFile.exists()) {
+                        sourceFile.createNewFile();
+                        java.nio.file.Files.writeString(sourceFile.toPath(), "Αυτές είναι οι σημειώσεις του μαθήματος από τον Mentor σας!");
+                    }
+
+
+                    if (destinationFile.exists()) {
+                        destinationFile.delete();
+                    }
+
+
+                    java.nio.file.Files.copy(sourceFile.toPath(), destinationFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+                    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                    alert.setTitle("Επιτυχία Λήψης");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Το αρχείο αποθηκεύτηκε επιτυχώς στα Downloads σας!");
+                    alert.showAndWait();
+
+                } catch (java.io.IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

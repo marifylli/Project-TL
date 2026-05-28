@@ -11,17 +11,20 @@ import java.io.File;
 
 public class OfferSubmissionFormScreen {
 
-    @FXML private TextField fileRootTextField; // Αντιστοιχεί στο offerDataType()
-    @FXML private Button submitOfferButton; // Αντιστοιχεί στο postOffer()
+    @FXML private TextField fileRootTextField;
+    @FXML private Button submitOfferButton;
     @FXML private TextField meetingUrlTextField;
 
     private ManageMentorProfile controller;
 
     @FXML
     public void initialize() {
-        controller = new ManageMentorProfile();
-    }
 
+        if (controller == null) {
+            controller = new ManageMentorProfile();
+        }
+        System.out.println("DEBUG UI: Η initialize() του OfferSubmissionFormScreen ολοκληρώθηκε.");
+    }
     @FXML
     private void handleBrowseFile() {
         FileChooser fileChooser = new FileChooser();
@@ -41,15 +44,16 @@ public class OfferSubmissionFormScreen {
 
     @FXML
     private void handleSubmit() {
-        String notesFile = fileRootTextField.getText();
-        String meetingUrl = meetingUrlTextField.getText();
+        if (controller == null) return;
+
+
+        String notesFile = fileRootTextField.getText() != null ? fileRootTextField.getText().trim() : "";
+        String meetingUrl = meetingUrlTextField.getText() != null ? meetingUrlTextField.getText().trim() : "";
 
 
         controller.offerDataType(notesFile, meetingUrl);
 
-
         int loggedInStudentId = com.unipath.login.UserSession.getInstance().getUserId();
-
 
         com.unipath.model.StudentProfile realProfile = new com.unipath.model.StudentProfile();
         realProfile.setStudentId(loggedInStudentId);

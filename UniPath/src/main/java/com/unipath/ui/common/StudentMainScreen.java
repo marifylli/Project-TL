@@ -81,6 +81,44 @@ public class StudentMainScreen {
         }
     }
 
+
+    public void loadActiveHelpOffers() {
+        if (coursesContainer == null) return;
+
+        int studentId = com.unipath.login.UserSession.getInstance().getUserId();
+        System.out.println("DEBUG MAIN SCREEN [UC7]: Ανάκτηση προσφορών βοήθειας για mentorId = " + studentId);
+
+        String sql = "SELECT ho.courseId, c.title, ho.assistanceType FROM HelpOffer ho " +
+                "LEFT JOIN Course c ON ho.courseId = c.courseId " +
+                "WHERE ho.mentorId = ?";
+
+        int offerCount = 0;
+
+        try (java.sql.Connection conn = com.unipath.dataBase.DBManager.getInstance().connect();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, studentId);
+            try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    offerCount++;
+                    String courseTitle = rs.getString("title");
+                    String helpType = rs.getString("assistanceType");
+
+                    if (courseTitle == null || courseTitle.isEmpty()) {
+                        courseTitle = rs.getString("courseId");
+                    }
+
+                    Label offerLabel = new Label("🤝 Προσφορά: " + courseTitle + " (" + helpType + ")");
+                    offerLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #1565c0; -fx-font-weight: bold; -fx-padding: 5px;");
+                    coursesContainer.getChildren().add(offerLabel);
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Σφάλμα κατά τη φόρτωση των προσφορών βοήθειας: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     public void clickCreatePlan() {
         try {
@@ -97,20 +135,20 @@ public class StudentMainScreen {
             com.unipath.ui.UC1.ScenarioSelectionScreen scenarioScreen = loader.getController();
             scenarioScreen.setManageStudyPlan(studyPlanController);
 
-            // 🌟 ΔΗΜΙΟΥΡΓΙΑ ΝΕΟΥ ΑΥΤΟΝΟΜΟΥ ΠΑΡΑΘΥΡΟΥ (STAGE)
+
             Stage popupStage = new Stage();
             popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL); // Κλειδώνει το πίσω παράθυρο για ασφάλεια
             popupStage.setScene(new Scene(root, 650, 500));
             popupStage.setTitle("Επιλογή Σεναρίου - UniPath");
 
-            // Αποθηκεύουμε αυτό το νέο παράθυρο στον controller της ομάδας σου
+
             try {
                 java.lang.reflect.Field stageField = studyPlanController.getClass().getDeclaredField("mainStage");
                 stageField.setAccessible(true);
                 stageField.set(studyPlanController, popupStage);
             } catch (Exception ignored) {}
 
-            // 🌟 ΜΟΛΙΣ ΚΛΕΙΣΕΙ ΤΟ POPUP (Είτε από υποβολή είτε από ακύρωση), ΑΝΑΝΕΩΝΟΥΜΕ ΤΟ ΜΕΝΟΥ!
+
             popupStage.setOnHiding(event -> {
                 System.out.println("Το Popup έκλεισε. Ανανέωση δεδομένων Κεντρικής Οθόνης...");
                 loadSubmittedStudyPlans();

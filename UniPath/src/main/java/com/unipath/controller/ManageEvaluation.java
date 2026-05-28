@@ -21,20 +21,14 @@ public class ManageEvaluation {
     }
 
     // 2. Ελέγχει αν ο φοιτητής έχει δικαίωμα αξιολόγησης (Βήμα 4 - sd2)
-    public boolean checkEvaluationRight(String courseName) {
+    public boolean checkEvaluationRight(String courseIdOrName) {
         int studentId = UserSession.getInstance().getUserId();
-        String courseId = convertCourseNameToId(courseName);
 
-        // Μετατροπή του String courseId σε int προσωρινά
-        int courseIdInt = 0;
-        try {
-            // Αν το ID περιέχει μόνο αριθμούς, το μετατρέπουμε. Αν είναι σαν το CEID_24Y332, παίρνουμε ένα fallback νούμερο.
-            courseIdInt = Integer.parseInt(courseId.replaceAll("[^0-9]", ""));
-        } catch (NumberFormatException e) {
-            courseIdInt = 101;
-        }
+        // Παίρνουμε το καθαρό String ID (π.χ. "CEID_24Y332")
+        String courseId = convertCourseNameToId(courseIdOrName);
 
-        return !evaluationRepository.hasAlreadySubmitted(studentId, courseIdInt);
+        // Στέλνουμε το String απευθείας στο repository χωρίς αλχημείες με Integer.parseInt
+        return !evaluationRepository.hasAlreadySubmitted(studentId, courseId);
     }
 
     // 3. Ελέγχει την εγκυρότητα των πεδίων της φόρμας
@@ -51,24 +45,20 @@ public class ManageEvaluation {
     }
 
     // 4. Δημιουργεί και αποθηκεύει το αντικείμενο CourseEvaluation μέσω του Repository της ομάδας
-    public boolean saveEvaluation(String courseName, int rating, String comments) {
-        // Δημιουργία του αντικειμένου από το Model σας
+    public boolean saveEvaluation(String courseIdOrName, int rating, String comments) {
         CourseEvaluation evaluation = new CourseEvaluation();
 
-        // Γέμισμα των στοιχείων
         evaluation.setStudentID(UserSession.getInstance().getUserId());
         evaluation.setRating(rating);
         evaluation.setComments(comments);
         evaluation.setSubmissionDate(new Date());
         evaluation.setSubmitted(true);
 
-        // Τώρα περνάμε String ID ("CEID_...") όπως ακριβώς το περιμένει το Model!
-        String courseId = convertCourseNameToId(courseName);
+        // Αν είναι ήδη ID το χρησιμοποιεί, αλλιώς το μετατρέπει
+        String courseId = convertCourseNameToId(courseIdOrName);
         evaluation.setCourseId(courseId);
 
-        // Κλήση της πραγματικής μεθόδου saveEvaluation του Repository της ομάδας!
         evaluationRepository.saveEvaluation(evaluation);
-
         return true;
     }
 
@@ -81,11 +71,16 @@ public class ManageEvaluation {
     // Η μέθοδος επιστρέφει  String και χρησιμοποιεί τα πραγματικά IDs της βάσης
     private String convertCourseNameToId(String courseName) {
         if (courseName == null) return "UNKNOWN";
+
+        // ΑΝ είναι ήδη ID, επέστρεψέ το απευθείας!
+        if (courseName.startsWith("CEID_")) {
+            return courseName;
+        }
+
         if (courseName.contains("Λογισμικού")) return "CEID_24Y332";
         if (courseName.contains("Δεδομένων")) return "CEID_24Y334";
         if (courseName.contains("Δίκτυα")) return "CEID_24Y387";
         return "CEID_22Y103"; // Default fallback ID
     }
-
 
 }

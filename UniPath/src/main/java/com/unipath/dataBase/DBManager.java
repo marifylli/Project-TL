@@ -19,6 +19,9 @@ public class DBManager {
         }
         return instance;
     }
+    public static Connection getConnection() throws SQLException {
+        return getInstance().connect();
+    }
 
     public Connection connect() throws SQLException {
         if (connection == null || connection.isClosed()) {

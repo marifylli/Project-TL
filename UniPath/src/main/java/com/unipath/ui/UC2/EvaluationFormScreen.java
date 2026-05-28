@@ -33,55 +33,37 @@ public class EvaluationFormScreen {
         String ratingText = ratingField.getText();
         String comments = commentsArea.getText();
 
-
+        // 1. Έλεγχος εγκυρότητας πεδίων μέσω του controller
         if (!controller.checkFields(ratingText, comments)) {
             statusLabel.setText("Παρακαλώ δώστε έγκυρο βαθμό (1-5) και συμπληρώστε τα σχόλια!");
             return;
         }
 
         int rating = Integer.parseInt(ratingText);
-
-
-        com.unipath.model.CourseEvaluation evaluation = new com.unipath.model.CourseEvaluation();
-        evaluation.setStudentID(41);
-        evaluation.setRating(rating);
-        evaluation.setComments(comments);
-        evaluation.setSubmissionDate(new java.util.Date());
-        evaluation.setSubmitted(true);
-
-
-        String courseId = "CEID_24Y332";
-        if (currentCourseName != null) {
-            if (currentCourseName.contains("Δεδομένων")) courseId = "CEID_24Y334";
-            else if (currentCourseName.contains("Δίκτυα")) courseId = "CEID_24Y387";
-        }
-        evaluation.setCourseId(courseId);
-
-
         boolean success = false;
+
         try {
-            com.unipath.repository.EvaluationRepository repo = new com.unipath.repository.EvaluationRepository();
-            repo.saveEvaluation(evaluation);
-            success = true;
+            // 2. Κλήση της μεθόδου του controller που αποθηκεύει σωστά με το UserSession ID
+            success = controller.saveEvaluation(currentCourseName, rating, comments);
 
-
-            controller.updateCourseStats(currentCourseName);
-
+            if (success) {
+                // Ενημέρωση στατιστικών μαθήματος
+                controller.updateCourseStats(currentCourseName);
+            }
         } catch (Exception e) {
             System.err.println("Σφάλμα κατά την αποθήκευση: " + e.getMessage());
         }
 
-
+        // Κλείσιμο του τρέχοντος παραθύρου της φόρμας
         Stage currentStage = (Stage) ratingField.getScene().getWindow();
         currentStage.close();
 
-
+        // 3. Εμφάνιση του ανάλογου Pop-up παραθύρου (Success / Error)
         try {
-            String fxmlPath = success ? "/fxml/common/success-window-view.fxml" : "/fxml/common/error-screen-view.fxml";
+            String fxmlPath = success ? "/fxml/common/success-window-view.fxml" : "/fxml/common/error-window-view.fxml";
             java.net.URL popUpFxmlUrl = getClass().getResource(fxmlPath);
 
             if (popUpFxmlUrl == null) {
-
                 fxmlPath = success ? "/fxml/common/success-window.fxml" : "/fxml/common/error-screen.fxml";
                 popUpFxmlUrl = getClass().getResource(fxmlPath);
             }
@@ -90,7 +72,6 @@ public class EvaluationFormScreen {
                 javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(popUpFxmlUrl);
                 javafx.scene.Parent root = loader.load();
 
-
                 if (success) {
                     com.unipath.ui.common.SuccessScreen successController = loader.getController();
                     successController.setSuccessMessage("Η αξιολόγηση για το μάθημα υποβλήθηκε με επιτυχία στην SQLite!");
@@ -98,7 +79,6 @@ public class EvaluationFormScreen {
                     com.unipath.ui.common.ErrorScreen errorController = loader.getController();
                     errorController.setErrorMessage("Αποτυχία υποβολής. Το ID του μαθήματος δεν βρέθηκε στη βάση.");
                 }
-
 
                 Stage popUpStage = new Stage();
                 popUpStage.setTitle(success ? "Επιτυχία" : "Προσοχή / Σφάλμα");
@@ -114,7 +94,6 @@ public class EvaluationFormScreen {
             e.printStackTrace();
         }
     }
-
 
     @FXML
     private void onCancel() {

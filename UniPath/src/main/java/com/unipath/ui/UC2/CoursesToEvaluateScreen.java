@@ -56,17 +56,24 @@ public class CoursesToEvaluateScreen {
     @FXML
     private void onCourseSelected() {
         errorLabel.setText("");
-        String selectedCourse = coursesListView.getSelectionModel().getSelectedItem();
+        String selectedItem = coursesListView.getSelectionModel().getSelectedItem();
 
-        if (selectedCourse == null) {
+        if (selectedItem == null) {
             errorLabel.setText("Παρακαλώ επιλέξτε ένα μάθημα από τη λίστα!");
             return;
         }
 
-        boolean hasRight = controller.checkEvaluationRight(selectedCourse);
+        // Εξαγωγή του ID από την παρένθεση. Π.χ. από το "Τεχνολογία Λογισμικού (CEID_24Y332)" παίρνουμε το "CEID_24Y332"
+        String courseId = "UNKNOWN";
+        if (selectedItem.contains("(") && selectedItem.contains(")")) {
+            courseId = selectedItem.substring(selectedItem.indexOf("(") + 1, selectedItem.indexOf(")"));
+        }
+
+        // Ο έλεγχος και το άνοιγμα της φόρμας γίνονται πλέον με το καθαρό ID
+        boolean hasRight = controller.checkEvaluationRight(courseId);
 
         if (hasRight) {
-            openEvaluationForm(selectedCourse);
+            openEvaluationForm(courseId); // Περνάμε το καθαρό courseId
         } else {
             errorLabel.setText("Έχετε ήδη υποβάλει αξιολόγηση για αυτό το μάθημα!");
         }

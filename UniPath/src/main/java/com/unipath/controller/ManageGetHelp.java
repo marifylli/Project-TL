@@ -6,6 +6,13 @@ import com.unipath.model.StudyPlan;
 import com.unipath.repository.HelpOfferRepository;
 import java.util.List;
 import java.util.Collections;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import javafx.scene.control.Alert;
 
 public class ManageGetHelp {
 
@@ -44,15 +51,59 @@ public class ManageGetHelp {
     }
 
 
-    public void executeAction() {
-        System.out.println("[Controller-UC8] 4. Εκτέλεση εσωτερικής ενέργειας executeAction().");
+    public void executeAction(Stage stage) {
+        System.out.println("[Controller-UC8] 4. Εκτέλεση ενέργειας executeAction().");
         if (this.selectedOffer != null) {
             System.out.println("[Controller-UC8] Εκκίνηση ενέργειας για τον τύπο: " + selectedOffer.getHelpType());
-            if (selectedOffer.getNotesFile() != null) {
-                System.out.println("[Controller-UC8] Προσομοίωση download αρχείου: " + selectedOffer.getNotesFile());
+
+
+            if (selectedOffer.getNotesFile() != null && !selectedOffer.getNotesFile().isBlank()) {
+
+
+                File sourceFile = new File(selectedOffer.getNotesFile());
+
+
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Αποθήκευση Σημειώσεων");
+                fileChooser.setInitialFileName(sourceFile.getName());
+
+
+                String extension = "";
+                int i = sourceFile.getName().lastIndexOf('.');
+                if (i > 0) { extension = sourceFile.getName().substring(i+1); }
+                if (!extension.isEmpty()) {
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(extension.toUpperCase() + " Files", "*." + extension));
+                }
+
+
+                File destinationFile = fileChooser.showSaveDialog(stage);
+
+                if (destinationFile != null) {
+                    try {
+
+                        Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Επιτυχία Λήψης");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Το αρχείο αποθηκεύτηκε επιτυχώς στο:\n" + destinationFile.getAbsolutePath());
+                        alert.showAndWait();
+
+                    } catch (IOException e) {
+                        System.err.println("Σφάλμα κατά την αντιγραφή του αρχείου: " + e.getMessage());
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Σφάλμα");
+                        alert.setHeaderText("Αποτυχία λήψης αρχείου");
+                        alert.setContentText("Δεν ήταν δυνατή η αποθήκευση. Ελέγξτε αν το αρχείο πηγής υπάρχει: " + selectedOffer.getNotesFile());
+                        alert.showAndWait();
+                    }
+                }
             }
+
             if (selectedOffer.getMeetingUrl() != null) {
                 System.out.println("[Controller-UC8] Ανακατεύθυνση στο meeting URL: " + selectedOffer.getMeetingUrl());
+
             }
         }
     }

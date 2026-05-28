@@ -83,7 +83,17 @@ public class ManageSecCourEditClass {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
             stage.setTitle("Επιτυχία");
+            //σταματάει την εκτέλεση εδώ μέχρι ο υπάλληλος να κλείσει το popup επιτυχίας
             stage.showAndWait();
+
+            // Τραβάμε την καινούργια λίστα μαθημάτων με την επεξεργασία από τη βάση δεδομένων
+            List<Course> updatedCourseList = courseRepository.queryCourseList();
+
+            // Ξανανοίγουμε τη λίστα μαθημάτων η οποία πλέον θα έχει τα νέα τροποποιημένα στοιχεία
+            CourseListScreen courseListScreen = new CourseListScreen(this, updatedCourseList);
+            courseListScreen.display();
+
+
         } catch (Exception e) {
             System.err.println("Απέτυχε η φόρτωση της κοινής οθόνης επιτυχίας στο UC6:");
             e.printStackTrace();

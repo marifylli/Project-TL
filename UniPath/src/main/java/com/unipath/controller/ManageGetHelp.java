@@ -6,13 +6,7 @@ import com.unipath.model.StudyPlan;
 import com.unipath.repository.HelpOfferRepository;
 import java.util.List;
 import java.util.Collections;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import javafx.scene.control.Alert;
+
 
 public class ManageGetHelp {
 
@@ -64,18 +58,18 @@ public class ManageGetHelp {
 
             if (destinationFile != null) {
                 try {
-                    // Δημιουργία εικονικού αρχείου αν δεν υπάρχει ήδη στο PC
+
                     if (!sourceFile.exists()) {
                         sourceFile.createNewFile();
                         java.nio.file.Files.writeString(sourceFile.toPath(), "Αυτές είναι οι σημειώσεις του μαθήματος από τον Mentor σας!");
                     }
 
-                    // Αν υπάρχει ήδη στα Downloads, το σβήνουμε για να μην κολλήσει το override
+
                     if (destinationFile.exists()) {
                         destinationFile.delete();
                     }
 
-                    // Πραγματικό download/αντιγραφή αρχείου
+
                     java.nio.file.Files.copy(sourceFile.toPath(), destinationFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
                     javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);

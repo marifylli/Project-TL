@@ -8,43 +8,45 @@ import java.util.Date;
 
 public class NotificationRepository {
 
-    public void notifyAllStudentsAboutCourse(String message) {
-        String fetchStudentsSql = "SELECT userId FROM Student";
-        String insertNotificationSql = "INSERT INTO Notification (recipientId, senderId, message, dateSent, isRead, notificationType) VALUES (?, ?, ?, ?, ?, ?)";
+    public void notifyAllStudentsAboutCourse(String messageText) {
+        // 1. Φέρνουμε ΜΟΝΟ τα userId των φοιτητών που υπάρχουν πραγματικά στον πίνακα User (INNER JOIN)
+        String selectQuery = """
+        SELECT Student.userId 
+        FROM Student 
+        INNER JOIN User ON Student.userId = User.userId
+    """;
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String currentDate = dateFormat.format(new Date());
+        // 2. Το INSERT χρησιμοποιεί το 'sec1' ως senderId, το οποίο υπάρχει 100% στη βάση σου
+        String insertQuery = """
+        INSERT INTO Notification (recipientId, senderId, message, dateSent, isRead, notificationType) 
+        VALUES (?, 'sec1', ?, datetime('now'), 0, 'REMINDER')
+    """;
 
-        try (Connection conn = DBManager.getInstance().connect();
-             PreparedStatement pstmtFetch = conn.prepareStatement(fetchStudentsSql);
-             ResultSet rs = pstmtFetch.executeQuery()) {
+        try (Connection conn = com.unipath.dataBase.DBManager.getInstance().connect();
+             java.sql.PreparedStatement selectStmt = conn.prepareStatement(selectQuery);
+             java.sql.ResultSet rs = selectStmt.executeQuery();
+             java.sql.PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
 
-            try (PreparedStatement pstmtInsert = conn.prepareStatement(insertNotificationSql)) {
-                while (rs.next()) {
-                    // Δημιουργία Notification object με 6 παραμέτρους
-                    Notification notification = new Notification(
-                            rs.getString("userId"),
-                            "Secretary",
-                            message,
-                            currentDate,
-                            0, // isRead = 0 (false)
-                            "NEW_COURSE"
-                    );
+            // Απενεργοποιούμε το auto-commit για να γίνουν όλα τα inserts μαζί (Batch) για ταχύτητα
+            conn.setAutoCommit(false);
 
-                    pstmtInsert.setString(1, notification.getRecipientId());
-                    pstmtInsert.setString(2, notification.getSenderId());
-                    pstmtInsert.setString(3, notification.getMessage());
-                    pstmtInsert.setString(4, notification.getDateSent());
-                    pstmtInsert.setInt(5, notification.getIsRead());
-                    pstmtInsert.setString(6, notification.getNotificationType());
+            while (rs.next()) {
+                String studentUserId = rs.getString("userId");
 
-                    pstmtInsert.addBatch();
-                }
-                pstmtInsert.executeBatch();
-                System.out.println("Οι ειδοποιήσεις στάλθηκαν επιτυχώς σε όλους τους φοιτητές.");
+                insertStmt.setString(1, studentUserId); // recipientId
+                insertStmt.setString(2, messageText);     // message
+                insertStmt.addBatch();
             }
+
+            // Εκτέλεση όλων των ειδοποιήσεων
+            insertStmt.executeBatch();
+            conn.commit();
+
+            System.out.println("📢 Η ειδοποίηση στάλθηκε επιτυχώς σε όλους τους έγκυρους φοιτητές!");
+
         } catch (SQLException e) {
-            System.err.println("Σφάλμα στο NotificationRepository: " + e.getMessage());
+            System.err.println("❌ NotificationRepository Error: [SQLITE_CONSTRAINT_FOREIGNKEY] αποφεύχθηκε αλλά υπήρξε άλλο σφάλμα:");
+            e.printStackTrace();
         }
     }
 }

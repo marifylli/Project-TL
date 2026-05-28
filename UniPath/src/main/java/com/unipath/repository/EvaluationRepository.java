@@ -13,7 +13,7 @@ import java.util.List;
 
 public class EvaluationRepository {
 
-
+    // UC2 βήμα 4: έλεγξε αν έχει ήδη αξιολογήσει
     public boolean hasAlreadySubmitted(int studentId, int courseId) {
         String sql = "SELECT * FROM CourseEvaluation WHERE studentId=? AND courseId=?";
 
@@ -31,15 +31,35 @@ public class EvaluationRepository {
         }
     }
 
-
+    // UC2 βήμα 3: παίρνεις τα μαθήματα που παρακολούθησε
     public List<Course> getAttendedCourses(int studentId) {
         List<Course> courses = new ArrayList<>();
+
+        // DEBUG
+        String debugSql = "SELECT planId, courses, isFinalized FROM StudyPlan WHERE studentId = ?";
+        try (Connection conn = DBManager.getInstance().connect();
+             PreparedStatement pstmt = conn.prepareStatement(debugSql)) {
+            pstmt.setInt(1, studentId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                System.out.println("DEBUG: Βρέθηκε πλάνο - planId=" + rs.getInt("planId") +
+                        ", isFinalized=" + rs.getInt("isFinalized") +
+                        ", courses=" + rs.getString("courses"));
+            } else {
+                System.out.println("DEBUG: Δεν βρέθηκε κανένα πλάνο για studentId=" + studentId);
+            }
+        } catch (SQLException e) {
+            System.err.println("DEBUG Error: " + e.getMessage());
+        }
+
+        // Κύριο query
         String sql = """
-            SELECT c.courseId, c.title, c.ects, c.semester
-            FROM Course c
-            JOIN StudentCourse sc ON c.courseId = sc.courseId
-            WHERE sc.studentId = ?
-        """;
+        SELECT c.courseId, c.title, c.ects, c.semester
+        FROM Course c
+        INNER JOIN StudyPlan sp ON (',' || sp.courses || ',') LIKE ('%,' || c.courseId || ',%')
+        WHERE sp.studentId = ? AND sp.isFinalized = 1
+        ORDER BY sp.planId DESC
+    """;
 
         try (Connection conn = DBManager.getInstance().connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -64,6 +84,7 @@ public class EvaluationRepository {
     }
 
 
+    // UC2 βήμα 9: αποθήκευσε αξιολόγηση
     public void saveEvaluation(CourseEvaluation evaluation) {
         String sql = """
             INSERT INTO CourseEvaluation 
@@ -90,7 +111,7 @@ public class EvaluationRepository {
         }
     }
 
-
+    // UC4: ανάκτηση αξιολογήσεων για στατιστικά
     public List<CourseEvaluation> getEvaluationsByCourse(String courseId) {
         List<CourseEvaluation> evaluations = new ArrayList<>();
         String sql = "SELECT * FROM CourseEvaluation WHERE courseId=?";

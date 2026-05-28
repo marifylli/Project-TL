@@ -13,25 +13,29 @@ import java.util.List;
 
 public class EvaluationRepository {
 
-    // UC2 βήμα 4: έλεγξε αν έχει ήδη αξιολογήσει
-    public boolean hasAlreadySubmitted(int studentId, int courseId) {
-        String sql = "SELECT * FROM CourseEvaluation WHERE studentId=? AND courseId=?";
 
-        try (Connection conn = DBManager.getInstance().connect();
+    public boolean hasAlreadySubmitted(int studentId, String courseId) {
+        String sql = "SELECT COUNT(*) FROM CourseEvaluation WHERE studentId = ? AND courseId = ?";
+
+        try (Connection conn = DBManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, studentId);
-            pstmt.setInt(2, courseId);
-            ResultSet rs = pstmt.executeQuery();
-            return rs.next();
+            pstmt.setString(2, courseId);
 
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                }
+            }
         } catch (SQLException e) {
-            System.err.println("Σφάλμα hasAlreadySubmitted: " + e.getMessage());
-            return false;
+            System.err.println("Σφάλμα κατά τον έλεγχο υποβολής αξιολόγησης: " + e.getMessage());
         }
+        return false;
     }
 
-    // UC2 βήμα 3: παίρνεις τα μαθήματα που παρακολούθησε
+
     public List<Course> getAttendedCourses(int studentId) {
         List<Course> courses = new ArrayList<>();
 
@@ -52,7 +56,7 @@ public class EvaluationRepository {
             System.err.println("DEBUG Error: " + e.getMessage());
         }
 
-        // Κύριο query
+
         String sql = """
         SELECT c.courseId, c.title, c.ects, c.semester
         FROM Course c
@@ -84,7 +88,7 @@ public class EvaluationRepository {
     }
 
 
-    // UC2 βήμα 9: αποθήκευσε αξιολόγηση
+
     public void saveEvaluation(CourseEvaluation evaluation) {
         String sql = """
             INSERT INTO CourseEvaluation 
@@ -111,7 +115,7 @@ public class EvaluationRepository {
         }
     }
 
-    // UC4: ανάκτηση αξιολογήσεων για στατιστικά
+
     public List<CourseEvaluation> getEvaluationsByCourse(String courseId) {
         List<CourseEvaluation> evaluations = new ArrayList<>();
         String sql = "SELECT * FROM CourseEvaluation WHERE courseId=?";

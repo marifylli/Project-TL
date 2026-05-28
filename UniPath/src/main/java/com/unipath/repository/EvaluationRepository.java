@@ -34,6 +34,25 @@ public class EvaluationRepository {
     // UC2 βήμα 3: παίρνεις τα μαθήματα που παρακολούθησε
     public List<Course> getAttendedCourses(int studentId) {
         List<Course> courses = new ArrayList<>();
+
+        // DEBUG
+        String debugSql = "SELECT planId, courses, isFinalized FROM StudyPlan WHERE studentId = ?";
+        try (Connection conn = DBManager.getInstance().connect();
+             PreparedStatement pstmt = conn.prepareStatement(debugSql)) {
+            pstmt.setInt(1, studentId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                System.out.println("DEBUG: Βρέθηκε πλάνο - planId=" + rs.getInt("planId") +
+                        ", isFinalized=" + rs.getInt("isFinalized") +
+                        ", courses=" + rs.getString("courses"));
+            } else {
+                System.out.println("DEBUG: Δεν βρέθηκε κανένα πλάνο για studentId=" + studentId);
+            }
+        } catch (SQLException e) {
+            System.err.println("DEBUG Error: " + e.getMessage());
+        }
+
+        // Κύριο query
         String sql = """
         SELECT c.courseId, c.title, c.ects, c.semester
         FROM Course c
@@ -63,6 +82,7 @@ public class EvaluationRepository {
 
         return courses;
     }
+
 
     // UC2 βήμα 9: αποθήκευσε αξιολόγηση
     public void saveEvaluation(CourseEvaluation evaluation) {

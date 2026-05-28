@@ -538,6 +538,15 @@ public class InsertTestData {
             """);
             System.out.println("✅ ProfessorCourse προστέθηκαν!");
 
+        // ── STUDY PLAN ΓΙΑ TEST STUDENT (UC2 TESTING) ──────────
+            conn.createStatement().execute("""
+    INSERT OR IGNORE INTO StudyPlan 
+    (studentId, scenarioId, courses, academicYear, status, isValid, isDraft, isFinalized)
+    VALUES 
+    (41, 1, 'CEID_24Y334,CEID_24Y332,CEID_24Y387,CEID_NE5057,CEID_NE4117,CEID_NE4168,CEID_NE4128,CEID_NE590,CEID_NE509,CEID_NE5288,CEID_25EE606,CEID_NE565,CEID_NE548,CEID_NE520,CEID_NE5078,CEID_NE5237,CEID_24EE594',
+     '2026-05', 'Finalized', 1, 0, 1)
+""");
+            System.out.println("✅ StudyPlan για test.student1 (id=41) προστέθηκε!");
             // 🌟 Επανενεργοποιούμε τους ελέγχους Foreign Keys για την κανονική λειτουργία της εφαρμογής
             conn.createStatement().execute("PRAGMA foreign_keys = ON");
             System.out.println("\n✅ Όλα τα δεδομένα εισήχθησαν επιτυχώς!");

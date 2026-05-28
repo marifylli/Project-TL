@@ -227,27 +227,34 @@ public class CourseRepository {
 
     public List<Professor> queryManageProfessors() {
         List<Professor> professors = new ArrayList<>();
+        // 🌟 Εξασφαλίζουμε ότι το Query παίρνει το currentTeachingLoad και το όνομα του χρήστη
         String sql = """
-            SELECT p.professorId, (u.firstName || ' ' || u.lastName) AS fullName, u.email, p.office 
-            FROM Professor p
-            JOIN User u ON p.userId = u.userId
-        """;
+        SELECT p.professorId, p.office, p.maxTeachingLoad, p.currentTeachingLoad, 
+               u.firstName, u.lastName
+        FROM Professor p
+        JOIN User u ON p.userId = u.userId
+    """;
 
-        try (java.sql.Connection conn = DBManager.getInstance().connect();
-             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
-             java.sql.ResultSet rs = pstmt.executeQuery()) {
+        try (Connection conn = DBManager.getInstance().connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                Professor prof = new Professor(
-                        rs.getInt("professorId"),
-                        rs.getString("fullName"),
-                        rs.getString("email"),
-                        rs.getString("office")
-                );
+                Professor prof = new Professor();
+                prof.setProfessorId(rs.getInt("professorId"));
+                prof.setOffice(rs.getString("office"));
+
+                // 1. 🌟 ΕΝΩΝΟΥΜΕ το όνομα και το επίθετο από τη βάση στο fullName του μοντέλου
+                String fullName = rs.getString("firstName") + " " + rs.getString("lastName");
+                prof.setFullName(fullName);
+
+                // 2. 🌟 ΤΡΑΒΑΜΕ τον τρέχοντα φόρτο από τη βάση
+                prof.setCurrentTeachingLoad(rs.getInt("currentTeachingLoad"));
+
                 professors.add(prof);
             }
-        } catch (java.sql.SQLException e) {
-            System.err.println("Σφάλμα στο queryManageProfessors: " + e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return professors;
     }

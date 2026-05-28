@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
+import com.unipath.ui.common.SuccessScreen;
+import com.unipath.ui.common.ErrorScreen;
 
 import java.net.URL;
 

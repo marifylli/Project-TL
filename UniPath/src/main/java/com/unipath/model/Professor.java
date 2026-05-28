@@ -12,7 +12,7 @@ public class Professor {
     private String office;
 
 
-    private List<String> thesisTopics; // Λίστα με τα θέματα που έχει αναρτήσει
+    private List<String> thesisTopics;
 
 
     private static final int MAX_TEACHING_LOAD = 3;

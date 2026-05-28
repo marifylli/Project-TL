@@ -3,7 +3,7 @@ package com.unipath.ui.UC11;
 import com.unipath.controller.ManageThesisInterest;
 import com.unipath.model.AvailabilitySlot;
 import com.unipath.model.Thesis;
-import com.unipath.ui.common.ErrorScreen; // ‼️ Χρειάζεται αυτό το import για τον controller του σφάλματος
+import com.unipath.ui.common.ErrorScreen;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,6 +13,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
 
 public class ThesisDetailsScreen {
 
@@ -116,6 +118,26 @@ public class ThesisDetailsScreen {
         } catch (IOException e) {
             System.out.println("Σφάλμα κατά το φόρτωμα του student-meeting-calendar-view.fxml");
             e.printStackTrace();
+        }
+    }
+    @FXML
+    private void handleBackToMain(ActionEvent event) {
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Student/student-main-screen.fxml"));
+            Parent root = loader.load();
+
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
         }
     }
 }

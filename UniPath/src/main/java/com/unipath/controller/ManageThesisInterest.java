@@ -3,16 +3,22 @@ package com.unipath.controller;
 import com.unipath.model.Calendar;
 import com.unipath.model.Notification;
 import com.unipath.model.AvailabilitySlot;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
+import javafx.event.ActionEvent;
+
+import javafx.scene.Node;
+
 
 public class ManageThesisInterest {
 
-    public ManageThesisInterest() {}
+    public ManageThesisInterest() {
+    }
 
     public boolean checkAcademicStatus(int studentId, int thesisId) {
         return true;
@@ -49,4 +55,6 @@ public class ManageThesisInterest {
             e.printStackTrace();
         }
     }
+
+
 }

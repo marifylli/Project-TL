@@ -144,13 +144,19 @@ public class StudentMainScreen {
             if (fxmlUrl == null) fxmlUrl = getClass().getClassLoader().getResource("fxml/Student/courses-evaluate-view.fxml");
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
-            Stage stage = (Stage) evaluateButton.getScene().getWindow();
-            stage.setScene(new Scene(root, 1000, 650));
-            stage.setTitle("UniPath - Λίστα Μαθημάτων προς Αξιολόγηση");
+
+            Stage popupStage = new Stage();
+            popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            popupStage.initOwner((Stage) evaluateButton.getScene().getWindow());
+            popupStage.setScene(new Scene(root, 1000, 650));
+            popupStage.setTitle("UniPath - Λίστα Μαθημάτων προς Αξιολόγηση");
+            popupStage.showAndWait();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     @FXML
     public void clickAddNewOffer() {

@@ -33,7 +33,7 @@ public class EvaluationFormScreen {
         String ratingText = ratingField.getText();
         String comments = commentsArea.getText();
 
-        // 1. Έλεγχος εγκυρότητας πεδίων μέσω του controller
+
         if (!controller.checkFields(ratingText, comments)) {
             statusLabel.setText("Παρακαλώ δώστε έγκυρο βαθμό (1-5) και συμπληρώστε τα σχόλια!");
             return;
@@ -43,22 +43,22 @@ public class EvaluationFormScreen {
         boolean success = false;
 
         try {
-            // 2. Κλήση της μεθόδου του controller που αποθηκεύει σωστά με το UserSession ID
+
             success = controller.saveEvaluation(currentCourseName, rating, comments);
 
             if (success) {
-                // Ενημέρωση στατιστικών μαθήματος
+
                 controller.updateCourseStats(currentCourseName);
             }
         } catch (Exception e) {
             System.err.println("Σφάλμα κατά την αποθήκευση: " + e.getMessage());
         }
 
-        // Κλείσιμο του τρέχοντος παραθύρου της φόρμας
+
         Stage currentStage = (Stage) ratingField.getScene().getWindow();
         currentStage.close();
 
-        // 3. Εμφάνιση του ανάλογου Pop-up παραθύρου (Success / Error)
+
         try {
             String fxmlPath = success ? "/fxml/common/success-window-view.fxml" : "/fxml/common/error-window-view.fxml";
             java.net.URL popUpFxmlUrl = getClass().getResource(fxmlPath);

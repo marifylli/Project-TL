@@ -63,13 +63,13 @@ public class CoursesToEvaluateScreen {
             return;
         }
 
-        // Εξαγωγή του ID από την παρένθεση. Π.χ. από το "Τεχνολογία Λογισμικού (CEID_24Y332)" παίρνουμε το "CEID_24Y332"
+
         String courseId = "UNKNOWN";
         if (selectedItem.contains("(") && selectedItem.contains(")")) {
             courseId = selectedItem.substring(selectedItem.indexOf("(") + 1, selectedItem.indexOf(")"));
         }
 
-        // Ο έλεγχος και το άνοιγμα της φόρμας γίνονται πλέον με το καθαρό ID
+
         boolean hasRight = controller.checkEvaluationRight(courseId);
 
         if (hasRight) {

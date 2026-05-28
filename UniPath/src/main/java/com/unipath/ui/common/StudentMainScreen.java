@@ -81,6 +81,44 @@ public class StudentMainScreen {
         }
     }
 
+    // 🌟 ΝΕΑ ΜΕΘΟΔΟΣ ΓΙΑ ΤΟ UC7 (Θα προστεθεί στο SD στο τέλος!)
+    public void loadActiveHelpOffers() {
+        if (coursesContainer == null) return;
+
+        int studentId = com.unipath.login.UserSession.getInstance().getUserId();
+        System.out.println("DEBUG MAIN SCREEN [UC7]: Ανάκτηση προσφορών βοήθειας για mentorId = " + studentId);
+
+        String sql = "SELECT ho.courseId, c.title, ho.assistanceType FROM HelpOffer ho " +
+                "LEFT JOIN Course c ON ho.courseId = c.courseId " +
+                "WHERE ho.mentorId = ?";
+
+        int offerCount = 0;
+
+        try (java.sql.Connection conn = com.unipath.dataBase.DBManager.getInstance().connect();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, studentId);
+            try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    offerCount++;
+                    String courseTitle = rs.getString("title");
+                    String helpType = rs.getString("assistanceType");
+
+                    if (courseTitle == null || courseTitle.isEmpty()) {
+                        courseTitle = rs.getString("courseId");
+                    }
+
+                    Label offerLabel = new Label("🤝 Προσφορά: " + courseTitle + " (" + helpType + ")");
+                    offerLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #1565c0; -fx-font-weight: bold; -fx-padding: 5px;");
+                    coursesContainer.getChildren().add(offerLabel);
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Σφάλμα κατά τη φόρτωση των προσφορών βοήθειας: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     public void clickCreatePlan() {
         try {

@@ -19,8 +19,8 @@ import java.util.ArrayList;
 
 public class ManageMentorProfile {
 
-    private String currentCourseId;
-    private String currentHelpType;
+    private static String currentCourseId;
+    private static String currentHelpType;
     private String currentNotesFile;
     private String currentMeetingUrl;
     private Stage mainStage;
@@ -144,13 +144,37 @@ public class ManageMentorProfile {
 
     public void returnToMainMenu() {
         try {
+            // 1. Δοκιμάζουμε όλες τις πιθανές διαδρομές που μπορεί να έχει το FXML της ομάδας σου
+            java.net.URL fxmlLocation = getClass().getResource("/fxml/Student/student-main-view.fxml");
 
-            java.net.URL fxmlLocation = getClass().getResource("/fxml/Student/student-main-screen.fxml");
+            if (fxmlLocation == null) {
+                fxmlLocation = getClass().getClassLoader().getResource("fxml/Student/student-main-view.fxml");
+            }
+            if (fxmlLocation == null) {
+                fxmlLocation = getClass().getResource("/fxml/Student/student-main-screen.fxml");
+            }
             if (fxmlLocation == null) {
                 fxmlLocation = getClass().getClassLoader().getResource("fxml/Student/student-main-screen.fxml");
             }
 
-            Parent root = FXMLLoader.load(fxmlLocation);
+            // Αν παρόλα αυτά δεν βρεθεί τίποτα, πετάμε ελεγχόμενο σφάλμα για να μην κρασάρει η JavaFX
+            if (fxmlLocation == null) {
+                System.err.println("❌ ΚΡΙΣΙΜΟ ΣΦΑΛΜΑ: Δεν βρέθηκε πουθενά το αρχείο FXML της Κεντρικής Οθόνης!");
+                showErrorPopup("Αδυναμία επιστροφής στο κεντρικό μενού. Ελέγξτε τα FXML Paths.");
+                return;
+            }
+
+            System.out.println("✓ [UI Flow] Φόρτωση κεντρικής οθόνης από: " + fxmlLocation.getPath());
+            FXMLLoader loader = new FXMLLoader(fxmlLocation);
+            Parent root = loader.load();
+
+            com.unipath.ui.common.StudentMainScreen mainController = loader.getController();
+            if (mainController != null) {
+                // Ανανέωση Πλάνων (UC1)
+                mainController.loadSubmittedStudyPlans();
+                // Ανανέωση Προσφορών Μέντορα (UC7)
+                mainController.loadActiveHelpOffers();
+            }
 
             if (this.mainStage == null) {
                 this.mainStage = (Stage) Stage.getWindows().filtered(window -> window.isShowing()).get(0);
@@ -158,8 +182,11 @@ public class ManageMentorProfile {
 
             mainStage.setScene(new Scene(root, 1000, 650));
             mainStage.setTitle("UniPath - Κεντρικό Μενού");
+            mainStage.show();
+
         } catch (Exception e) {
-            System.err.println(" Σφάλμα κατά την επιστροφή στο κεντρικό μενού: " + e.getMessage());
+            System.err.println("❌ Σφάλμα κατά την επιστροφή στο κεντρικό μενού: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -236,12 +263,37 @@ public class ManageMentorProfile {
 
 
     public boolean checkFields() {
-        if (this.currentCourseId == null || this.currentCourseId.isBlank()) return false;
-        if (this.currentHelpType == null || this.currentHelpType.isBlank()) return false;
+        // 1. Εκτυπώνουμε ακριβώς τι βλέπει η Java για να ξέρουμε τι συμβαίνει
+        System.out.println("DEBUG [CheckFields] CourseID: " + this.currentCourseId);
+        System.out.println("DEBUG [CheckFields] HelpType: " + this.currentHelpType);
+        System.out.println("DEBUG [CheckFields] NotesFile: '" + this.currentNotesFile + "'");
+        System.out.println("DEBUG [CheckFields] MeetingUrl: '" + this.currentMeetingUrl + "'");
 
-        boolean hasFile = (this.currentNotesFile != null && !this.currentNotesFile.isBlank());
-        boolean hasMeeting = (this.currentMeetingUrl != null && !this.currentMeetingUrl.isBlank());
+        // 2. Βασικοί έλεγχοι για τα πρώτα πεδία
+        if (this.currentCourseId == null || this.currentCourseId.trim().isEmpty()) return false;
+        if (this.currentHelpType == null || this.currentHelpType.trim().isEmpty()) return false;
 
+        // 3. Έλεγχος αν υπάρχει έγκυρο αρχείο (αν έχει χαρακτήρες και δεν είναι άδειο)
+        boolean hasFile = false;
+        if (this.currentNotesFile != null) {
+            String cleanFile = this.currentNotesFile.trim();
+            if (!cleanFile.isEmpty() && !cleanFile.equalsIgnoreCase("null") && cleanFile.length() > 3) {
+                hasFile = true;
+            }
+        }
+
+        // 4. Έλεγχος αν υπάρχει σύνδεσμος
+        boolean hasMeeting = false;
+        if (this.currentMeetingUrl != null) {
+            String cleanUrl = this.currentMeetingUrl.trim();
+            if (!cleanUrl.isEmpty() && !cleanUrl.equalsIgnoreCase("null") && cleanUrl.length() > 3) {
+                hasMeeting = true;
+            }
+        }
+
+        System.out.println("DEBUG [CheckFields] Τελικό αποτέλεσμα -> Έχει Αρχείο: " + hasFile + " | Έχει Σύνδεσμο: " + hasMeeting);
+
+        // Επιστρέφει true αν έχουμε έστω ένα από τα δύο!
         return hasFile || hasMeeting;
     }
 }

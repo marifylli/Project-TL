@@ -219,24 +219,34 @@ public class ManageStudyPlan {
 
     public boolean validateRules() {
 
-        if (selectedCourses != null && selectedCourses.size() == 17) {
-            System.out.println("✓ [Validation Success]: Επιλέχθηκαν ακριβώς 17 μαθήματα. Το πλάνο εγκρίνεται για αποθήκευση!");
-            return true;
+
+        if (selectedCourses == null || selectedCourses.size() != 17) {
+            System.out.println("ΣΦΑΛΜΑ: Πρέπει να επιλέξετε ακριβώς 17 μαθήματα.");
+            return false;
         }
 
-
-        if (selectedCourses == null || selectedCourses.size() != 17) return false;
 
         int scenarioId = (selectedScenario != null) ? selectedScenario.getScenarioId() : 1;
 
+        boolean isPlanValid = false;
+
+
         if (scenarioId == 1) {
-            return validateScenario1();
+            isPlanValid = validateScenario1();
         } else if (scenarioId == 2) {
-            return validateScenario2();
+            isPlanValid = validateScenario2();
         } else if (scenarioId == 3) {
-            return validateScenario3();
+            isPlanValid = validateScenario3();
         }
-        return false;
+
+
+        if (isPlanValid) {
+            System.out.println("✓ [Validation Success]: Οι έλεγχοι του σεναρίου πέτυχαν. Το πλάνο εγκρίνεται!");
+        } else {
+            System.out.println("x [Validation Failed]: Το πρόγραμμα σπουδών δεν πληροί τις προϋποθέσεις του σεναρίου " + scenarioId + ".");
+        }
+
+        return isPlanValid;
     }
 
 
@@ -302,7 +312,7 @@ public class ManageStudyPlan {
         System.out.println("DEBUG [3ο Tab]: Άλλες_Β=" + otherDirectionsBCount + ", ΓΠ_Άλλα_Τμήματα=" + externalDepartmentCount + ", Erasmus=" + erasmusCount + " -> Έγκυρο Group 3: " + validMutualExclusion);
 
 
-        return mainA == 5 && mainB == 5 && otherA == 5 && otherDirectionsSet.size() <= 3 && validMutualExclusion;
+        return mainA >= 5 && mainB >= 5 && otherA >= 5 && validMutualExclusion;
     }
 
     private boolean validateScenario2() {
@@ -349,7 +359,7 @@ public class ManageStudyPlan {
         }
 
         System.out.println("DEBUG [Scenario 2]: Main1A=" + main1A + "/5, Main1B=" + main1B + "/2 | Main2A=" + main2A + "/5, Main2B=" + main2B + "/2 | Extra=" + extraCount + "/3");
-        return main1A == 5 && main1B == 2 && main2A == 5 && main2B == 2 && extraCount == 3 && extraDirectionsSet.size() <= 2;
+        return main1A >= 5 && main1B >= 2 && main2A >= 5 && main2B >= 2 && extraCount >= 3;
     }
 
     private boolean validateScenario3() {
